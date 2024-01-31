@@ -1,0 +1,12 @@
+services:
+  mariadb:
+    container_name: "online-store-mariadb"
+    image: 'mariadb:latest'
+    environment:
+      - 'MARIADB_DATABASE=online_store'
+      - 'MARIADB_PASSWORD=1234'
+      - 'MARIADB_ROOT_PASSWORD=1234'
+      - 'MARIADB_USER=user'
+    ports:
+      - '3306'
+    restart: always
