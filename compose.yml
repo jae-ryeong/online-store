@@ -8,5 +8,5 @@ services:
       - 'MARIADB_ROOT_PASSWORD=1234'
       - 'MARIADB_USER=user'
     ports:
-      - '3306'
+      - '3306:3306'
     restart: always
