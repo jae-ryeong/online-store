@@ -1,4 +1,4 @@
-package com.project.onlinestore.jwt;
+package com.project.onlinestore.jwt.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -27,20 +27,15 @@ public class JwtTokenUtils {
     @Value("${jwt.expired-time-ms}")
     private Long expireTime;
 
-    public String createToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
+    public String generateToken(String userName) {
         Claims claims = Jwts.claims();
-        claims.put("auth", authorities);
+        claims.put("userName", userName);
 
         return Jwts.builder()
-                .setSubject(authentication.getName())
                 .setClaims(claims)
-                .signWith(getKey(key), SignatureAlgorithm.HS256)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expireTime))
+                .signWith(getKey(key), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -58,7 +53,7 @@ public class JwtTokenUtils {
 
         User principal = new User(claims.getSubject(), "", authorities);
 
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
 
     // 토근의 유효성 검증 수행
