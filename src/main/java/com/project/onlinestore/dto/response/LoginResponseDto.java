@@ -5,7 +5,6 @@ import lombok.Builder;
 @Builder
 public record LoginResponseDto(
         String userName,
-        String password,
         String token
 ) {
 }
