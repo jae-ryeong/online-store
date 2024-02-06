@@ -5,7 +5,6 @@ spring:
     password: 1234
     url: jdbc:mariadb://localhost:3306/online-store
 
-
   jpa:
     hibernate:
       ddl-auto: create
@@ -13,7 +12,7 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
-        #dialect: org.hibernate.dialect.MariaDBDialect
+        dialect: org.hibernate.dialect.MariaDBDialect
 
 jwt:
   secret-key: secret-key_secret-key_secret-key_secret-key
