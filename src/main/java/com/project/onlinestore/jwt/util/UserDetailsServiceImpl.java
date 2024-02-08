@@ -20,8 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("[loadUserByUsername] Username not found " + username));
 
         if (user != null) {
-            System.out.println("user = " + user);
-            UserDetailsImpl userDetails = new UserDetailsImpl(user);
+            UserDetails userDetails = new UserDetailsImpl(user.getId(), user.getUserName(), user.getPassword(), user.getRoleType(), user.getStoreName());
             return userDetails;
         }
 

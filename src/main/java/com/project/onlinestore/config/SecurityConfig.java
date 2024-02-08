@@ -2,9 +2,10 @@ package com.project.onlinestore.config;
 
 import com.project.onlinestore.jwt.filter.JwtAccessDeniedHandler;
 import com.project.onlinestore.jwt.filter.JwtAuthenticationEntryPoint;
-import com.project.onlinestore.jwt.filter.JwtFilter;
-import com.project.onlinestore.jwt.util.JwtTokenUtils;
+import com.project.onlinestore.jwt.filter.JwtTokenFilter;
+import com.project.onlinestore.jwt.util.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,7 +23,10 @@ public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final JwtTokenUtils jwtTokenUtils;
+    private final UserDetailsServiceImpl userDetailsService;
+
+    @Value("${jwt.secret-key}")
+    private String key;
 
     /*
     CustomUserDetails -> CustomUserDetailsService ->
@@ -34,10 +38,11 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/*/user/*/join", "/api/*/user/login" ,"/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers("/api/*/item/**").authenticated()
                         )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtFilter(jwtTokenUtils), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(key, userDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
                                 .accessDeniedHandler(jwtAccessDeniedHandler)    // 인증이 실패했을 때 실행

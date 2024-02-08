@@ -1,7 +1,9 @@
 package com.project.onlinestore.jwt.util;
 
-import com.project.onlinestore.entity.User;
-import lombok.RequiredArgsConstructor;
+import com.project.onlinestore.entity.enums.RoleType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,27 +11,25 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@RequiredArgsConstructor
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user;
+    private Long id;
+    private String userName;
+    private String password;
+    private RoleType userRole;
+    private String storeName;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        /*Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(() -> String.valueOf(user.getRoleType())); // key: ROLE_권한
-        return authorities;*/
-        return List.of(new SimpleGrantedAuthority(user.getRoleType().toString()));
-    }
-
-    @Override
-    public String getPassword() {
-        return user.getPassword();
+        return List.of(new SimpleGrantedAuthority(this.getUserRole().toString()));
     }
 
     @Override
     public String getUsername() {
-        return user.getUserName();
+        return this.userName;
     }
 
     @Override
