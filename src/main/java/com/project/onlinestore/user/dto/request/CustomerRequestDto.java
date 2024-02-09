@@ -1,4 +1,4 @@
-package com.project.onlinestore.dto.request;
+package com.project.onlinestore.user.dto.request;
 
 public record CustomerRequestDto(
         String userName,

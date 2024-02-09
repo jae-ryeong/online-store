@@ -1,4 +1,4 @@
-package com.project.onlinestore.entity;
+package com.project.onlinestore.user.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review {
+public class Cart { // 장바구니
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -1,7 +1,6 @@
-package com.project.onlinestore.dto;
+package com.project.onlinestore.user.dto;
 
-import com.project.onlinestore.entity.User;
-import com.project.onlinestore.entity.enums.RoleType;
+import com.project.onlinestore.user.entity.enums.RoleType;
 import lombok.Builder;
 
 @Builder

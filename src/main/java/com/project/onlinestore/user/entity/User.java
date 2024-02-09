@@ -1,8 +1,7 @@
-package com.project.onlinestore.entity;
+package com.project.onlinestore.user.entity;
 
-import com.project.onlinestore.entity.enums.RoleType;
+import com.project.onlinestore.user.entity.enums.RoleType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -10,7 +9,7 @@ import lombok.*;
 @Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,6 +25,6 @@ public class User {
     private RoleType roleType;
 
     private String storeName;   // sellerType만
-    // grade 나중에
-
+    
+    // grade 나중에 추가예정
 }

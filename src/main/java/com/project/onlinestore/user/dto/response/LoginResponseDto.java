@@ -1,4 +1,4 @@
-package com.project.onlinestore.dto.response;
+package com.project.onlinestore.user.dto.response;
 
 import lombok.Builder;
 

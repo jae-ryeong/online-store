@@ -1,4 +1,4 @@
-package com.project.onlinestore.entity.enums;
+package com.project.onlinestore.user.entity.enums;
 
 public enum RoleType {
     ADMIN,

@@ -1,11 +1,11 @@
-package com.project.onlinestore.controller;
+package com.project.onlinestore.user.controller;
 
-import com.project.onlinestore.dto.request.CustomerRequestDto;
-import com.project.onlinestore.dto.request.LoginRequestDto;
-import com.project.onlinestore.dto.request.SellerRequestDto;
-import com.project.onlinestore.dto.response.LoginResponseDto;
-import com.project.onlinestore.dto.response.UserResponseDto;
-import com.project.onlinestore.service.UserService;
+import com.project.onlinestore.user.dto.request.CustomerRequestDto;
+import com.project.onlinestore.user.dto.request.LoginRequestDto;
+import com.project.onlinestore.user.dto.request.SellerRequestDto;
+import com.project.onlinestore.user.dto.response.LoginResponseDto;
+import com.project.onlinestore.user.dto.response.UserResponseDto;
+import com.project.onlinestore.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

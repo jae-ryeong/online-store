@@ -1,9 +1,8 @@
-package com.project.onlinestore.dto.response;
+package com.project.onlinestore.user.dto.response;
 
-import com.project.onlinestore.dto.UserDto;
-import com.project.onlinestore.dto.request.CustomerRequestDto;
-import com.project.onlinestore.dto.request.SellerRequestDto;
-import com.project.onlinestore.entity.enums.RoleType;
+import com.project.onlinestore.user.dto.request.CustomerRequestDto;
+import com.project.onlinestore.user.dto.request.SellerRequestDto;
+import com.project.onlinestore.user.entity.enums.RoleType;
 
 public record UserResponseDto(
         String userName,
