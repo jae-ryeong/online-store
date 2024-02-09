@@ -25,8 +25,4 @@ public class ItemController {
                 .body(registration);
     }
 
-    @GetMapping("/test")
-    public String test(Authentication authentication){
-        return authentication.getName();
-    }
 }
