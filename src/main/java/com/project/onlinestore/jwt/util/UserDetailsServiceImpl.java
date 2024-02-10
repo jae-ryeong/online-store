@@ -1,7 +1,7 @@
 package com.project.onlinestore.jwt.util;
 
-import com.project.onlinestore.entity.User;
-import com.project.onlinestore.repository.UserRepository;
+import com.project.onlinestore.user.entity.User;
+import com.project.onlinestore.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

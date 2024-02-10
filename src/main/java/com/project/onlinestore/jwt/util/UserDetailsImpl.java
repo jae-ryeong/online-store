@@ -1,6 +1,6 @@
 package com.project.onlinestore.jwt.util;
 
-import com.project.onlinestore.entity.enums.RoleType;
+import com.project.onlinestore.user.entity.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
