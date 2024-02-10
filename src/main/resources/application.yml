@@ -10,10 +10,12 @@ spring:
       ddl-auto: create
     properties:
       hibernate:
+        globally_quoted_identifiers: true
         format_sql: true
         show_sql: true
         dialect: org.hibernate.dialect.MariaDBDialect
 
+
 jwt:
-  secret-key: secret-key_secret-key_secret-key_secret-key
+  secret-key: secret-key_secret-key_secret-key_secret-key.secret-key
   expired-time-ms: 3600000  # 1hour
