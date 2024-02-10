@@ -1,9 +1,12 @@
 package com.project.onlinestore.Item.controller;
 
 import com.project.onlinestore.Item.dto.request.RegistrationRequestDto;
+import com.project.onlinestore.Item.dto.response.ItemSearchResponseDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
 import com.project.onlinestore.Item.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,10 +22,17 @@ public class ItemController {
     @PostMapping("/registration")
     public ResponseEntity<RegistrationResponseDto> registration(@RequestBody RegistrationRequestDto dto, Authentication authentication) {
 
-        RegistrationResponseDto registration = itemService.Registration(authentication.getName(), dto);
+        RegistrationResponseDto registration = itemService.registration(authentication.getName(), dto);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(registration);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<ItemSearchResponseDto>> searchAll(Pageable pageable) {
+        Page<ItemSearchResponseDto> allItem = itemService.findAllItem(pageable);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(allItem);
+    }
 }

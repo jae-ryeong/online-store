@@ -3,18 +3,22 @@ package com.project.onlinestore.service;
 import com.project.onlinestore.Item.dto.request.RegistrationRequestDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
 import com.project.onlinestore.Item.entity.Item;
+import com.project.onlinestore.Item.entity.enums.Category;
 import com.project.onlinestore.Item.repository.ItemRepository;
 import com.project.onlinestore.Item.service.ItemService;
+import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.entity.enums.RoleType;
-import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -22,6 +26,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ItemServiceTest {
@@ -42,7 +47,7 @@ class ItemServiceTest {
         given(userRepository.findByUserName(user.getUserName())).willReturn(Optional.of(user));
 
         //when
-        RegistrationResponseDto registration = itemService.Registration(user.getUserName(), itemDto());
+        RegistrationResponseDto registration = itemService.registration(user.getUserName(), itemDto());
 
         //then
         verify(userRepository).findByUserName(any());
@@ -58,7 +63,20 @@ class ItemServiceTest {
         given(userRepository.findByUserName(user.getUserName())).willReturn(Optional.of(user));
 
         //then
-        assertThatThrownBy(() -> itemService.Registration(user.getUserName(), itemDto())).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> itemService.registration(user.getUserName(), itemDto())).isInstanceOf(ApplicationException.class);
+    }
+
+    @DisplayName("item 전체 목록 조회")
+    @Test
+    public void allItemSearchTest() throws Exception{
+        //given
+        Pageable pageable = Mockito.mock(Pageable.class);
+
+        //when
+        when(itemRepository.findAll(pageable)).thenReturn(Page.empty());
+
+        //then
+        assertThatCode(() -> itemService.findAllItem(pageable)).doesNotThrowAnyException();
     }
 
     private User sellerUser() {
@@ -82,6 +100,6 @@ class ItemServiceTest {
     }
 
     private RegistrationRequestDto itemDto() {
-        return new RegistrationRequestDto("item", 100, 10000);
+        return new RegistrationRequestDto("item", 100, 10000, Category.PET);
     }
 }
