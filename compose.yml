@@ -2,11 +2,15 @@ services:
   mariadb:
     container_name: "online-store-mariadb"
     image: 'mariadb:latest'
+    build:
+      context: ./database
     environment:
       - 'MARIADB_DATABASE=online_store'
       - 'MARIADB_PASSWORD=1234'
       - 'MARIADB_ROOT_PASSWORD=1234'
-      - 'MARIADB_USER=root'
+      - 'MARIADB_USER=user'
     ports:
       - '3306:3306'
     restart: always
+    volumes:
+      - ./database/init:/docker-entrypoint-initdb.d

@@ -1,16 +1,17 @@
-package com.project.onlinestore.Item.entity;
+package com.project.onlinestore.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity(name = "review")
+@Entity(name = "address")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review {
+public class Address {  // 배송지 정보
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "review_id")
+    @Column(name = "ADDRESS_ID")
     private Long id;
 }

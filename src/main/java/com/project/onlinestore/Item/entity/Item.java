@@ -5,7 +5,7 @@ import com.project.onlinestore.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
+@Entity(name = "item")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -26,7 +26,7 @@ public class Item {
     private Integer price;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "USER_ID", nullable = false)
     private User user;  // 판매자
 
     @Column(name = "ITEM_COUNT", nullable = false)

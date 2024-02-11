@@ -1,12 +1,9 @@
 package com.project.onlinestore.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
+@Entity(name = "cart")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -14,5 +11,6 @@ import lombok.*;
 public class Cart { // 장바구니
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "cart_id")
     private Long id;
 }
