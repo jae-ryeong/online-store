@@ -4,23 +4,24 @@ import com.project.onlinestore.Item.entity.Item;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity(name = "cart")
+@Entity(name = "item_cart")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Cart { // 장바구니
+public class ItemCart {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cart_id")
+    @Column(name = "item_cart_id")
     private Long id;
 
-    @OneToOne(mappedBy = "cart")
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 
-    @OneToMany(mappedBy = "cart")
-    private List<ItemCart> itemCarts = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
+
 }

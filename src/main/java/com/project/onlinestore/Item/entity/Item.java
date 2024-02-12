@@ -25,7 +25,7 @@ public class Item {
     @Column(nullable = false)
     private Integer price;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;  // 판매자
 
