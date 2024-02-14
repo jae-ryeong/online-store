@@ -1,5 +1,6 @@
 package com.project.onlinestore.Item.service;
 
+import com.project.onlinestore.Item.dto.response.LikeClickResponseDto;
 import com.project.onlinestore.Item.entity.Item;
 import com.project.onlinestore.Item.entity.Like;
 import com.project.onlinestore.Item.repository.ItemRepository;
@@ -10,6 +11,7 @@ import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +20,8 @@ public class LikeService {
     private final ItemRepository itemRepository;
     private final LikeRepository likeRepository;
 
-    public void itemLike(Long itemId, String userName) {
+    @Transactional
+    public LikeClickResponseDto itemLike(Long itemId, String userName) {
         User user = findUser(userName);
 
         if (likeRepository.existsByItem_IdAndUser_Id(itemId, user.getId())) {   // 좋아요를 누른적이 있으면
@@ -31,7 +34,10 @@ public class LikeService {
                             .user(user)
                             .build()
             );
+
+            return new LikeClickResponseDto(itemId, user.getId());
         }
+        return null;
     }
 
     private User findUser(String userName) {

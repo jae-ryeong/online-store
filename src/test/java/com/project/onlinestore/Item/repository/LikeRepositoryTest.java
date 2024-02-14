@@ -29,49 +29,13 @@ class LikeRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        /*User user = User.builder()
-                .userName("test")
-                .password("1234")
-                .storeName("회사")
-                .roleType(RoleType.SELLER)
-                .build();
-
-        userRepository.save(user);
-
-        Item item = Item.builder()
-                .itemName("item")
-                .count(100L)
-                .price(10000)
-                .category(Category.PET)
-                .quantity(1000)
-                .soldOut(false)
-                .build();
-
-        itemRepository.save(item);*/
     }
 
     @Test
     void existsByItem_IdAndUser_Id() {
         // given
-        User user = User.builder()
-                .userName("test")
-                .password("1234")
-                .storeName("회사")
-                .roleType(RoleType.SELLER)
-                .build();
-        userRepository.save(user);
-
-        Item item = Item.builder()
-                .itemName("item")
-                .user(user)
-                .count(100L)
-                .price(10000)
-                .category(Category.PET)
-                .quantity(1000)
-                .soldOut(false)
-                .build();
-
-        itemRepository.save(item);
+        User user = sellerUser();
+        Item item = createItem(user);
 
         // when
         likeRepository.save(Like.builder().user(user).item(item).build());
@@ -86,25 +50,8 @@ class LikeRepositoryTest {
     @Test
     void deleteByItem_IdAndUser_Id() {
         // given
-        User user = User.builder()
-                .userName("test")
-                .password("1234")
-                .storeName("회사")
-                .roleType(RoleType.SELLER)
-                .build();
-        userRepository.save(user);
-
-        Item item = Item.builder()
-                .itemName("item")
-                .user(user)
-                .count(100L)
-                .price(10000)
-                .category(Category.PET)
-                .quantity(1000)
-                .soldOut(false)
-                .build();
-
-        itemRepository.save(item);
+        User user = sellerUser();
+        Item item = createItem(user);
 
         // when
         likeRepository.save(Like.builder().user(user).item(item).build());
@@ -128,10 +75,10 @@ class LikeRepositoryTest {
         return user;
     }
 
-    private Item createItem() {
+    private Item createItem(User user) {
         Item item = Item.builder()
                 .itemName("item")
-                .user(sellerUser())
+                .user(user)
                 .count(100L)
                 .price(10000)
                 .category(Category.PET)
