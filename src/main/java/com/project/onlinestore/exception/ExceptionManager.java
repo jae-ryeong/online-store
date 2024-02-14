@@ -1,9 +1,8 @@
 package com.project.onlinestore.exception;
 
-import com.project.onlinestore.dto.ErrorDto;
+import com.project.onlinestore.exception.dto.ErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
