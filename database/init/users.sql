@@ -5,7 +5,9 @@ create table users(
     user_name varchar(255) not null unique,
     password varchar(255) not null,
     store_name varchar(255),
-    role_type enum('ADMIN', 'CUSTOMER', 'SELLER') not null
+    role_type enum('ADMIN', 'CUSTOMER', 'SELLER') not null,
+    item_id bigint,
+    cart_id bigint
 
 ) engine=InnoDB;
 

@@ -16,7 +16,7 @@ import java.util.List;
 public class User{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "USER_ID")
+    @Column(name = "user_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -32,7 +32,11 @@ public class User{
     private String storeName;   // sellerType만
 
     @OneToMany(mappedBy = "user")
-    private List<Item> item = new ArrayList<Item>();
+    private List<Item> item = new ArrayList<>();    // seller가 판매하는 Item
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
     
     // grade 나중에 추가예정
 }

@@ -37,8 +37,5 @@ public class Item {
     private Category category;
 
     @Column(nullable = false)
-    private Integer like;
-
-    @Column(nullable = false)
     private boolean soldOut; // 판매여부
 }
