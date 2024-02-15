@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LikeRepository extends JpaRepository<Like, Long> {
     boolean existsByItem_IdAndUser_Id(Long item_id, Long user_id);
-
     void deleteByItem_IdAndUser_Id(Long item_id, Long user_id);
+    Integer countByItem_Id(Long item_id);
 }

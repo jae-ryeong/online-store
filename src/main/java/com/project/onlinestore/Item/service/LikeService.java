@@ -35,9 +35,13 @@ public class LikeService {
                             .build()
             );
 
-            return new LikeClickResponseDto(itemId, user.getId());
+            return new LikeClickResponseDto(itemId, user.getId(), likeCount(itemId));
         }
         return null;
+    }
+
+    private Integer likeCount(Long itemId) {    // 좋아요 총 갯수
+        return likeRepository.countByItem_Id(itemId);
     }
 
     private User findUser(String userName) {
