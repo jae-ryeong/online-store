@@ -19,7 +19,7 @@ public class Cart { // 장바구니
     private Long id;
 
     @OneToOne(mappedBy = "cart")
-    private User user;
+    private User user;  // TODO: 필요 없을 듯 싶다.
 
     @OneToMany(mappedBy = "cart")
     private List<ItemCart> itemCarts = new ArrayList<>();
