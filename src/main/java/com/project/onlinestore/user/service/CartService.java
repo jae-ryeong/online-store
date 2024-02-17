@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CartService {
@@ -32,10 +34,11 @@ public class CartService {
         Cart cart = cartRepository.findById(user.getCart().getId()).orElseThrow(() ->
                         new ApplicationException(ErrorCode.CART_NOT_FOUND, userName + "의 cart를 찾을 수 없습니다."));
 
-        if (cart.getUser() != null) {
+        /*if (cart.getUser() != null) { // 굳이 필요 없어 보인다, 내 생각이 맞으면
             cartRepository.updateCartByUser(user, user.getId());
-        }
+        }*/
 
+        // TODO: 중복 체크 해주기
         itemCartRepository.save(
                 ItemCart.builder()
                         .cart(cart)
@@ -43,11 +46,18 @@ public class CartService {
                         .build()
         );
 
+        System.out.println("user.getCart().getItemCarts().get(0).getItem() = " + user.getCart().getItemCarts().get(0).getItem().getItemName());
+
         return new AddCartResponseDto(
                 itemId, user.getId(), item.getUser().getId(), item.getItemName(), item.getUser().getStoreName()
         );
     }
 
+    public List<ItemCart> allItemCartSearch(String userName) {
+        User user = findUser(userName);
+        List<ItemCart> allCart = itemCartRepository.findByCart_Id(user.getCart().getId());
+        return allCart;
+    }
     private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
                 new ApplicationException(ErrorCode.USERNAME_NOT_FOUND, userName + "를 찾을 수 없습니다."));
