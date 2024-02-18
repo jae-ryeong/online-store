@@ -24,4 +24,5 @@ public class ItemCart {
     @JoinColumn(name = "item_id")
     private Item item;
 
+    private Integer quantity;
 }

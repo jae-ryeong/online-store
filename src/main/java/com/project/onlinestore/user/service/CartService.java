@@ -5,6 +5,7 @@ import com.project.onlinestore.Item.repository.ItemRepository;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.exception.ErrorCode;
 import com.project.onlinestore.user.dto.response.AddCartResponseDto;
+import com.project.onlinestore.user.dto.response.CartViewResponseDto;
 import com.project.onlinestore.user.entity.Cart;
 import com.project.onlinestore.user.entity.ItemCart;
 import com.project.onlinestore.user.entity.User;
@@ -34,29 +35,32 @@ public class CartService {
         Cart cart = cartRepository.findById(user.getCart().getId()).orElseThrow(() ->
                         new ApplicationException(ErrorCode.CART_NOT_FOUND, userName + "의 cart를 찾을 수 없습니다."));
 
-        /*if (cart.getUser() != null) { // 굳이 필요 없어 보인다, 내 생각이 맞으면
-            cartRepository.updateCartByUser(user, user.getId());
-        }*/
+        if (itemCartRepository.existsByCartAndItem(cart, item)) {   // 중복 체크
+            ItemCart itemCart = itemCartRepository.findByCartAndItem(cart, item);
+            itemCartRepository.addQuantity(cart, item); // 중복된 제품을 장바구니 한번 더 넣을 경우 구매 수량을 +1 한다.
+            return new AddCartResponseDto(
+                    itemId, user.getId(), item.getUser().getId(), item.getItemName(), item.getUser().getStoreName(), itemCart.getQuantity()+1
+            );
+        }
 
-        // TODO: 중복 체크 해주기
-        itemCartRepository.save(
+        ItemCart itemCart = itemCartRepository.save(
                 ItemCart.builder()
                         .cart(cart)
                         .item(item)
+                        .quantity(1)    // 장바구니에 넣을 시 기본 구매 수량은 1
                         .build()
         );
 
-        System.out.println("user.getCart().getItemCarts().get(0).getItem() = " + user.getCart().getItemCarts().get(0).getItem().getItemName());
-
         return new AddCartResponseDto(
-                itemId, user.getId(), item.getUser().getId(), item.getItemName(), item.getUser().getStoreName()
+                itemId, user.getId(), item.getUser().getId(), item.getItemName(), item.getUser().getStoreName(), itemCart.getQuantity()
         );
     }
 
-    public List<ItemCart> allItemCartSearch(String userName) {
+    public List<CartViewResponseDto> allItemCartView(String userName) {
         User user = findUser(userName);
-        List<ItemCart> allCart = itemCartRepository.findByCart_Id(user.getCart().getId());
-        return allCart;
+
+        List<ItemCart> itemCarts = itemCartRepository.findAllByCart(user.getCart());
+        return itemCarts.stream().map(CartViewResponseDto::fromEntity).toList();
     }
     private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->

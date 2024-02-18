@@ -4,5 +4,6 @@ create table item_cart
 (
     item_cart_id bigint not null auto_increment primary key,
     cart_id bigint,
-    item_id bigint
+    item_id bigint,
+    quantity integer
 ) engine = InnoDB;

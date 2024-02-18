@@ -5,6 +5,7 @@ public record AddCartResponseDto(
         Long customerId,
         Long sellerId,
         String itemName,
-        String storeName
+        String storeName,
+        Integer Quantity
 ) {
 }
