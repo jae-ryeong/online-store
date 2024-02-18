@@ -18,9 +18,6 @@ public class Cart { // 장바구니
     @Column(name = "cart_id")
     private Long id;
 
-    @OneToOne(mappedBy = "cart")
-    private User user;
-
     @OneToMany(mappedBy = "cart")
     private List<ItemCart> itemCarts = new ArrayList<>();
 }

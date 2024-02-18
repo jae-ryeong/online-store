@@ -11,11 +11,11 @@ create table users(
 
 ) engine=InnoDB;
 
-insert into users(user_name, password, role_type)  values ('admin', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', 'ADMIN');
+insert into users(user_name, password, role_type, cart_id)  values ('admin', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', 'ADMIN', 1);
 
-insert into users(user_name, password, role_type)  values ('customer', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', 'CUSTOMER');
-insert into users(user_name, password, role_type)  values ('customer2', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', 'CUSTOMER');
+insert into users(user_name, password, role_type, cart_id)  values ('customer', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', 'CUSTOMER', 2);
+insert into users(user_name, password, role_type, cart_id)  values ('customer2', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', 'CUSTOMER', 3);
 
-insert into users(user_name, password, store_name, role_type) values ('seller', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', '회사', 'SELLER');
-insert into users(user_name, password, store_name, role_type) values ('seller2', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', '회사2', 'SELLER');
-insert into users(user_name, password, store_name, role_type) values ('seller3', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', '회사3', 'SELLER');
+insert into users(user_name, password, store_name, role_type, cart_id) values ('seller', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', '회사', 'SELLER', 4);
+insert into users(user_name, password, store_name, role_type, cart_id) values ('seller2', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', '회사2', 'SELLER', 5);
+insert into users(user_name, password, store_name, role_type, cart_id) values ('seller3', '$2a$10$qMIiQrKqgzFVR8y.IQdZeuNh/W6OK7Hf5xxhvHttyi8wBQG8mM77a', '회사3', 'SELLER', 6);
