@@ -118,8 +118,7 @@ class CartServiceTest {
         cartService.cartCheck(customerUser.getUserName(), itemCart.getId());
 
         //then
-        verify(itemCartRepository).checkFalse(any());
-        assertThat(itemCart.isCartCheck()).isFalse();
+        verify(itemCartRepository).checkFalse(itemCart.getId());
     }
 
     private User sellerUser() {

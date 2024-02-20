@@ -5,6 +5,7 @@ import com.project.onlinestore.Item.repository.ItemRepository;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.exception.ErrorCode;
 import com.project.onlinestore.user.dto.response.AddCartResponseDto;
+import com.project.onlinestore.user.dto.response.CartCheckResponseDto;
 import com.project.onlinestore.user.dto.response.CartViewResponseDto;
 import com.project.onlinestore.user.entity.Cart;
 import com.project.onlinestore.user.entity.ItemCart;
@@ -43,16 +44,17 @@ public class CartService {
             );
         }
 
-        ItemCart itemCart = itemCartRepository.save(
+        itemCartRepository.save(
                 ItemCart.builder()
                         .cart(cart)
                         .item(item)
                         .quantity(1)    // 장바구니에 넣을 시 기본 구매 수량은 1
+                        .cartCheck(true)    // 기본은 체크되어 있는 상태로
                         .build()
         );
 
         return new AddCartResponseDto(
-                itemId, user.getId(), item.getUser().getId(), item.getItemName(), item.getUser().getStoreName(), itemCart.getQuantity()
+                itemId, user.getId(), item.getUser().getId(), item.getItemName(), item.getUser().getStoreName(), 1
         );
     }
 
@@ -62,6 +64,28 @@ public class CartService {
         List<ItemCart> itemCarts = itemCartRepository.findAllByCart(user.getCart());
         return itemCarts.stream().map(CartViewResponseDto::fromEntity).toList();
     }
+
+    @Transactional
+    public CartCheckResponseDto cartCheck(String userName, Long itemCartId) {
+        User user = findUser(userName);
+
+        ItemCart itemCart = itemCartRepository.findById(itemCartId).orElseThrow(() ->
+                new ApplicationException(ErrorCode.ITEM_CART_NOT_FOUNT, "해당 상품이 장바구니에 존재하지 않습니다.")
+        );
+
+        if (itemCart.getCart() != user.getCart()){
+            throw new ApplicationException(ErrorCode.INVALID_USER, "잘못된 유저 접근입니다.");
+        }
+
+        if(itemCart.isCartCheck()){
+            itemCartRepository.checkFalse(itemCart.getId());
+        } else{
+            itemCartRepository.checkTrue(itemCartId);
+        }
+
+        return new CartCheckResponseDto(itemCartId, !itemCart.isCartCheck());
+    }
+
     private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
                 new ApplicationException(ErrorCode.USERNAME_NOT_FOUND, userName + "를 찾을 수 없습니다."));

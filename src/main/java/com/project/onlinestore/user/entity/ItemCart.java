@@ -25,4 +25,7 @@ public class ItemCart {
     private Item item;
 
     private Integer quantity;
+
+    @Column(name = "cart_check")
+    private boolean cartCheck;  // 장바구니 선택 체크
 }

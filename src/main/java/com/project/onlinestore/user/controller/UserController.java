@@ -1,13 +1,7 @@
 package com.project.onlinestore.user.controller;
 
-import com.project.onlinestore.user.dto.request.AddCartRequestDto;
-import com.project.onlinestore.user.dto.request.CustomerRequestDto;
-import com.project.onlinestore.user.dto.request.LoginRequestDto;
-import com.project.onlinestore.user.dto.request.SellerRequestDto;
-import com.project.onlinestore.user.dto.response.AddCartResponseDto;
-import com.project.onlinestore.user.dto.response.CartViewResponseDto;
-import com.project.onlinestore.user.dto.response.LoginResponseDto;
-import com.project.onlinestore.user.dto.response.UserResponseDto;
+import com.project.onlinestore.user.dto.request.*;
+import com.project.onlinestore.user.dto.response.*;
 import com.project.onlinestore.user.service.CartService;
 import com.project.onlinestore.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -66,5 +60,14 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(itemCarts);
+    }
+
+    @PutMapping("/cart/view/check")
+    public ResponseEntity<CartCheckResponseDto> cartCheck(Authentication authentication, @RequestBody CartCheckRequestDto dto) {
+        // 체크 버튼 클릭시 toggle
+        CartCheckResponseDto cartCheckResponseDto = cartService.cartCheck(authentication.getName(), dto.itemCartId());
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(cartCheckResponseDto);
     }
 }

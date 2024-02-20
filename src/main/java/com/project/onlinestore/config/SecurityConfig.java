@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/*/user/*/join", "/api/*/user/login" ,"/swagger-ui/**", "/v3/api-docs/**", "/api/*/item/search").permitAll()
-                                .requestMatchers("/api/*/item/**", "/api/*/like/*", "/api/*/user/cart/*").authenticated()
+                                .requestMatchers("/api/*/item/**", "/api/*/like/*", "/api/*/user/cart/*", "/api/*/user/cart/*/*").authenticated()
                         )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
