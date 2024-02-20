@@ -1,8 +1,7 @@
-package com.project.onlinestore.repository;
+package com.project.onlinestore.user.repository;
 
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.entity.enums.RoleType;
-import com.project.onlinestore.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

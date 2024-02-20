@@ -5,9 +5,10 @@ import com.project.onlinestore.user.entity.ItemCart;
 public record CartViewResponseDto(
         String itemName,
         Integer price,
-        String sellerName
+        String sellerName,
+        boolean cartCheck
 ) {
-    public static CartViewResponseDto fromEntity(ItemCart item) {
-        return new CartViewResponseDto(item.getItem().getItemName(), item.getItem().getPrice(), item.getItem().getUser().getStoreName());
+    public static CartViewResponseDto fromEntity(ItemCart itemCart) {
+        return new CartViewResponseDto(itemCart.getItem().getItemName(), itemCart.getItem().getPrice(), itemCart.getItem().getUser().getStoreName(), itemCart.isCartCheck());
     }
 }

@@ -1,13 +1,11 @@
-package com.project.onlinestore.service;
+package com.project.onlinestore.Item.service;
 
 import com.project.onlinestore.Item.dto.request.RegistrationRequestDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
 import com.project.onlinestore.Item.entity.Item;
-import com.project.onlinestore.Item.entity.Like;
 import com.project.onlinestore.Item.entity.enums.Category;
 import com.project.onlinestore.Item.repository.ItemRepository;
 import com.project.onlinestore.Item.repository.LikeRepository;
-import com.project.onlinestore.Item.service.ItemService;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.entity.enums.RoleType;
@@ -22,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
