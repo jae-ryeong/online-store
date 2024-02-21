@@ -2,6 +2,8 @@ package com.project.onlinestore.user.service;
 
 import com.project.onlinestore.Item.entity.Item;
 import com.project.onlinestore.Item.repository.ItemRepository;
+import com.project.onlinestore.exception.ApplicationException;
+import com.project.onlinestore.exception.ErrorCode;
 import com.project.onlinestore.user.dto.response.AddCartResponseDto;
 import com.project.onlinestore.user.entity.Cart;
 import com.project.onlinestore.user.entity.ItemCart;
@@ -20,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -43,10 +46,12 @@ class CartServiceTest {
     @Test
     public void addCartTest() throws Exception{
         //given
-        User sellerUser = sellerUser();
+        Cart cart1 = createCart();
+        User sellerUser = sellerUser(cart1);
+
         Item item = createItem(sellerUser);
-        Cart cart = createCart();
-        User customerUser = customerUser(cart);
+        Cart cart2 = createCart();
+        User customerUser = customerUser(cart2);
 
         given(userRepository.findByUserName(customerUser.getUserName())).willReturn(Optional.of(customerUser));
         given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
@@ -64,17 +69,19 @@ class CartServiceTest {
     @Test
     public void addCartDuplicationTest() throws Exception{
         //given
-        User sellerUser = sellerUser();
+        Cart cart1 = createCart();
+        User sellerUser = sellerUser(cart1);
         Item item = createItem(sellerUser);
-        Cart cart = createCart();
-        User customerUser = customerUser(cart);
-        ItemCart itemCart = createItemCart(cart, item);
+
+        Cart cart2 = createCart();
+        User customerUser = customerUser(cart2);
+        ItemCart itemCart = createItemCart(cart2, item);
 
         given(userRepository.findByUserName(customerUser.getUserName())).willReturn(Optional.of(customerUser));
         given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
-        given(cartRepository.findById(customerUser.getCart().getId())).willReturn(Optional.of(cart));
-        given(itemCartRepository.existsByCartAndItem(cart, item)).willReturn(true);
-        given(itemCartRepository.findByCartAndItem(cart, item)).willReturn(itemCart);
+        given(cartRepository.findById(customerUser.getCart().getId())).willReturn(Optional.of(cart2));
+        given(itemCartRepository.existsByCartAndItem(cart2, item)).willReturn(true);
+        given(itemCartRepository.findByCartAndItem(cart2, item)).willReturn(itemCart);
 
         //when
         AddCartResponseDto addCartResponseDto = cartService.addCart(customerUser.getUserName(), item.getId());
@@ -105,7 +112,8 @@ class CartServiceTest {
     @Test
     public void checkToggleTest() throws Exception{
         //given
-        User sellerUser = sellerUser();
+        Cart cart1 = createCart();
+        User sellerUser = sellerUser(cart1);
         Cart cart = createCart();
         User customerUser = customerUser(cart);
         Item item = createItem(sellerUser);
@@ -121,16 +129,56 @@ class CartServiceTest {
         verify(itemCartRepository).checkFalse(itemCart.getId());
     }
 
-    private User sellerUser() {
+    @DisplayName("장바구니 삭제")
+    @Test
+    public void deleteTest() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User sellerUser = sellerUser(cart1);
+        Cart cart = createCart();
+        User customerUser = customerUser(cart);
+        Item item = createItem(sellerUser);
+        ItemCart itemCart = createItemCart(cart, item);
+
+        given(userRepository.findByUserName(customerUser.getUserName())).willReturn(Optional.of(customerUser));
+        given(itemCartRepository.findById(itemCart.getId())).willReturn(Optional.of(itemCart));
+
+        //when
+        cartService.delete(customerUser.getUserName(), itemCart.getId());
+
+        //then
+        verify(itemCartRepository).deleteById(itemCart.getId());
+    }
+
+    @DisplayName("장바구니 삭제시 타인의 cart 속 장바구니 삭제, 에러 발생")
+    @Test
+    public void deleteErrorTest() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        Cart cart2 = createCart();
+        User sellerUser = sellerUser(cart2);
+        Item item = createItem(sellerUser);
+
+        ItemCart itemCart = createItemCart(cart1, item);
+
+        given(userRepository.findByUserName(sellerUser.getUserName())).willReturn(Optional.of(sellerUser));
+        given(itemCartRepository.findById(itemCart.getId())).willReturn(Optional.of(itemCart));
+
+        //then
+        assertThatThrownBy(() -> cartService.delete(sellerUser.getUserName(), itemCart.getId())).isInstanceOf(ApplicationException.class);
+    }
+
+    private User sellerUser(Cart cart) {
         return User.builder().userName("seller")
                 .password("1234")
+                .cart(cart)
                 .storeName("회사")
                 .roleType(RoleType.SELLER)
                 .build();
     }
 
     private User customerUser(Cart cart) {
-        return User.builder().userName("seller")
+        return User.builder().userName("customer")
                 .password("1234")
                 .cart(cart)
                 .roleType(RoleType.CUSTOMER)

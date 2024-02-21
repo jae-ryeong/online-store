@@ -70,4 +70,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(cartCheckResponseDto);
     }
+
+    @DeleteMapping("/cart/view/delete/{itemCartId}")
+    public ResponseEntity<Void> cartDelete(Authentication authentication, @PathVariable("itemCartId") Long itemCartId) {
+        cartService.delete(authentication.getName(), itemCartId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

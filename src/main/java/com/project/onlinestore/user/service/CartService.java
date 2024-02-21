@@ -69,9 +69,7 @@ public class CartService {
     public CartCheckResponseDto cartCheck(String userName, Long itemCartId) {
         User user = findUser(userName);
 
-        ItemCart itemCart = itemCartRepository.findById(itemCartId).orElseThrow(() ->
-                new ApplicationException(ErrorCode.ITEM_CART_NOT_FOUNT, "해당 상품이 장바구니에 존재하지 않습니다.")
-        );
+        ItemCart itemCart = findItemCart(itemCartId);
 
         if (itemCart.getCart() != user.getCart()){
             throw new ApplicationException(ErrorCode.INVALID_USER, "잘못된 유저 접근입니다.");
@@ -86,6 +84,17 @@ public class CartService {
         return new CartCheckResponseDto(itemCartId, !itemCart.isCartCheck());
     }
 
+    @Transactional
+    public void delete(String userName, Long itemCartId) {
+        User user = findUser(userName);
+        ItemCart itemCart = findItemCart(itemCartId);
+
+        if (itemCart.getCart() != user.getCart()){
+            throw new ApplicationException(ErrorCode.INVALID_USER, "잘못된 유저 접근입니다.");
+        }
+
+        itemCartRepository.deleteById(itemCartId);
+    }
     private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
                 new ApplicationException(ErrorCode.USERNAME_NOT_FOUND, userName + "를 찾을 수 없습니다."));
@@ -93,5 +102,11 @@ public class CartService {
     private Item findItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() ->
                 new ApplicationException(ErrorCode.ITEM_ID_NOT_FOUND, itemId + "를 찾을 수 없습니다."));
+    }
+
+    private ItemCart findItemCart(Long itemCartId) {
+        return itemCartRepository.findById(itemCartId).orElseThrow(() ->
+                new ApplicationException(ErrorCode.ITEM_CART_NOT_FOUNT, "해당 상품이 장바구니에 존재하지 않습니다.")
+        );
     }
 }
