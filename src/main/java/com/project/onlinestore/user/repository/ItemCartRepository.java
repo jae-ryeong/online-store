@@ -28,4 +28,6 @@ public interface ItemCartRepository extends JpaRepository<ItemCart, Long> {
     @Modifying
     @Query("update item_cart i set i.cartCheck = false where i.id = :itemCartId")
     void checkFalse(@Param("itemCartId")Long itemCardId);
+
+    void deleteAllByItem(Item item);
 }

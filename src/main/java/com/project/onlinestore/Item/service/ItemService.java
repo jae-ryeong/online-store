@@ -5,11 +5,11 @@ import com.project.onlinestore.Item.dto.response.ItemSearchResponseDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
 import com.project.onlinestore.Item.entity.Item;
 import com.project.onlinestore.Item.repository.ItemRepository;
-import com.project.onlinestore.Item.repository.LikeRepository;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.exception.ErrorCode;
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.entity.enums.RoleType;
+import com.project.onlinestore.user.repository.ItemCartRepository;
 import com.project.onlinestore.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class ItemService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-    private final LikeRepository likeRepository;
+    private final ItemCartRepository itemCartRepository;
 
     public RegistrationResponseDto registration(String userName, RegistrationRequestDto dto) {
         User user = findUser(userName);
@@ -46,6 +46,17 @@ public class ItemService {
         return new RegistrationResponseDto(dto.itemName(), dto.quantity(), dto.price(), user.getId(), user.getStoreName(), dto.category());
     }
 
+    public void deleteItem(String userName, Long itemId) {
+        User user = findUser(userName);
+        Item item = findItem(itemId);
+
+        if(item.getUser() != user){
+            throw new ApplicationException(ErrorCode.INVALID_USER, "권한이 없는 유저 입니다.");
+        }
+
+        itemRepository.deleteById(itemId);
+        itemCartRepository.deleteAllByItem(item);
+    }
 
     public Page<ItemSearchResponseDto> findAllItem(Pageable pageable) {
         return itemRepository.findAll(pageable).map(ItemSearchResponseDto::fromEntity);
