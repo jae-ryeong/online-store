@@ -72,9 +72,10 @@ public class UserController {
     }
 
     @DeleteMapping("/cart/view/delete/{itemCartId}")
-    public ResponseEntity<Void> cartDelete(Authentication authentication, @PathVariable("itemCartId") Long itemCartId) {
+    public ResponseEntity<String> cartDelete(Authentication authentication, @PathVariable("itemCartId") Long itemCartId) {
         cartService.delete(authentication.getName(), itemCartId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("장바구니 목록이 삭제되었습니다."); // TODO: 메세지 반환하기
     }
 }
