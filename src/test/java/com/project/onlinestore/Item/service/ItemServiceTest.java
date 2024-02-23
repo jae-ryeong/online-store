@@ -109,20 +109,32 @@ class ItemServiceTest {
         Cart cart1 = createCart();
         User seller = sellerUser(cart1);
         Item item = createItem(seller);
-        Cart cart2 = createCart();
-        User customer = customerUser(cart2);
-        ItemCart itemCart = createItemCart(cart2, item);
-        itemCartRepository.save(itemCart);
 
         given(userRepository.findByUserName(seller.getUserName())).willReturn(Optional.of(seller));
         given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
 
         //when
-        System.out.println(itemCartRepository.count());
         itemService.deleteItem(seller.getUserName(), item.getId());
 
         //then
         verify(itemCartRepository).deleteAllByItem(item);
+    }
+
+    @DisplayName("아이템 삭제시 다른 Seller의 아이템 삭제 - 에러 발생")
+    @Test
+    public void deleteItemCartErrorTest() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        given(userRepository.findByUserName(any())).willReturn(Optional.of(customer));
+        given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
+
+        //then
+        assertThatThrownBy(() -> itemService.deleteItem(any(), item.getId())).isInstanceOf(ApplicationException.class);
     }
 
     private User sellerUser(Cart cart) {

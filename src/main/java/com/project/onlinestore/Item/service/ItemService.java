@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +47,7 @@ public class ItemService {
         return new RegistrationResponseDto(dto.itemName(), dto.quantity(), dto.price(), user.getId(), user.getStoreName(), dto.category());
     }
 
+    @Transactional
     public void deleteItem(String userName, Long itemId) {
         User user = findUser(userName);
         Item item = findItem(itemId);

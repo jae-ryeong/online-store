@@ -1,5 +1,6 @@
 package com.project.onlinestore.Item.controller;
 
+import com.project.onlinestore.Item.dto.request.DeleteItemRequestDto;
 import com.project.onlinestore.Item.dto.request.RegistrationRequestDto;
 import com.project.onlinestore.Item.dto.response.ItemSearchResponseDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
@@ -26,6 +27,15 @@ public class ItemController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(registration);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(Authentication authentication, @RequestBody DeleteItemRequestDto dto) {
+
+        itemService.deleteItem(authentication.getName(), dto.itemId());
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("등록하신 상품이 삭제되었습니다.");
     }
 
     @GetMapping("/search")
