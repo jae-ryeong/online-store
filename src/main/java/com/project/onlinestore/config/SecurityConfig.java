@@ -42,7 +42,7 @@ public class SecurityConfig {
                                 .requestMatchers( "/api/*/item/search", "/api/*/item/detail/*").permitAll()
                                 .requestMatchers("/api/*/user/cart/*", "/api/*/user/cart/*/*", "/api/*/user/cart/*/*/*").authenticated()
                                 .requestMatchers("/api/*/item/**", "/api/*/like/*").authenticated()
-                                .requestMatchers("/api/*/review/*").authenticated()
+                                .requestMatchers("/api/*/review/*", "/api/*/review/*/*").authenticated()
                         )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -23,6 +23,10 @@ public class Review {
 
     private String content;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", updatable = false, nullable = false)
+    private Item item;
+
     @Column(name = "created_at", updatable = false)
     @CreatedDate
     private LocalDateTime createdAt;
