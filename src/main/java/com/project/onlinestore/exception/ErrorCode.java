@@ -11,10 +11,12 @@ public enum ErrorCode {
     USERNAME_NOT_FOUND(HttpStatus.NOT_FOUND, "userName not found"),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "Password is invalid"),
     INVALID_ROLE(HttpStatus.FORBIDDEN, "Not Authorized RoleType"),
-    ITEM_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "Item not fount"),
+    ITEM_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "Item not found"),
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "Cart not found"),
     ITEM_CART_NOT_FOUNT(HttpStatus.NOT_FOUND, "ItemCart not found"),
-    INVALID_USER(HttpStatus.FORBIDDEN, "Not Authorized USER");
+    INVALID_USER(HttpStatus.FORBIDDEN, "Not Authorized USER"),
+    REVIEW_NOT_FOUNT(HttpStatus.NOT_FOUND, "Review not found"),
+    DUPLICATED_REVIEW(HttpStatus.CONFLICT, "Review is duplicated");
 
     private HttpStatus status;
     private String errorMessage;
