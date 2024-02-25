@@ -1,7 +1,7 @@
 package com.project.onlinestore.Item.controller;
 
 import com.project.onlinestore.Item.dto.request.LikeClickRequestDto;
-import com.project.onlinestore.Item.dto.response.LikeClickResponseDto;
+import com.project.onlinestore.Item.dto.response.ItemLikeResponseDto;
 import com.project.onlinestore.Item.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +21,10 @@ public class LikeController {
     private final LikeService likeService;
 
     @PostMapping("/click")
-    public ResponseEntity<LikeClickResponseDto> click(@RequestBody LikeClickRequestDto dto, Authentication authentication) {
-        LikeClickResponseDto likeClickResponseDto = likeService.itemLike(dto.itemId(), authentication.getName());
+    public ResponseEntity<ItemLikeResponseDto> click(@RequestBody LikeClickRequestDto dto, Authentication authentication) {
+        ItemLikeResponseDto itemLikeResponseDto = likeService.itemLike(dto.itemId(), authentication.getName());
 
         return ResponseEntity.status(OK)
-                .body(likeClickResponseDto);
+                .body(itemLikeResponseDto);
     }
 }

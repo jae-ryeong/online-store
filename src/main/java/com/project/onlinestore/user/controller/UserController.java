@@ -76,6 +76,6 @@ public class UserController {
         cartService.delete(authentication.getName(), itemCartId);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body("장바구니 목록이 삭제되었습니다."); // TODO: 메세지 반환하기
+                .body("장바구니 목록이 삭제되었습니다.");
     }
 }
