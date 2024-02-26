@@ -7,4 +7,9 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     boolean existsByItem_IdAndUser_Id(Long itemId, Long userId);
     void deleteByItem_IdAndUser_Id(Long itemId, Long userId);
     Integer countByItem_Id(Long itemId);
+
+    boolean existsByReview_IdAndUser_Id(Long reviewId, Long userId);
+    void deleteByReview_IdAndUser_Id(Long reviewId, Long userId);
+    Integer countByReview_Id(Long reviewId);
+
 }
