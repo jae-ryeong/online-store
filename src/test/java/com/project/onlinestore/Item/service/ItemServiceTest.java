@@ -6,6 +6,7 @@ import com.project.onlinestore.Item.entity.Item;
 import com.project.onlinestore.Item.entity.enums.Category;
 import com.project.onlinestore.Item.repository.ItemRepository;
 import com.project.onlinestore.Item.repository.LikeRepository;
+import com.project.onlinestore.Item.repository.ReviewRepository;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.user.entity.Cart;
 import com.project.onlinestore.user.entity.ItemCart;
@@ -40,6 +41,8 @@ class ItemServiceTest {
     private ItemRepository itemRepository;
     @Mock
     private ItemCartRepository itemCartRepository;
+    @Mock
+    private ReviewRepository reviewRepository;
 
     @InjectMocks
     private ItemService itemService;
@@ -118,6 +121,24 @@ class ItemServiceTest {
 
         //then
         verify(itemCartRepository).deleteAllByItem(item);
+    }
+
+    @DisplayName("아이템 삭제시 아이템 리뷰들도 삭제")
+    @Test
+    public void deleteReviewTest() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        given(userRepository.findByUserName(seller.getUserName())).willReturn(Optional.of(seller));
+        given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
+
+        //when
+        itemService.deleteItem(seller.getUserName(), item.getId());
+
+        //then
+        verify(reviewRepository).deleteAllByItem(item);
     }
 
     @DisplayName("아이템 삭제시 다른 Seller의 아이템 삭제 - 에러 발생")
