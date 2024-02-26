@@ -5,6 +5,7 @@ import com.project.onlinestore.Item.dto.response.ItemSearchResponseDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
 import com.project.onlinestore.Item.entity.Item;
 import com.project.onlinestore.Item.repository.ItemRepository;
+import com.project.onlinestore.Item.repository.ReviewRepository;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.exception.ErrorCode;
 import com.project.onlinestore.user.entity.User;
@@ -23,6 +24,7 @@ public class ItemService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final ItemCartRepository itemCartRepository;
+    private final ReviewRepository reviewRepository;
 
     public RegistrationResponseDto registration(String userName, RegistrationRequestDto dto) {
         User user = findUser(userName);
@@ -58,6 +60,7 @@ public class ItemService {
 
         itemRepository.deleteById(itemId);
         itemCartRepository.deleteAllByItem(item);
+        reviewRepository.deleteAllByItem(item);
     }
 
     public Page<ItemSearchResponseDto> findAllItem(Pageable pageable) {
