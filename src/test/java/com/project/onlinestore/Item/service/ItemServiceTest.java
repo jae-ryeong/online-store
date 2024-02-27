@@ -43,6 +43,8 @@ class ItemServiceTest {
     private ItemCartRepository itemCartRepository;
     @Mock
     private ReviewRepository reviewRepository;
+    @Mock
+    private LikeRepository likeRepository;
 
     @InjectMocks
     private ItemService itemService;
@@ -141,6 +143,24 @@ class ItemServiceTest {
         verify(reviewRepository).deleteAllByItem(item);
     }
 
+    @DisplayName("아이템 삭제시 아이템 좋아요들도 삭제")
+    @Test
+    public void deleteLikeTest() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        given(userRepository.findByUserName(seller.getUserName())).willReturn(Optional.of(seller));
+        given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
+
+        //when
+        itemService.deleteItem(seller.getUserName(), item.getId());
+
+        //then
+        verify(likeRepository).deleteAllByItem_Id(item.getId());
+    }
+
     @DisplayName("아이템 삭제시 다른 Seller의 아이템 삭제 - 에러 발생")
     @Test
     public void deleteItemCartErrorTest() throws Exception{
@@ -186,10 +206,6 @@ class ItemServiceTest {
                 .build();
     }
 
-    private ItemCart createItemCart(Cart cart, Item item) {
-        return ItemCart.builder()
-                .cart(cart).item(item).cartCheck(true).quantity(1).build();
-    }
     private RegistrationRequestDto itemDto() {
         return new RegistrationRequestDto("item", 100, 10000, Category.PET);
     }

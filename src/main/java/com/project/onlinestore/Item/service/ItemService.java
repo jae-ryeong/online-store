@@ -5,6 +5,7 @@ import com.project.onlinestore.Item.dto.response.ItemSearchResponseDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
 import com.project.onlinestore.Item.entity.Item;
 import com.project.onlinestore.Item.repository.ItemRepository;
+import com.project.onlinestore.Item.repository.LikeRepository;
 import com.project.onlinestore.Item.repository.ReviewRepository;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.exception.ErrorCode;
@@ -25,6 +26,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ItemCartRepository itemCartRepository;
     private final ReviewRepository reviewRepository;
+    private final LikeRepository likeRepository;
 
     public RegistrationResponseDto registration(String userName, RegistrationRequestDto dto) {
         User user = findUser(userName);
@@ -58,9 +60,11 @@ public class ItemService {
             throw new ApplicationException(ErrorCode.INVALID_USER, "권한이 없는 유저 입니다.");
         }
 
+        // Item 삭제시 장바구니속 해당 item, item에 달린 review, item에 눌린 좋아요를 모두 삭제한다.
         itemRepository.deleteById(itemId);
         itemCartRepository.deleteAllByItem(item);
         reviewRepository.deleteAllByItem(item);
+        likeRepository.deleteAllByItem_Id(itemId);
     }
 
     public Page<ItemSearchResponseDto> findAllItem(Pageable pageable) {
