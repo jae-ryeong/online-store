@@ -4,6 +4,7 @@ import com.project.onlinestore.Item.dto.request.ReviewCreateRequestDto;
 import com.project.onlinestore.Item.dto.request.ReviewUpdateRequestDto;
 import com.project.onlinestore.Item.dto.response.ReviewCreateResponseDto;
 import com.project.onlinestore.Item.dto.response.ReviewUpdateResponseDto;
+import com.project.onlinestore.Item.dto.response.ReviewViewResponseDto;
 import com.project.onlinestore.Item.entity.Item;
 import com.project.onlinestore.Item.entity.Review;
 import com.project.onlinestore.Item.repository.ItemRepository;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -25,6 +27,7 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final ReviewRepository reviewRepository;
+    private final LikeRepository likeRepository;
 
     public ReviewCreateResponseDto createReview(String userName, ReviewCreateRequestDto dto) {
         User user = findUser(userName);
@@ -69,6 +72,14 @@ public class ReviewService {
         }
 
         reviewRepository.deleteById(reviewId);
+        likeRepository.deleteAllByReview_Id(reviewId);
+    }
+
+    public List<ReviewViewResponseDto> ViewReview(Long itemId) {
+        List<Review> allByItemId = reviewRepository.findAllByItem_Id(itemId);
+        List<ReviewViewResponseDto> result = allByItemId.stream().map(r -> new ReviewViewResponseDto(r.getCreatedBy(), r.getCreatedAt(), r.getContent(), likeRepository.countByReview_Id(r.getId()))).toList();
+
+        return result;
     }
 
     private User findUser(String userName) {

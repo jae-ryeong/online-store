@@ -4,6 +4,7 @@ import com.project.onlinestore.Item.dto.request.ReviewCreateRequestDto;
 import com.project.onlinestore.Item.dto.request.ReviewUpdateRequestDto;
 import com.project.onlinestore.Item.dto.response.ReviewCreateResponseDto;
 import com.project.onlinestore.Item.dto.response.ReviewUpdateResponseDto;
+import com.project.onlinestore.Item.dto.response.ReviewViewResponseDto;
 import com.project.onlinestore.Item.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,6 +46,13 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(reviewUpdateResponseDto);
     }
-        
-    // TODO: 아이템에 딸린 review 모두 조회
+
+    // TODO: 좋아요 많은 순서, 최신 순서 정렬
+    @GetMapping("/view/{itemId}")
+    public ResponseEntity<List<ReviewViewResponseDto>> reviewView(@PathVariable("itemId") Long itemId) {
+        List<ReviewViewResponseDto> reviewViewResponseDto = reviewService.ViewReview(itemId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(reviewViewResponseDto);
+    }
 }
