@@ -38,13 +38,12 @@ public class LikeService {
                             .user(user)
                             .build()
             );
-
-            return new ItemLikeResponseDto(itemId, user.getId(), itemLikeCount(itemId));
         }
-        return null;
+        return new ItemLikeResponseDto(itemId, user.getId(), itemLikeCount(itemId));
     }
 
-    public ReviewLikeResponseDto reviewLike(String userName, Long reviewId) {   // TODO: 컨트롤러 구현 및 postman 테스트
+    @Transactional
+    public ReviewLikeResponseDto reviewLike(String userName, Long reviewId) {
         User user = findUser(userName);
 
         if(likeRepository.existsByReview_IdAndUser_Id(reviewId, user.getId())){
@@ -57,10 +56,8 @@ public class LikeService {
                             .review(review)
                             .build()
             );
-
-            return new ReviewLikeResponseDto(user.getId(), reviewId, reviewLikeCount(reviewId));
         }
-        return null;
+        return new ReviewLikeResponseDto(user.getId(), reviewId, reviewLikeCount(reviewId));
     }
 
     private Integer itemLikeCount(Long itemId) {    // 좋아요 총 갯수
