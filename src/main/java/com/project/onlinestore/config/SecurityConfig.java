@@ -40,8 +40,9 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .requestMatchers("/api/*/user/*/join", "/api/*/user/login").permitAll()
                                 .requestMatchers( "/api/*/item/search", "/api/*/item/detail/*").permitAll()
+                                .requestMatchers("/api/*/review/view/*").permitAll()
                                 .requestMatchers("/api/*/user/cart/*", "/api/*/user/cart/*/*", "/api/*/user/cart/*/*/*").authenticated()
-                                .requestMatchers("/api/*/item/**", "/api/*/like/*").authenticated()
+                                .requestMatchers("/api/*/item/**", "/api/*/like/*/*").authenticated()
                                 .requestMatchers("/api/*/review/*", "/api/*/review/*/*").authenticated()
                         )
                 .sessionManagement(session -> session
