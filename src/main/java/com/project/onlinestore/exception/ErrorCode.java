@@ -16,7 +16,8 @@ public enum ErrorCode {
     ITEM_CART_NOT_FOUNT(HttpStatus.NOT_FOUND, "ItemCart not found"),
     INVALID_USER(HttpStatus.FORBIDDEN, "Not Authorized USER"),
     REVIEW_NOT_FOUNT(HttpStatus.NOT_FOUND, "Review not found"),
-    DUPLICATED_REVIEW(HttpStatus.CONFLICT, "Review is duplicated");
+    DUPLICATED_REVIEW(HttpStatus.CONFLICT, "Review is duplicated"),
+    NOT_ENOUGH_QUANTITY(HttpStatus.CONFLICT,"Quantity is not enough");
 
     private HttpStatus status;
     private String errorMessage;
