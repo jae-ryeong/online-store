@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
     @Modifying(clearAutomatically = true)
-    @Query("update item i set i.count = i.count + :count where i.id = :itemId")
-    void itemCountUpdate(@Param("count")Integer count, @Param("itemId")Long itemId);
+    @Query("update item i set i.count = i.count + :count, i.quantity = i.quantity - :count where i.id = :itemId")
+    void itemCountAndQuantityUpdate(@Param("count")Integer count, @Param("itemId")Long itemId);
 }

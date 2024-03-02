@@ -20,18 +20,35 @@ class ItemRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    void itemPlusCount() {
+    void itemOrderTest() {
         // given
         User user = sellerUser();
         Item item = Item.builder().itemName("item1").count(0L).price(10000).category(Category.BOOK).user(user).quantity(1000).soldOut(false).build();
         itemRepository.save(item);
 
         // when
-        itemRepository.itemCountUpdate(3, item.getId());
+        itemRepository.itemCountAndQuantityUpdate(3, item.getId());
         Item result = itemRepository.findById(item.getId()).get();
 
         // then
         assertThat(result.getCount()).isEqualTo(3);
+        assertThat(result.getQuantity()).isEqualTo(997);
+    }
+
+    @Test
+    void itemRefundTest() {
+        // given
+        User user = sellerUser();
+        Item item = Item.builder().itemName("item1").count(10L).price(10000).category(Category.BOOK).user(user).quantity(1000).soldOut(false).build();
+        itemRepository.save(item);
+
+        // when
+        itemRepository.itemCountAndQuantityUpdate(3 * -1, item.getId());
+        Item result = itemRepository.findById(item.getId()).get();
+
+        // then
+        assertThat(result.getCount()).isEqualTo(7);
+        assertThat(result.getQuantity()).isEqualTo(1003);
     }
 
     private User sellerUser() {
