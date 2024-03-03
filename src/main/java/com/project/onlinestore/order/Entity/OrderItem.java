@@ -4,6 +4,8 @@ import com.project.onlinestore.Item.entity.Item;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @Builder
@@ -26,7 +28,7 @@ public class OrderItem {
     private Item item;
 
     @Column(name = "order_item_count")
-    private Integer count; // 상품의 수량
+    private Integer count; // 상품의 수량 ( 몇 개 살 것 인지 )
 
     private Integer orderPrice;
 }

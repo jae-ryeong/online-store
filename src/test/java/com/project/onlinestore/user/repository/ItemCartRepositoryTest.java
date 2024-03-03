@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,6 +53,37 @@ class ItemCartRepositoryTest {
         itemCartRepository.checkFalse(itemCart.getId());
     }
 
+    @Test
+    void findAllCheckedCartTest() {
+        //given
+        Cart cart = createCart();
+        cartRepository.save(cart);
+
+        User sellerUser = sellerUser();
+        userRepository.save(sellerUser);
+
+        Item item1 = createItem(sellerUser);
+        itemRepository.save(item1);
+
+        ItemCart itemCart = createItemCart(cart, item1);
+        itemCartRepository.save(itemCart);
+
+        Item item2 = Item.builder()
+                .user(sellerUser)
+                .itemName("item2").quantity(100).price(10000).count(10000L).category(Category.PET).build();
+        itemRepository.save(item2);
+
+        ItemCart uncheckedItemCart = createUncheckedItemCart(cart, item2);
+        itemCartRepository.save(uncheckedItemCart);
+
+        //when
+        List<ItemCart> allCheckedCart = itemCartRepository.findAllCheckedCart(cart);
+
+        //then
+        assertThat(allCheckedCart.size()).isEqualTo(1);
+        assertThat(allCheckedCart.get(0).getItem().getItemName()).isEqualTo("item");
+
+    }
     private User sellerUser() {
         return User.builder().userName("seller")
                 .password("1234")
@@ -82,5 +114,10 @@ class ItemCartRepositoryTest {
     private Cart createCart() {
         return Cart.builder()
                 .build();
+    }
+
+    private ItemCart createUncheckedItemCart(Cart cart, Item item) {
+        return ItemCart.builder()
+                .cart(cart).item(item).cartCheck(false).quantity(100).build();
     }
 }

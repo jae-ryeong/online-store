@@ -30,4 +30,8 @@ public interface ItemCartRepository extends JpaRepository<ItemCart, Long> {
     void checkFalse(@Param("itemCartId")Long itemCardId);
 
     void deleteAllByItem(Item item);
+
+    @Modifying
+    @Query("select i from item_cart i where i.cart = :cart and i.cartCheck = true")
+    List<ItemCart> findAllCheckedCart(@Param("cart") Cart cart);
 }
