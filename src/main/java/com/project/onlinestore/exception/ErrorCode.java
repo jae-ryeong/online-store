@@ -17,7 +17,8 @@ public enum ErrorCode {
     INVALID_USER(HttpStatus.FORBIDDEN, "Not Authorized USER"),
     REVIEW_NOT_FOUNT(HttpStatus.NOT_FOUND, "Review not found"),
     DUPLICATED_REVIEW(HttpStatus.CONFLICT, "Review is duplicated"),
-    NOT_ENOUGH_QUANTITY(HttpStatus.CONFLICT,"Quantity is not enough");
+    NOT_ENOUGH_QUANTITY(HttpStatus.CONFLICT,"Quantity is not enough"),
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "Order not found");
 
     private HttpStatus status;
     private String errorMessage;
