@@ -75,10 +75,8 @@ public class OrderService {
 
     public List<OrderViewResponseDto> orderView(String userName) {
         User user = findUser(userName);
-
-        Order order = orderRepository.findByUser_Id(user.getId()).orElseThrow(() -> new ApplicationException(ErrorCode.INVALID_USER, null));    // TODO: 에러 고치기 및 테스트코드 작성
+        Order order = findOrder(user.getId());    // TODO: 에러 고치기 및 테스트코드 작성
         List<OrderItem> orderItems = order.getOrderItems();
-
         List<OrderViewResponseDto> dtoList = new ArrayList<>();
 
         for (OrderItem orderItem : orderItems) {
@@ -103,5 +101,10 @@ public class OrderService {
     private Item findItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() ->
                 new ApplicationException(ErrorCode.ITEM_ID_NOT_FOUND, itemId + "를 찾을 수 없습니다."));
+    }
+
+    private Order findOrder(Long userId) {
+        return orderRepository.findByUser_Id(userId).orElseThrow(() ->
+                new ApplicationException(ErrorCode.ORDER_NOT_FOUND, null));
     }
 }
