@@ -7,6 +7,7 @@ import com.project.onlinestore.order.Entity.Order;
 import com.project.onlinestore.order.Entity.OrderItem;
 import com.project.onlinestore.order.Entity.enums.OrderStatus;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
+import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
 import com.project.onlinestore.order.repository.OrderItemRepository;
 import com.project.onlinestore.order.repository.OrderRepository;
 import com.project.onlinestore.user.entity.Cart;
@@ -22,7 +23,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -110,6 +112,36 @@ class OrderServiceTest {
         //then
         assertThatThrownBy(() -> orderService.itemOrder(customer.getUserName())).isInstanceOf(ApplicationException.class)
                 .hasMessage("Quantity is not enough, item");
+    }
+
+    @DisplayName("주문 목록 조회")
+    @Test
+    void itemOrderViewTest() {
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+        Item item2 = Item.builder()
+                .user(seller)
+                .itemName("item3").quantity(200).price(30000).build();
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        OrderItem orderItem = OrderItem.builder().item(item).count(1).orderPrice(10000).build();
+        OrderItem orderItem2 = OrderItem.builder().item(item2).count(1).orderPrice(10000).build();
+
+        Order order = Order.builder().user(customer).orderStatus(OrderStatus.ORDER).orderItems(List.of(orderItem, orderItem2)).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(orderRepository.findByUser_Id(customer.getId())).willReturn(Optional.of(order));
+
+        //when
+        List<OrderViewResponseDto> dtoList = orderService.orderView(customer.getUserName());
+
+        //then
+        assertThat(dtoList.get(0).orderStatus()).isEqualTo(OrderStatus.ORDER);
+        assertThat(dtoList.size()).isEqualTo(2);
     }
 
     private User sellerUser(Cart cart) {
