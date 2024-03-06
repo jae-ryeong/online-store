@@ -6,6 +6,7 @@ import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.exception.ErrorCode;
 import com.project.onlinestore.user.dto.response.AddCartResponseDto;
 import com.project.onlinestore.user.dto.response.CartCheckResponseDto;
+import com.project.onlinestore.user.dto.response.CartQuantityResponseDto;
 import com.project.onlinestore.user.dto.response.CartViewResponseDto;
 import com.project.onlinestore.user.entity.Cart;
 import com.project.onlinestore.user.entity.ItemCart;
@@ -84,6 +85,33 @@ public class CartService {
         return new CartCheckResponseDto(itemCartId, !itemCart.isCartCheck());
     }
 
+    @Transactional
+    public CartQuantityResponseDto cartQuantityUp(String userName, Long itemCartId) {
+        User user = findUser(userName);
+        ItemCart itemCart = findItemCart(itemCartId);
+        Item item = findItem(itemCart.getItem().getId());
+        String storeName = item.getUser().getStoreName();   // LAZY init
+
+        itemCartRepository.addQuantity(user.getCart(), item);
+
+        return new CartQuantityResponseDto(item.getItemName(), item.getPrice(), storeName, itemCart.getQuantity()+1);
+    }
+
+    @Transactional
+    public CartQuantityResponseDto cartQuantityDown(String userName, Long itemCartId) {
+        User user = findUser(userName);
+        ItemCart itemCart = findItemCart(itemCartId);
+        Item item = findItem(itemCart.getItem().getId());
+
+        if (itemCart.getQuantity() <= 0){   // 주문 수량은 음수 일 수 없다.
+            throw new ApplicationException(ErrorCode.QUANTITY_OUT_OF_RANGE, null);
+        }
+        String storeName = item.getUser().getStoreName();
+        itemCartRepository.minusQuantity(user.getCart(), item);
+
+        return new CartQuantityResponseDto(item.getItemName(), item.getPrice(), storeName, itemCart.getQuantity()-1);
+    }
+    
     @Transactional
     public void delete(String userName, Long itemCartId) {
         User user = findUser(userName);
