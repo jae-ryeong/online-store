@@ -82,8 +82,54 @@ class ItemCartRepositoryTest {
         //then
         assertThat(allCheckedCart.size()).isEqualTo(1);
         assertThat(allCheckedCart.get(0).getItem().getItemName()).isEqualTo("item");
-
     }
+
+    @Test
+    public void addQuantityTest() throws Exception{
+        //given
+        Cart cart = createCart();
+        cartRepository.save(cart);
+
+        User sellerUser = sellerUser();
+        userRepository.save(sellerUser);
+
+        Item item1 = createItem(sellerUser);
+        itemRepository.save(item1);
+
+        ItemCart itemCart = createItemCart(cart, item1);
+        itemCartRepository.save(itemCart);
+
+        //when
+        itemCartRepository.addQuantity(cart, item1);
+        ItemCart result = itemCartRepository.findById(itemCart.getId()).get();
+
+        //then
+        assertThat(result.getQuantity()).isEqualTo(2);
+    }
+
+    @Test
+    public void minusQuantityTest() throws Exception{
+        //given
+        Cart cart = createCart();
+        cartRepository.save(cart);
+
+        User sellerUser = sellerUser();
+        userRepository.save(sellerUser);
+
+        Item item1 = createItem(sellerUser);
+        itemRepository.save(item1);
+
+        ItemCart itemCart = createItemCart(cart, item1);
+        itemCartRepository.save(itemCart);
+
+        //when
+        itemCartRepository.minusQuantity(cart, item1);
+        ItemCart result = itemCartRepository.findById(itemCart.getId()).get();
+
+        //then
+        assertThat(result.getQuantity()).isEqualTo(0);
+    }
+
     private User sellerUser() {
         return User.builder().userName("seller")
                 .password("1234")
