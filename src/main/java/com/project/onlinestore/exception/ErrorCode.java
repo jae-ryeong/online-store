@@ -18,7 +18,8 @@ public enum ErrorCode {
     REVIEW_NOT_FOUNT(HttpStatus.NOT_FOUND, "Review not found"),
     DUPLICATED_REVIEW(HttpStatus.CONFLICT, "Review is duplicated"),
     NOT_ENOUGH_QUANTITY(HttpStatus.CONFLICT,"Quantity is not enough"),
-    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "Order not found");
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "Order not found"),
+    QUANTITY_OUT_OF_RANGE(HttpStatus.CONFLICT, "Cannot be less than 0");
 
     private HttpStatus status;
     private String errorMessage;
