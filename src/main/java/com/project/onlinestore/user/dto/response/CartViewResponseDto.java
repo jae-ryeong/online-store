@@ -5,7 +5,7 @@ import com.project.onlinestore.user.entity.ItemCart;
 public record CartViewResponseDto(
         String itemName,
         Integer price,
-        String sellerName,
+        String storeName,
         boolean cartCheck
 ) {
     public static CartViewResponseDto fromEntity(ItemCart itemCart) {
