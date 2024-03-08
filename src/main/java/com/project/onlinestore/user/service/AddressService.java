@@ -41,8 +41,24 @@ public class AddressService {
         return new AddressRegistrationResponseDto(dto.address(), dto.detailAddress(), dto.postalCode(), dto.tel());
     }
 
+    public void addressDelete(String userName, Long addressId) {
+        User user = findUser(userName);
+        Address address = findAddress(addressId);
+
+        if (address.getUser() != user) {
+            throw new ApplicationException(ErrorCode.INVALID_USER, "권한이 없는 유저입니다.");
+        }
+
+        addressRepository.deleteById(addressId);
+    }
+
     private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
                 new ApplicationException(ErrorCode.USERNAME_NOT_FOUND, userName + "를 찾을 수 없습니다."));
+    }
+
+    private Address findAddress(Long addressId) {
+        return addressRepository.findById(addressId).orElseThrow(() ->
+                new ApplicationException(ErrorCode.ADDRESS_NOT_FOUNT, "저장된 배송지를 찾을 수 없습니다."));
     }
 }

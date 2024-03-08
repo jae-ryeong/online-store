@@ -3,6 +3,7 @@ package com.project.onlinestore.user.service;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.user.dto.request.AddressRegistrationRequestDto;
 import com.project.onlinestore.user.dto.response.AddressRegistrationResponseDto;
+import com.project.onlinestore.user.entity.Address;
 import com.project.onlinestore.user.entity.Cart;
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.entity.enums.RoleType;
@@ -25,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,6 +70,41 @@ class AddressServiceTest {
 
         //then
         assertThatThrownBy(() -> addressService.addressRegistration(user.getUserName(), responseDto))
+                .isInstanceOf(ApplicationException.class);
+    }
+
+    @DisplayName("주소지 삭제 테스트")
+    @Test
+    void addressDeleteTest() {
+        //given
+        Cart cart = createCart();
+        User user = customerUser(cart);
+        Address address = Address.builder().detailAddress("213").address("321").user(user).tel("010-0000-0000").build();
+
+        given(userRepository.findByUserName(any())).willReturn(Optional.of(user));
+        given(addressRepository.findById(any())).willReturn(Optional.of(address));
+
+        //when
+        addressService.addressDelete("customer", any());
+
+        //then
+        verify(addressRepository).deleteById(any());
+    }
+
+    @DisplayName("다른 유저가 주소지 삭제시 에러 발생")
+    @Test
+    void addressDeleteErrorTest() {
+        //given
+        Cart cart = createCart();
+        User user = customerUser(cart);
+        User user2 = User.builder().build();
+        Address address = Address.builder().detailAddress("213").address("321").user(user).tel("010-0000-0000").build();
+
+        given(userRepository.findByUserName(any())).willReturn(Optional.of(user2));
+        given(addressRepository.findById(any())).willReturn(Optional.of(address));
+
+        //then
+        assertThatThrownBy(() -> addressService.addressDelete("customer", any()))
                 .isInstanceOf(ApplicationException.class);
     }
 

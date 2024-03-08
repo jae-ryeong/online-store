@@ -20,7 +20,8 @@ public enum ErrorCode {
     NOT_ENOUGH_QUANTITY(HttpStatus.CONFLICT,"Quantity is not enough"),
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "Order not found"),
     QUANTITY_OUT_OF_RANGE(HttpStatus.CONFLICT, "Cannot be less than 0"),
-    DIFFERENT_FROM_THE_PATTERN(HttpStatus.CONFLICT, "It's different from the pattern");
+    DIFFERENT_FROM_THE_PATTERN(HttpStatus.CONFLICT, "It's different from the pattern"),
+    ADDRESS_NOT_FOUNT(HttpStatus.NOT_FOUND, "Address not found");
 
     private HttpStatus status;
     private String errorMessage;
