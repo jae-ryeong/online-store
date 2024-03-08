@@ -46,7 +46,7 @@ class AddressServiceTest {
         //given
         Cart cart = createCart();
         User user = customerUser(cart);
-        AddressRegistrationRequestDto responseDto = new AddressRegistrationRequestDto("대전시", "동구", 12345, "010-0000-1234");
+        AddressRegistrationRequestDto responseDto = new AddressRegistrationRequestDto("주문자","대전시", "동구", 12345, "010-0000-1234");
 
         given(userRepository.findByUserName(user.getUserName())).willReturn(Optional.of(user));
 
@@ -64,7 +64,7 @@ class AddressServiceTest {
         //given
         Cart cart = createCart();
         User user = customerUser(cart);
-        AddressRegistrationRequestDto responseDto = new AddressRegistrationRequestDto("대전시", "동구", 12345, "1235");
+        AddressRegistrationRequestDto responseDto = new AddressRegistrationRequestDto("주문자","대전시", "동구", 12345, "1235");
 
         given(userRepository.findByUserName(user.getUserName())).willReturn(Optional.of(user));
 

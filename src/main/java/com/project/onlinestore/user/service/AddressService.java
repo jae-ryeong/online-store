@@ -30,6 +30,7 @@ public class AddressService {
         }
 
         addressRepository.save(Address.builder()
+                .addresseeName(dto.addresseeName())
                 .address(dto.address())
                 .user(user)
                 .detailAddress(dto.detailAddress())
@@ -38,7 +39,7 @@ public class AddressService {
                 .build()
         );
 
-        return new AddressRegistrationResponseDto(dto.address(), dto.detailAddress(), dto.postalCode(), dto.tel());
+        return new AddressRegistrationResponseDto(dto.addresseeName(), dto.address(), dto.detailAddress(), dto.postalCode(), dto.tel());
     }
 
     public void addressDelete(String userName, Long addressId) {
