@@ -104,4 +104,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(result);
     }
+
+    @PostMapping("/setting/address/delete/{addressId}")
+    public ResponseEntity<String> addressDelete(Authentication authentication, @PathVariable("addressId")Long addressId) {
+        addressService.addressDelete(authentication.getName(), addressId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("배송지가 정상적으로 삭제되었습니다.");
+    }
 }
