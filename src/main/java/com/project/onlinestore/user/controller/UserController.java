@@ -2,6 +2,7 @@ package com.project.onlinestore.user.controller;
 
 import com.project.onlinestore.user.dto.request.*;
 import com.project.onlinestore.user.dto.response.*;
+import com.project.onlinestore.user.service.AddressService;
 import com.project.onlinestore.user.service.CartService;
 import com.project.onlinestore.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class UserController {
 
     private final UserService userService;
     private final CartService cartService;
+    private final AddressService addressService;
 
     @PostMapping("/customer/join")
     public ResponseEntity<UserResponseDto> join(@RequestBody CustomerRequestDto dto) {
@@ -77,5 +79,29 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body("장바구니 목록이 삭제되었습니다.");
+    }
+
+    @PutMapping("/cart/view/{itemCartId}/up")
+    public ResponseEntity<CartQuantityResponseDto> cartQuantityUp(Authentication authentication, @PathVariable("itemCartId") Long itemId) {
+        CartQuantityResponseDto cartQuantityResponseDto = cartService.cartQuantityUp(authentication.getName(), itemId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(cartQuantityResponseDto);
+    }
+
+    @PutMapping("/cart/view/{itemCartId}/down")
+    public ResponseEntity<CartQuantityResponseDto> cartQuantityDown(Authentication authentication, @PathVariable("itemCartId") Long itemId) {
+        CartQuantityResponseDto cartQuantityResponseDto = cartService.cartQuantityDown(authentication.getName(), itemId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(cartQuantityResponseDto);
+    }
+
+    @PostMapping("/setting/address/create")
+    public ResponseEntity<AddressRegistrationResponseDto> addressCreate(Authentication authentication, @RequestBody AddressRegistrationRequestDto dto) {
+        AddressRegistrationResponseDto result = addressService.addressRegistration(authentication.getName(), dto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(result);
     }
 }
