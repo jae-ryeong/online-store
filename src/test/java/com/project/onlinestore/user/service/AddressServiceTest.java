@@ -2,6 +2,7 @@ package com.project.onlinestore.user.service;
 
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.user.dto.request.AddressRegistrationRequestDto;
+import com.project.onlinestore.user.dto.response.AddressListResponseDto;
 import com.project.onlinestore.user.dto.response.AddressRegistrationResponseDto;
 import com.project.onlinestore.user.entity.Address;
 import com.project.onlinestore.user.entity.Cart;
@@ -19,6 +20,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -106,6 +109,25 @@ class AddressServiceTest {
         //then
         assertThatThrownBy(() -> addressService.addressDelete("customer", any()))
                 .isInstanceOf(ApplicationException.class);
+    }
+
+    @DisplayName("주소지 모두 조회 테스트")
+    @Test
+    void addressAllViewTest() {
+        //given
+        Cart cart = createCart();
+        User user = customerUser(cart);
+        Address address = Address.builder().detailAddress("213").address("321").user(user).tel("010-0000-0000").build();
+
+        given(userRepository.findByUserName(any())).willReturn(Optional.of(user));
+        given(addressRepository.findAllByUserId(any())).willReturn(List.of(address));
+
+        //when
+        List<AddressListResponseDto> result = addressService.addressListView("customer");
+
+        //then
+        verify(addressRepository).findAllByUserId(any());
+        assertThat(result.size()).isEqualTo(1);
     }
 
     private User customerUser(Cart cart) {

@@ -105,11 +105,19 @@ public class UserController {
                 .body(result);
     }
 
-    @PostMapping("/setting/address/delete/{addressId}")
-    public ResponseEntity<String> addressDelete(Authentication authentication, @PathVariable("addressId")Long addressId) {
+    @DeleteMapping("/setting/address/delete/{addressId}")
+    public ResponseEntity<String> addressDelete(Authentication authentication, @PathVariable("addressId") Long addressId) {
         addressService.addressDelete(authentication.getName(), addressId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body("배송지가 정상적으로 삭제되었습니다.");
+    }
+
+    @GetMapping("/setting/address/view")
+    public ResponseEntity<List<AddressListResponseDto>> addressView(Authentication authentication) {
+        List<AddressListResponseDto> dtoList = addressService.addressListView(authentication.getName());
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(dtoList);
     }
 }

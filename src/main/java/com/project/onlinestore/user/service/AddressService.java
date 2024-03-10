@@ -2,6 +2,7 @@ package com.project.onlinestore.user.service;
 
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.exception.ErrorCode;
+import com.project.onlinestore.user.dto.response.AddressListResponseDto;
 import com.project.onlinestore.user.dto.request.AddressRegistrationRequestDto;
 import com.project.onlinestore.user.dto.response.AddressRegistrationResponseDto;
 import com.project.onlinestore.user.entity.Address;
@@ -11,7 +12,9 @@ import com.project.onlinestore.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +54,15 @@ public class AddressService {
         }
 
         addressRepository.deleteById(addressId);
+    }
+
+    //TODO: 일단 모든 배송지 보기
+    public List<AddressListResponseDto> addressListView(String userName) {
+        User user = findUser(userName);
+
+        List<Address> userAddress = addressRepository.findAllByUserId(user.getId());
+
+        return userAddress.stream().map(AddressListResponseDto::fromEntity).collect(Collectors.toList());
     }
 
     private User findUser(String userName) {
