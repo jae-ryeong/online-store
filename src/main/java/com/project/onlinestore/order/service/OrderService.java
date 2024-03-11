@@ -7,13 +7,17 @@ import com.project.onlinestore.exception.ErrorCode;
 import com.project.onlinestore.order.Entity.Order;
 import com.project.onlinestore.order.Entity.OrderItem;
 import com.project.onlinestore.order.Entity.enums.OrderStatus;
+import com.project.onlinestore.order.dto.OrderAddressDto;
 import com.project.onlinestore.order.dto.OrderItemDto;
+import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
 import com.project.onlinestore.order.repository.OrderItemRepository;
 import com.project.onlinestore.order.repository.OrderRepository;
+import com.project.onlinestore.user.entity.Address;
 import com.project.onlinestore.user.entity.ItemCart;
 import com.project.onlinestore.user.entity.User;
+import com.project.onlinestore.user.repository.AddressRepository;
 import com.project.onlinestore.user.repository.ItemCartRepository;
 import com.project.onlinestore.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,15 +35,23 @@ public class OrderService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
     private final ItemCartRepository itemCartRepository;
+    private final AddressRepository addressRepository;
 
 // TODO: 서비스코드 ( 주문하기, 취소하기, 주문하면 아이템의 재고 체크하기, 재고 없으면 soldout만들기 등등 )
     /*
     장바구니에 상품들을 담아놓는다 -> 주문할 상품들을 check -> 주문버튼
      */
     @Transactional
-    public OrderResponseDto itemOrder(String userName) {
+    public OrderResponseDto itemOrder(String userName, OrderAddressRequestDto dto) {
         User user = findUser(userName);
+        Address address = findAddress(dto.addressId());
+
+        if (address.getUser() != user){
+            throw new ApplicationException(ErrorCode.INVALID_USER, null);
+        }
+
         List<ItemCart> itemCarts = itemCartRepository.findAllCheckedCart(user.getCart());
+        OrderAddressDto addressDto = new OrderAddressDto(address.getAddresseeName(), address.getAddress(), address.getDetailAddress(), address.getPostalCode(), address.getTel());
 
         Order order = orderRepository.save(Order.builder().user(user).orderStatus(OrderStatus.ORDER).build());
 
@@ -70,12 +82,12 @@ public class OrderService {
             itemRepository.itemCountAndQuantityUpdate(orderItem.getCount(), orderItem.getItem().getId());    // 주문한 상품의 판매 횟수 증가 및 재고 감소
         }
 
-        return new OrderResponseDto(user.getId(), order.getOrderStatus(), totalPrice, orderItemDtoList);
+        return new OrderResponseDto(user.getId(), order.getOrderStatus(), totalPrice, orderItemDtoList, addressDto);
     }
 
     public List<OrderViewResponseDto> orderView(String userName) {
         User user = findUser(userName);
-        Order order = findOrder(user.getId());    // TODO: 에러 고치기 및 테스트코드 작성
+        Order order = findOrder(user.getId());
         List<OrderItem> orderItems = order.getOrderItems();
         List<OrderViewResponseDto> dtoList = new ArrayList<>();
 
@@ -94,6 +106,10 @@ public class OrderService {
         return dtoList;
     }
 
+    //TODO: orderDetailView
+
+    //TODO: orderCancel
+
     private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
                 new ApplicationException(ErrorCode.USERNAME_NOT_FOUND, userName + "를 찾을 수 없습니다."));
@@ -106,5 +122,10 @@ public class OrderService {
     private Order findOrder(Long userId) {
         return orderRepository.findByUser_Id(userId).orElseThrow(() ->
                 new ApplicationException(ErrorCode.ORDER_NOT_FOUND, null));
+    }
+
+    private Address findAddress(Long addressId) {
+        return addressRepository.findById(addressId).orElseThrow(() ->
+                new ApplicationException(ErrorCode.ADDRESS_NOT_FOUNT, null));
     }
 }

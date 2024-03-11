@@ -6,14 +6,17 @@ import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.order.Entity.Order;
 import com.project.onlinestore.order.Entity.OrderItem;
 import com.project.onlinestore.order.Entity.enums.OrderStatus;
+import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
 import com.project.onlinestore.order.repository.OrderItemRepository;
 import com.project.onlinestore.order.repository.OrderRepository;
+import com.project.onlinestore.user.entity.Address;
 import com.project.onlinestore.user.entity.Cart;
 import com.project.onlinestore.user.entity.ItemCart;
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.entity.enums.RoleType;
+import com.project.onlinestore.user.repository.AddressRepository;
 import com.project.onlinestore.user.repository.ItemCartRepository;
 import com.project.onlinestore.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +49,8 @@ class OrderServiceTest {
     private ItemRepository itemRepository;
     @Mock
     private ItemCartRepository itemCartRepository;
+    @Mock
+    private AddressRepository addressRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -71,13 +76,16 @@ class OrderServiceTest {
 
         OrderItem orderItem = OrderItem.builder().item(item).order(order).count(1).orderPrice(10000).build();
 
+        Address address = Address.builder().detailAddress("213").address("321").user(customer).tel("010-0000-0000").build();
+
         given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
         given(itemCartRepository.findAllCheckedCart(cart2)).willReturn(List.of(itemCart, itemCart2));
         given(orderRepository.save(any())).willReturn(order);
         given(orderItemRepository.save(any())).willReturn(orderItem);
+        given(addressRepository.findById(any())).willReturn(Optional.of(address));
 
         //when
-        OrderResponseDto orderResponseDto = orderService.itemOrder(customer.getUserName());
+        OrderResponseDto orderResponseDto = orderService.itemOrder(customer.getUserName(), new OrderAddressRequestDto(1L));
 
         //then
         verify(itemCartRepository).findAllCheckedCart(cart2);
@@ -105,13 +113,42 @@ class OrderServiceTest {
 
         Order order = Order.builder().user(customer).orderStatus(OrderStatus.ORDER).build();
 
+        Address address = Address.builder().detailAddress("213").address("321").user(customer).tel("010-0000-0000").build();
+
         given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
         given(itemCartRepository.findAllCheckedCart(cart2)).willReturn(List.of(itemCart));
         given(orderRepository.save(any())).willReturn(order);
+        given(addressRepository.findById(any())).willReturn(Optional.of(address));
 
         //then
-        assertThatThrownBy(() -> orderService.itemOrder(customer.getUserName())).isInstanceOf(ApplicationException.class)
+        assertThatThrownBy(() -> orderService.itemOrder(customer.getUserName(), new OrderAddressRequestDto(1L))).isInstanceOf(ApplicationException.class)
                 .hasMessage("Quantity is not enough, item");
+    }
+
+    @DisplayName("상품 주문시 배송지의 user가 주문자와 다를경우 에러 발생")
+    @Test
+    void UserNotEqualAddressTest() {
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = Item.builder()
+                .user(seller)
+                .itemName("item").quantity(10).price(20000).build();
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        ItemCart itemCart = createItemCart(cart2, item);
+
+        Order order = Order.builder().user(customer).orderStatus(OrderStatus.ORDER).build();
+
+        Address address = Address.builder().detailAddress("213").address("321").user(seller).tel("010-0000-0000").build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(addressRepository.findById(any())).willReturn(Optional.of(address));
+
+        //then
+        assertThatThrownBy(() -> orderService.itemOrder(customer.getUserName(), new OrderAddressRequestDto(1L))).isInstanceOf(ApplicationException.class);
     }
 
     @DisplayName("주문 목록 조회")
