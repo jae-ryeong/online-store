@@ -6,6 +6,7 @@ create table orders
     order_items bigint ,
     order_date datetime,
     user_id bigint not null,
-    order_status enum('ORDER', 'CANCEL', 'TAKE_BACK')
+    order_status enum('ORDER', 'CANCEL', 'TAKE_BACK'),
+    address_id bigint not null
 ) engine = InnoDB;
 

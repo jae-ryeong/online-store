@@ -1,6 +1,7 @@
 package com.project.onlinestore.order.Entity;
 
 import com.project.onlinestore.order.Entity.enums.OrderStatus;
+import com.project.onlinestore.user.entity.Address;
 import com.project.onlinestore.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +20,8 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class Order {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
     private Long id;
 
@@ -35,4 +37,7 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "id")
+    private Address address;
 }
