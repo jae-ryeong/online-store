@@ -56,7 +56,6 @@ public class AddressService {
         addressRepository.deleteById(addressId);
     }
 
-    //TODO: 일단 모든 배송지 보기
     public List<AddressListResponseDto> addressListView(String userName) {
         User user = findUser(userName);
 
