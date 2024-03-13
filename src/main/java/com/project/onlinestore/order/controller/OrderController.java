@@ -3,6 +3,7 @@ package com.project.onlinestore.order.controller;
 import com.project.onlinestore.order.Entity.Order;
 import com.project.onlinestore.order.Entity.OrderItem;
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
+import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
 import com.project.onlinestore.order.service.OrderService;
@@ -35,5 +36,13 @@ public class OrderController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(dtoList);
+    }
+
+    @GetMapping("/detail/{orderId}")
+    public ResponseEntity<OrderDetailViewResponseDto> orderDetailView(@PathVariable("orderId")Long orderId) {
+        OrderDetailViewResponseDto orderDetailView = orderService.orderDetailView(orderId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(orderDetailView);
     }
 }
