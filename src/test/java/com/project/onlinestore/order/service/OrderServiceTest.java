@@ -7,6 +7,7 @@ import com.project.onlinestore.order.Entity.Order;
 import com.project.onlinestore.order.Entity.OrderItem;
 import com.project.onlinestore.order.Entity.enums.OrderStatus;
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
+import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
 import com.project.onlinestore.order.repository.OrderItemRepository;
@@ -169,9 +170,11 @@ class OrderServiceTest {
         OrderItem orderItem2 = OrderItem.builder().item(item2).count(1).orderPrice(10000).build();
 
         Order order = Order.builder().user(customer).orderStatus(OrderStatus.ORDER).orderItems(List.of(orderItem, orderItem2)).build();
+        Order order2 = Order.builder().user(customer).orderStatus(OrderStatus.ORDER).orderItems(List.of(orderItem, orderItem2)).build();
 
         given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
-        given(orderRepository.findByUser_Id(customer.getId())).willReturn(Optional.of(order));
+        given(orderRepository.findAllByUser_Id(customer.getId())).willReturn(List.of(order, order2));
+        given(orderItemRepository.findAllByOrder_Id(any())).willReturn(List.of(orderItem, orderItem2));
 
         //when
         List<OrderViewResponseDto> dtoList = orderService.orderView(customer.getUserName());
@@ -179,6 +182,39 @@ class OrderServiceTest {
         //then
         assertThat(dtoList.get(0).orderStatus()).isEqualTo(OrderStatus.ORDER);
         assertThat(dtoList.size()).isEqualTo(2);
+        assertThat(dtoList.get(0).orderItemDtoList().get(0).itemName()).isEqualTo("item");
+    }
+
+    @DisplayName("주문 상세 조회")
+    @Test
+    void itemOrderDetailViewTest() {
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+        Item item2 = Item.builder()
+                .user(seller)
+                .itemName("item3").quantity(200).price(30000).build();
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        OrderItem orderItem = OrderItem.builder().item(item).count(1).orderPrice(10000).build();
+        OrderItem orderItem2 = OrderItem.builder().item(item2).count(1).orderPrice(10000).build();
+
+        Address address = Address.builder().detailAddress("213").address("321").user(customer).tel("010-0000-0000").build();
+
+        Order order = Order.builder().user(customer).orderStatus(OrderStatus.ORDER).orderItems(List.of(orderItem, orderItem2)).address(address).build();
+
+        given(orderRepository.findById(customer.getId())).willReturn(Optional.of(order));
+        given(orderItemRepository.findAllByOrder_Id(any())).willReturn(List.of(orderItem, orderItem2));
+
+        //when
+        OrderDetailViewResponseDto result = orderService.orderDetailView(order.getId());
+
+        //then
+        assertThat(result.orderItemDtoList().size()).isEqualTo(2);
+        assertThat(result.orderStatus()).isEqualTo(OrderStatus.ORDER);
     }
 
     private User sellerUser(Cart cart) {
