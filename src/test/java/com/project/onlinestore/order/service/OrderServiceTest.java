@@ -246,7 +246,8 @@ class OrderServiceTest {
         OrderCancelResponseDto result = orderService.orderCancel(customer.getUserName(), order.getId());
 
         //then
-        verify(orderRepository).updateOrderStatusCancel(any());
+        verify(orderRepository).updateOrderStatusCancel(any(), order.getId());
+        verify(itemRepository).itemCountAndQuantityUpdate(any(), any());
         assertThat(result.orderStatus()).isEqualTo(OrderStatus.CANCEL);
     }
 

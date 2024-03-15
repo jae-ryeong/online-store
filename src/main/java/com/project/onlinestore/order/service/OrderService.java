@@ -125,6 +125,7 @@ public class OrderService {
         return new OrderDetailViewResponseDto(order.getOrderStatus(), order.getOrderDate(), orderItemDtoList, orderAddressDto, totalPrice);
     }
 
+    @Transactional
     public OrderCancelResponseDto orderCancel(String userName, Long orderId) {
         User user = findUser(userName);
         Order order = findOrder(orderId);
@@ -137,13 +138,13 @@ public class OrderService {
             throw new ApplicationException(ErrorCode.CAN_NOT_CANCELED, null);
         }
 
-        orderRepository.updateOrderStatusCancel(OrderStatus.CANCEL);
-
         List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem orderItem : orderItems) {
             Integer count = orderItem.getCount();
             itemRepository.itemCountAndQuantityUpdate(count * -1 , orderItem.getItem().getId());    // count는 내리고, quantity의 갯수는 올려줘야 하기 때문에 *-1
         }
+
+        orderRepository.updateOrderStatusCancel(OrderStatus.CANCEL, orderId);
 
         return new OrderCancelResponseDto(orderId, OrderStatus.CANCEL);
     }
