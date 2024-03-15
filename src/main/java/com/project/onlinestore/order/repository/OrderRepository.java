@@ -13,6 +13,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllByUser_Id(Long userId);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Order o set o.orderStatus = :cancel")
-    void updateOrderStatusCancel(@Param("cancel")OrderStatus cancel);
+    @Query("update Order o set o.orderStatus = :cancel where o.id = :orderId")
+    void updateOrderStatusCancel(@Param("cancel")OrderStatus cancel, @Param("orderId")Long orderId);
 }

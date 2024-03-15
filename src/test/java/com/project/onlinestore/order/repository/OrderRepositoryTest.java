@@ -23,7 +23,7 @@ class OrderRepositoryTest {
         orderRepository.save(order);
 
         //when
-        orderRepository.updateOrderStatusCancel(OrderStatus.CANCEL);
+        orderRepository.updateOrderStatusCancel(OrderStatus.CANCEL, order.getId());
 
         //then
         Optional<Order> result = orderRepository.findById(order.getId());
