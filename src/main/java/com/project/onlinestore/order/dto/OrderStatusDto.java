@@ -1,8 +1,8 @@
-package com.project.onlinestore.order.dto.response;
+package com.project.onlinestore.order.dto;
 
 import com.project.onlinestore.order.Entity.enums.OrderStatus;
 
-public record OrderCancelResponseDto(
+public record OrderStatusDto(
         Long orderId,
         OrderStatus orderStatus
 ) {
