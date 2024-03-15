@@ -7,6 +7,7 @@ import com.project.onlinestore.order.Entity.Order;
 import com.project.onlinestore.order.Entity.OrderItem;
 import com.project.onlinestore.order.Entity.enums.OrderStatus;
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
+import com.project.onlinestore.order.dto.response.OrderCancelResponseDto;
 import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
@@ -215,6 +216,77 @@ class OrderServiceTest {
         //then
         assertThat(result.orderItemDtoList().size()).isEqualTo(2);
         assertThat(result.orderStatus()).isEqualTo(OrderStatus.ORDER);
+    }
+
+    @DisplayName("주문 취소 테스트")
+    @Test
+    void itemOrderCancelTest() {
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+        Item item2 = Item.builder()
+                .user(seller)
+                .itemName("item3").quantity(200).price(30000).build();
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        OrderItem orderItem = OrderItem.builder().item(item).count(1).orderPrice(10000).build();
+        OrderItem orderItem2 = OrderItem.builder().item(item2).count(1).orderPrice(10000).build();
+
+        Address address = Address.builder().detailAddress("213").address("321").user(customer).tel("010-0000-0000").build();
+
+        Order order = Order.builder().user(customer).orderStatus(OrderStatus.ORDER).orderItems(List.of(orderItem, orderItem2)).address(address).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(orderRepository.findById(customer.getId())).willReturn(Optional.of(order));
+
+        //when
+        OrderCancelResponseDto result = orderService.orderCancel(customer.getUserName(), order.getId());
+
+        //then
+        verify(orderRepository).updateOrderStatusCancel(any());
+        assertThat(result.orderStatus()).isEqualTo(OrderStatus.CANCEL);
+    }
+
+    @DisplayName("주문 취소시 주문의 user가 로그인한 유저와 다를경우 에러 발생")
+    @Test
+    void UserNotEqualOrderUserTest() {
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        Order order = Order.builder().user(seller).orderStatus(OrderStatus.ORDER).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(orderRepository.findById(any())).willReturn(Optional.of(order));
+
+        //then
+        assertThatThrownBy(() -> orderService.orderCancel(customer.getUserName(), order.getId())).isInstanceOf(ApplicationException.class);
+    }
+
+    @DisplayName("배송이 시작된 이후 주문 취소시 취소 불가")
+    @Test
+    void NotOrderStatus_CanNotCancel_Test() {
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        Order order = Order.builder().user(customer).orderStatus(OrderStatus.TAKE_BACK_COMPLETE).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(orderRepository.findById(any())).willReturn(Optional.of(order));
+
+        //then
+        assertThatThrownBy(() -> orderService.orderCancel(customer.getUserName(), order.getId())).isInstanceOf(ApplicationException.class)
+                .hasMessage("Orders that have been shipped cannot be canceled.");
     }
 
     private User sellerUser(Cart cart) {

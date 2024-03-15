@@ -1,6 +1,5 @@
 package com.project.onlinestore.order.service;
 
-import com.project.onlinestore.Item.entity.Item;
 import com.project.onlinestore.Item.repository.ItemRepository;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.exception.ErrorCode;
@@ -10,6 +9,7 @@ import com.project.onlinestore.order.Entity.enums.OrderStatus;
 import com.project.onlinestore.order.dto.OrderAddressDto;
 import com.project.onlinestore.order.dto.OrderItemDto;
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
+import com.project.onlinestore.order.dto.response.OrderCancelResponseDto;
 import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
@@ -109,8 +109,7 @@ public class OrderService {
     }
 
     public OrderDetailViewResponseDto orderDetailView(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() ->
-                new ApplicationException(ErrorCode.ORDER_NOT_FOUND, "를 찾을 수 없습니다."));
+        Order order = findOrder(orderId);
 
         List<OrderItem> orderItems = orderItemRepository.findAllByOrder_Id(order.getId());
 
@@ -126,16 +125,39 @@ public class OrderService {
         return new OrderDetailViewResponseDto(order.getOrderStatus(), order.getOrderDate(), orderItemDtoList, orderAddressDto, totalPrice);
     }
 
-    //TODO: orderCancel
+    public OrderCancelResponseDto orderCancel(String userName, Long orderId) {
+        User user = findUser(userName);
+        Order order = findOrder(orderId);
 
+        if (order.getUser() != user){
+            throw new ApplicationException(ErrorCode.INVALID_USER, null);
+        }
+        
+        if (order.getOrderStatus() != OrderStatus.ORDER){   // 배송 시작 전 단계에서만 cancel 가능
+            throw new ApplicationException(ErrorCode.CAN_NOT_CANCELED, null);
+        }
+
+        orderRepository.updateOrderStatusCancel(OrderStatus.CANCEL);
+
+        List<OrderItem> orderItems = order.getOrderItems();
+        for (OrderItem orderItem : orderItems) {
+            Integer count = orderItem.getCount();
+            itemRepository.itemCountAndQuantityUpdate(count * -1 , orderItem.getItem().getId());    // count는 내리고, quantity의 갯수는 올려줘야 하기 때문에 *-1
+        }
+
+        return new OrderCancelResponseDto(orderId, OrderStatus.CANCEL);
+    }
+
+    // TODO: orderTakeBack
     private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
                 new ApplicationException(ErrorCode.USERNAME_NOT_FOUND, userName + "를 찾을 수 없습니다."));
     }
 
-    private Item findItem(Long itemId) {
-        return itemRepository.findById(itemId).orElseThrow(() ->
-                new ApplicationException(ErrorCode.ITEM_ID_NOT_FOUND, itemId + "를 찾을 수 없습니다."));
+    private Order findOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() ->
+                new ApplicationException(ErrorCode.ORDER_NOT_FOUND, "를 찾을 수 없습니다."));
+        return order;
     }
 
     private Address findAddress(Long addressId) {

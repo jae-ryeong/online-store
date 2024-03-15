@@ -1,8 +1,7 @@
 package com.project.onlinestore.order.controller;
 
-import com.project.onlinestore.order.Entity.Order;
-import com.project.onlinestore.order.Entity.OrderItem;
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
+import com.project.onlinestore.order.dto.response.OrderCancelResponseDto;
 import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
@@ -45,4 +44,17 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(orderDetailView);
     }
+
+    @PostMapping("/list/{orderId}/cancel") // 주문 취소
+    public ResponseEntity<OrderCancelResponseDto> orderCompleted(Authentication authentication, @PathVariable("orderId") Long orderId) {
+        OrderCancelResponseDto orderCancelResponseDto = orderService.orderCancel(authentication.getName(), orderId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(orderCancelResponseDto);
+    }
+
+/*    @PostMapping("/list/{orderId}/completed") // 배송 확정
+    public ResponseEntity<?> orderCompleted(@PathVariable("orderId") Long orderId) {
+
+    }*/
 }
