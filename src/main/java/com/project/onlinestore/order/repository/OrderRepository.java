@@ -15,4 +15,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Order o set o.orderStatus = :cancel where o.id = :orderId")
     void updateOrderStatusCancel(@Param("cancel")OrderStatus cancel, @Param("orderId")Long orderId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update Order o set o.orderStatus = :takeBack where o.id = :orderId")
+    void updateOrderStatusTakeBack(@Param("takeBack")OrderStatus takeBack, @Param("orderId")Long orderId);
+
+
 }
