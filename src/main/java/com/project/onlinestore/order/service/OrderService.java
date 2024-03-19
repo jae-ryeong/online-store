@@ -9,7 +9,7 @@ import com.project.onlinestore.order.Entity.enums.OrderStatus;
 import com.project.onlinestore.order.dto.OrderAddressDto;
 import com.project.onlinestore.order.dto.OrderItemDto;
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
-import com.project.onlinestore.order.dto.response.OrderCancelResponseDto;
+import com.project.onlinestore.order.dto.OrderStatusDto;
 import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,7 +127,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderCancelResponseDto orderCancel(String userName, Long orderId) {
+    public OrderStatusDto orderCancel(String userName, Long orderId) {
         User user = findUser(userName);
         Order order = findOrder(orderId);
 
@@ -146,10 +147,26 @@ public class OrderService {
 
         orderRepository.updateOrderStatusCancel(OrderStatus.CANCEL, orderId);
 
-        return new OrderCancelResponseDto(orderId, OrderStatus.CANCEL);
+        return new OrderStatusDto(orderId, OrderStatus.CANCEL);
     }
 
-    // TODO: orderTakeBack
+    @Transactional
+    public OrderStatusDto orderTakeBack(String userName, Long orderId){
+        User user = findUser(userName);
+        Order order = findOrder(orderId);
+
+        if (order.getUser() != user){
+            throw new ApplicationException(ErrorCode.INVALID_USER, null);
+        }
+
+        if ( order.getOrderStatus() != OrderStatus.COMPLETE || !LocalDateTime.now().isBefore(order.getOrderDate().plusDays(15)) ) {   // 배송이 완료된 상품만 반품 신청 가능, 주문 후 15일 이내에만 반품 신청 가능
+            throw new ApplicationException(ErrorCode.CAN_NOT_TAKE_BACK, null);
+        }
+
+        orderRepository.updateOrderStatusTakeBack(OrderStatus.TAKE_BACK_APPLICATION, orderId);
+
+        return new OrderStatusDto(orderId, OrderStatus.TAKE_BACK_APPLICATION);
+    }
     private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
                 new ApplicationException(ErrorCode.USERNAME_NOT_FOUND, userName + "를 찾을 수 없습니다."));

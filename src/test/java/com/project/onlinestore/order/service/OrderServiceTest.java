@@ -7,7 +7,7 @@ import com.project.onlinestore.order.Entity.Order;
 import com.project.onlinestore.order.Entity.OrderItem;
 import com.project.onlinestore.order.Entity.enums.OrderStatus;
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
-import com.project.onlinestore.order.dto.response.OrderCancelResponseDto;
+import com.project.onlinestore.order.dto.OrderStatusDto;
 import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
@@ -28,6 +28,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -243,7 +244,7 @@ class OrderServiceTest {
         given(orderRepository.findById(customer.getId())).willReturn(Optional.of(order));
 
         //when
-        OrderCancelResponseDto result = orderService.orderCancel(customer.getUserName(), order.getId());
+        OrderStatusDto result = orderService.orderCancel(customer.getUserName(), order.getId());
 
         //then
         verify(orderRepository).updateOrderStatusCancel(any(), order.getId());
@@ -274,11 +275,8 @@ class OrderServiceTest {
     @Test
     void NotOrderStatus_CanNotCancel_Test() {
         //given
-        Cart cart1 = createCart();
-        User seller = sellerUser(cart1);
-
-        Cart cart2 = createCart();
-        User customer = customerUser(cart2);
+        Cart cart = createCart();
+        User customer = customerUser(cart);
 
         Order order = Order.builder().user(customer).orderStatus(OrderStatus.TAKE_BACK_COMPLETE).build();
 
@@ -288,6 +286,58 @@ class OrderServiceTest {
         //then
         assertThatThrownBy(() -> orderService.orderCancel(customer.getUserName(), order.getId())).isInstanceOf(ApplicationException.class)
                 .hasMessage("Orders that have been shipped cannot be canceled.");
+    }
+
+    @DisplayName("배송이 완료된 이후 반품 신청 정상 동작 테스트")
+    @Test
+    void orderTakeBackTest() {
+        //given
+        Cart cart = createCart();
+        User customer = customerUser(cart);
+
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now().minusDays(10)).orderStatus(OrderStatus.COMPLETE).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(orderRepository.findById(any())).willReturn(Optional.of(order));
+
+        //when
+        OrderStatusDto result = orderService.orderTakeBack(customer.getUserName(), order.getId());
+
+        //then
+        verify(orderRepository).updateOrderStatusTakeBack(OrderStatus.TAKE_BACK_APPLICATION, order.getId());
+        assertThat(result.orderStatus()).isEqualTo(OrderStatus.TAKE_BACK_APPLICATION);
+    }
+
+    @DisplayName("배송이 완료되지 않은 상품을 반품 신청시 에러 발생")
+    @Test
+    void notCompletedOrderTakeBackTest() {
+        //given
+        Cart cart = createCart();
+        User customer = customerUser(cart);
+
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now().minusDays(10)).orderStatus(OrderStatus.ORDER).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(orderRepository.findById(any())).willReturn(Optional.of(order));
+
+        //then
+        assertThatThrownBy(() -> orderService.orderTakeBack(customer.getUserName(), order.getId())).isInstanceOf(ApplicationException.class);
+    }
+
+    @DisplayName("주문하고 15일 이후 반품 신청시 에러 발생")
+    @Test
+    void DaysAfterOrderTakeBackTest() {
+        //given
+        Cart cart = createCart();
+        User customer = customerUser(cart);
+
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now().minusDays(17)).orderStatus(OrderStatus.COMPLETE).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(orderRepository.findById(any())).willReturn(Optional.of(order));
+
+        //then
+        assertThatThrownBy(() -> orderService.orderTakeBack(customer.getUserName(), order.getId())).isInstanceOf(ApplicationException.class);
     }
 
     private User sellerUser(Cart cart) {
