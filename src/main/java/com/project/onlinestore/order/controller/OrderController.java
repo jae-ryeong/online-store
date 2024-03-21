@@ -1,7 +1,7 @@
 package com.project.onlinestore.order.controller;
 
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
-import com.project.onlinestore.order.dto.response.OrderCancelResponseDto;
+import com.project.onlinestore.order.dto.OrderStatusDto;
 import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
@@ -45,15 +45,23 @@ public class OrderController {
                 .body(orderDetailView);
     }
 
-    @PostMapping("/list/{orderId}/cancel") // 주문 취소
-    public ResponseEntity<OrderCancelResponseDto> orderCompleted(Authentication authentication, @PathVariable("orderId") Long orderId) {
-        OrderCancelResponseDto orderCancelResponseDto = orderService.orderCancel(authentication.getName(), orderId);
+    @PutMapping("/list/{orderId}/cancel") // 주문 취소
+    public ResponseEntity<OrderStatusDto> orderCancel(Authentication authentication, @PathVariable("orderId") Long orderId) {
+        OrderStatusDto orderStatusDto = orderService.orderCancel(authentication.getName(), orderId);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(orderCancelResponseDto);
+                .body(orderStatusDto);
     }
 
-/*    @PostMapping("/list/{orderId}/completed") // 배송 확정
+    @PutMapping("/list/{orderId}/takeback") // 반품 신청
+    public ResponseEntity<OrderStatusDto> orderTakeBack(Authentication authentication, @PathVariable("orderId") Long orderId) {
+        OrderStatusDto orderStatusDto = orderService.orderTakeBack(authentication.getName(), orderId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(orderStatusDto);
+    }
+    //TODO: 반품 완료는 seller가 수락
+/*    @PutMapping("/list/{orderId}/completed") // 배송 확정
     public ResponseEntity<?> orderCompleted(@PathVariable("orderId") Long orderId) {
 
     }*/

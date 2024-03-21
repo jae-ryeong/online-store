@@ -12,6 +12,7 @@ import com.project.onlinestore.Item.repository.LikeRepository;
 import com.project.onlinestore.Item.repository.ReviewRepository;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.exception.ErrorCode;
+import com.project.onlinestore.order.repository.OrderRepository;
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class ReviewService {
     private final ItemRepository itemRepository;
     private final ReviewRepository reviewRepository;
     private final LikeRepository likeRepository;
+    private final OrderRepository orderRepository;
 
     public ReviewCreateResponseDto createReview(String userName, ReviewCreateRequestDto dto) {
         User user = findUser(userName);
@@ -37,7 +39,8 @@ public class ReviewService {
             throw new ApplicationException(ErrorCode.DUPLICATED_REVIEW, "이미 리뷰를 작성한 상품입니다.");
         }
 
-        // TODO: 차후 리뷰 등록은 구매한 유저만 가능하게 구현
+        // TODO: 차후 리뷰 등록은 구매한 유저만 가능하게 구현, 주문하고 30일 이내에만 가능
+
         reviewRepository.save(
                 Review.builder()
                         .item(item)
