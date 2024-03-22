@@ -51,6 +51,22 @@ class ItemRepositoryTest {
         assertThat(result.getQuantity()).isEqualTo(1003);
     }
 
+    @Test
+    public void itemSoldOutTest() throws Exception{
+        //given
+        User user = sellerUser();
+        userRepository.save(user);
+        Item item = Item.builder().itemName("item1").count(10L).price(10000).category(Category.BOOK).user(user).quantity(1000).soldOut(false).build();
+        itemRepository.save(item);
+
+        //when
+        itemRepository.itemSoldOut(item.getId());
+        Item result = itemRepository.findById(item.getId()).get();
+
+        //then
+        assertThat(result.isSoldOut()).isTrue();
+    }
+
     private User sellerUser() {
         User user = User.builder()
                 .userName("test")

@@ -10,4 +10,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Modifying//(clearAutomatically = true)
     @Query("update item i set i.count = i.count + :count, i.quantity = i.quantity - :count where i.id = :itemId")
     void itemCountAndQuantityUpdate(@Param("count")Integer count, @Param("itemId")Long itemId);
+
+    @Modifying//(clearAutomatically = true)
+    @Query("update item i set i.soldOut = true where i.id = :itemId")
+    void itemSoldOut(@Param("itemId")Long itemId);
 }
