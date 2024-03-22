@@ -47,7 +47,6 @@ public class ReviewController {
                 .body(reviewUpdateResponseDto);
     }
 
-    // TODO: 좋아요 많은 순서, 최신 순서 정렬
     @GetMapping("/view/{itemId}")
     public ResponseEntity<List<ReviewViewResponseDto>> reviewView(@PathVariable("itemId") Long itemId) {
         List<ReviewViewResponseDto> reviewViewResponseDto = reviewService.ViewReview(itemId);
