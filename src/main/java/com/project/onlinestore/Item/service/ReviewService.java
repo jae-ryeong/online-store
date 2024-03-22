@@ -12,6 +12,8 @@ import com.project.onlinestore.Item.repository.LikeRepository;
 import com.project.onlinestore.Item.repository.ReviewRepository;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.exception.ErrorCode;
+import com.project.onlinestore.order.Entity.Order;
+import com.project.onlinestore.order.repository.OrderItemRepository;
 import com.project.onlinestore.order.repository.OrderRepository;
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.repository.UserRepository;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +33,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final LikeRepository likeRepository;
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
     public ReviewCreateResponseDto createReview(String userName, ReviewCreateRequestDto dto) {
         User user = findUser(userName);
@@ -39,16 +43,23 @@ public class ReviewService {
             throw new ApplicationException(ErrorCode.DUPLICATED_REVIEW, "이미 리뷰를 작성한 상품입니다.");
         }
 
-        // TODO: 차후 리뷰 등록은 구매한 유저만 가능하게 구현, 주문하고 30일 이내에만 가능
+        List<Order> orderList = orderRepository.findAllByUser_Id(user.getId());
 
-        reviewRepository.save(
-                Review.builder()
-                        .item(item)
-                        .content(dto.content())
-                        .build()
-        );
-
-        return new ReviewCreateResponseDto(dto.itemId(), user.getId(), dto.content());
+        for (Order order : orderList) {
+            if (orderItemRepository.existsByOrderAndItem(order.getId(), item.getId())){ // 주문한 상품만 리뷰 등록 가능
+                if (order.getOrderDate().isBefore(LocalDateTime.now().minusDays(30))){  // 주문 하고 30일 이내에만 리뷰 작성 가능
+                    continue;
+                }
+                reviewRepository.save(
+                        Review.builder()
+                                .item(item)
+                                .content(dto.content())
+                                .build()
+                );
+                return new ReviewCreateResponseDto(dto.itemId(), user.getId(), dto.content());
+            }
+        }
+        throw new ApplicationException(ErrorCode.CAN_NOT_WRITE_REVIEW, null);
     }
 
     @Transactional

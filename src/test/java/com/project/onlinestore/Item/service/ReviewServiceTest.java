@@ -10,6 +10,10 @@ import com.project.onlinestore.Item.repository.ItemRepository;
 import com.project.onlinestore.Item.repository.LikeRepository;
 import com.project.onlinestore.Item.repository.ReviewRepository;
 import com.project.onlinestore.exception.ApplicationException;
+import com.project.onlinestore.order.Entity.Order;
+import com.project.onlinestore.order.Entity.enums.OrderStatus;
+import com.project.onlinestore.order.repository.OrderItemRepository;
+import com.project.onlinestore.order.repository.OrderRepository;
 import com.project.onlinestore.user.entity.Cart;
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.entity.enums.RoleType;
@@ -21,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +47,10 @@ class ReviewServiceTest {
     private ReviewRepository reviewRepository;
     @Mock
     private LikeRepository likeRepository;
+    @Mock
+    private OrderRepository orderRepository;
+    @Mock
+    private OrderItemRepository orderItemRepository;
 
     @InjectMocks
     private ReviewService reviewService;
@@ -57,9 +66,13 @@ class ReviewServiceTest {
         Cart cart2 = createCart();
         User customer = customerUser(cart2);
 
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).orderStatus(OrderStatus.COMPLETE).build();
+
         given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
         given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
         given(reviewRepository.existsByItemAndCreatedBy(any(),any())).willReturn(false);
+        given(orderRepository.findAllByUser_Id(any())).willReturn(List.of(order));
+        given(orderItemRepository.existsByOrderAndItem(any(), any())).willReturn(true);
 
         //when
         ReviewCreateResponseDto review = reviewService.createReview(customer.getUserName(), new ReviewCreateRequestDto(item.getId(), "리뷰"));
@@ -85,7 +98,56 @@ class ReviewServiceTest {
         given(reviewRepository.existsByItemAndCreatedBy(any(),any())).willReturn(true);
 
         //then
-        assertThatThrownBy(() -> reviewService.createReview(any(), new ReviewCreateRequestDto(item.getId(), "리뷰"))).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> reviewService.createReview(any(), new ReviewCreateRequestDto(item.getId(), "리뷰"))).isInstanceOf(ApplicationException.class)
+                .hasMessage("Review is duplicated, 이미 리뷰를 작성한 상품입니다.");
+    }
+
+    @DisplayName("구매하지 않은 상품에 리뷰를 작성할 시 에러 발생")
+    @Test
+    void createReview_NotExistsError_Test() {
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).orderStatus(OrderStatus.COMPLETE).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
+        given(reviewRepository.existsByItemAndCreatedBy(any(),any())).willReturn(false);
+        given(orderRepository.findAllByUser_Id(any())).willReturn(List.of(order));
+        given(orderItemRepository.existsByOrderAndItem(any(), any())).willReturn(false);
+
+        //then
+        assertThatThrownBy(() -> reviewService.createReview(customer.getUserName(), new ReviewCreateRequestDto(item.getId(), "리뷰"))).isInstanceOf(ApplicationException.class)
+                .hasMessage("Can't write a review");
+    }
+
+    @DisplayName("상품을 구매한지 30일 이후에 리뷰를 작성할 시 에러 발생")
+    @Test
+    void createReview_ExpireError_Test() {
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now().minusDays(30)).orderStatus(OrderStatus.COMPLETE).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
+        given(reviewRepository.existsByItemAndCreatedBy(any(),any())).willReturn(false);
+        given(orderRepository.findAllByUser_Id(any())).willReturn(List.of(order));
+        given(orderItemRepository.existsByOrderAndItem(any(), any())).willReturn(true);
+
+        //then
+        assertThatThrownBy(() -> reviewService.createReview(customer.getUserName(), new ReviewCreateRequestDto(item.getId(), "리뷰"))).isInstanceOf(ApplicationException.class)
+                .hasMessage("Can't write a review");
     }
 
     @DisplayName("리뷰 삭제")

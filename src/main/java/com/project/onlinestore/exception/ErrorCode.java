@@ -23,7 +23,8 @@ public enum ErrorCode {
     DIFFERENT_FROM_THE_PATTERN(HttpStatus.CONFLICT, "It's different from the pattern"),
     ADDRESS_NOT_FOUNT(HttpStatus.NOT_FOUND, "Address not found"),
     CAN_NOT_CANCELED(HttpStatus.FORBIDDEN, "Orders that have been shipped cannot be canceled."),
-    CAN_NOT_TAKE_BACK(HttpStatus.FORBIDDEN, "This order cannot be take back");
+    CAN_NOT_TAKE_BACK(HttpStatus.FORBIDDEN, "This order cannot be take back"),
+    CAN_NOT_WRITE_REVIEW(HttpStatus.CONFLICT, "Can't write a review");
 
     private HttpStatus status;
     private String errorMessage;
