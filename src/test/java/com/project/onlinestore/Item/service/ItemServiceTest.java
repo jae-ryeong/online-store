@@ -178,6 +178,23 @@ class ItemServiceTest {
         assertThatThrownBy(() -> itemService.deleteItem(any(), item.getId())).isInstanceOf(ApplicationException.class);
     }
 
+    @DisplayName("재고가 0이하인 제품의 isSoldOut을 True로 업데이트한다.")
+    @Test
+    public void itemSoldOutCheckTest() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
+
+        //when
+        itemService.itemSoldOutCheck(item.getId(), 100);
+
+        //then
+        verify(itemRepository).itemSoldOut(any());
+    }
+
     private User sellerUser(Cart cart) {
         return User.builder().userName("seller")
                 .password("1234")

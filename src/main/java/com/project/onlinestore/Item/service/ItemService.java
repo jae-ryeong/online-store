@@ -67,6 +67,16 @@ public class ItemService {
         likeRepository.deleteAllByItem_Id(itemId);
     }
 
+    @Transactional
+    public void itemSoldOutCheck(Long itemId, Integer itemCount) {
+        Item item = findItem(itemId);
+
+        if (item.getQuantity() - itemCount <= 0){
+            itemRepository.itemSoldOut(itemId);
+        }
+    }
+    // TODO: 아이템 재고 +, - (판매자가)
+
     public Page<ItemSearchResponseDto> findAllItem(Pageable pageable) {
         return itemRepository.findAll(pageable).map(ItemSearchResponseDto::fromEntity);
     }
