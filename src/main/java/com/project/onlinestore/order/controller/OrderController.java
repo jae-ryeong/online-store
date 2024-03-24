@@ -1,5 +1,6 @@
 package com.project.onlinestore.order.controller;
 
+import com.project.onlinestore.Item.service.ItemService;
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
 import com.project.onlinestore.order.dto.OrderStatusDto;
 import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
@@ -20,10 +21,12 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final ItemService itemService;
 
     @PostMapping("/checkout")
     public ResponseEntity<OrderResponseDto> orderCheckOut(Authentication authentication, @RequestBody OrderAddressRequestDto dto) {
         OrderResponseDto orderResponseDto = orderService.itemOrder(authentication.getName(), dto);
+        orderResponseDto.orderItemDtoList().forEach(orderItemDto -> itemService.itemSoldOutCheck(orderItemDto.itemId(), orderItemDto.orderItemCount()));   //주문 후 아이템 재고 체크 후 soldOut
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(orderResponseDto);
