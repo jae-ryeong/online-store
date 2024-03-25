@@ -24,7 +24,8 @@ public enum ErrorCode {
     ADDRESS_NOT_FOUNT(HttpStatus.NOT_FOUND, "Address not found"),
     CAN_NOT_CANCELED(HttpStatus.FORBIDDEN, "Orders that have been shipped cannot be canceled."),
     CAN_NOT_TAKE_BACK(HttpStatus.FORBIDDEN, "This order cannot be take back"),
-    CAN_NOT_WRITE_REVIEW(HttpStatus.CONFLICT, "Can't write a review");
+    CAN_NOT_WRITE_REVIEW(HttpStatus.CONFLICT, "Can't write a review"),
+    ORDER_ITEM_NOT_FOUNT_IN_ORDER(HttpStatus.NOT_FOUND, "I couldn't find the item in your order list");
 
     private HttpStatus status;
     private String errorMessage;
