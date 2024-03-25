@@ -66,7 +66,7 @@ class ReviewServiceTest {
         Cart cart2 = createCart();
         User customer = customerUser(cart2);
 
-        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).orderStatus(OrderStatus.COMPLETE).build();
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).build();
 
         given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
         given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
@@ -113,7 +113,7 @@ class ReviewServiceTest {
         Cart cart2 = createCart();
         User customer = customerUser(cart2);
 
-        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).orderStatus(OrderStatus.COMPLETE).build();
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).build();
 
         given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
         given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
@@ -137,7 +137,7 @@ class ReviewServiceTest {
         Cart cart2 = createCart();
         User customer = customerUser(cart2);
 
-        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now().minusDays(30)).orderStatus(OrderStatus.COMPLETE).build();
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now().minusDays(30)).build();
 
         given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
         given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
