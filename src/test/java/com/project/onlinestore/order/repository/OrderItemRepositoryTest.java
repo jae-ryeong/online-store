@@ -6,9 +6,7 @@ import com.project.onlinestore.Item.repository.ItemRepository;
 import com.project.onlinestore.order.Entity.Order;
 import com.project.onlinestore.order.Entity.OrderItem;
 import com.project.onlinestore.order.Entity.enums.OrderStatus;
-import com.project.onlinestore.user.entity.Address;
 import com.project.onlinestore.user.entity.Cart;
-import com.project.onlinestore.user.entity.ItemCart;
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.entity.enums.RoleType;
 import com.project.onlinestore.user.repository.CartRepository;
@@ -17,10 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class OrderItemRepositoryTest {
@@ -68,6 +63,35 @@ class OrderItemRepositoryTest {
 
         //then
         assertThat(result).isTrue();
+    }
+
+    @Test
+    void updateOrderStatusCancel() {
+        //given
+        Cart cart1 = createCart();
+        cartRepository.save(cart1);
+        User seller = sellerUser(cart1);
+        userRepository.save(seller);
+        Item item = createItem(seller);
+        itemRepository.save(item);
+
+        Cart cart2 = createCart();
+        cartRepository.save(cart2);
+        User customer = customerUser(cart2);
+        userRepository.save(customer);
+
+        Order order = Order.builder().user(customer).build();
+        orderRepository.save(order);
+
+        OrderItem orderItem = OrderItem.builder().item(item).count(1).orderPrice(10000).order(order).orderStatus(OrderStatus.ORDER).build();
+        orderItemRepository.save(orderItem);
+
+        //when
+        orderItemRepository.updateOrderStatus(OrderStatus.CANCEL, order.getId());
+
+        //then
+        OrderItem result = orderItemRepository.findById(orderItem.getId()).get();
+        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.CANCEL);
     }
 
     private User sellerUser(Cart cart) {
