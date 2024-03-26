@@ -2,7 +2,7 @@ package com.project.onlinestore.order.controller;
 
 import com.project.onlinestore.Item.service.ItemService;
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
-import com.project.onlinestore.order.dto.OrderStatusDto;
+import com.project.onlinestore.order.dto.OrderItemStatusDto;
 import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
@@ -49,19 +49,19 @@ public class OrderController {
     }
 
     @PutMapping("/list/{orderId}/cancel") // 주문 취소
-    public ResponseEntity<OrderStatusDto> orderCancel(Authentication authentication, @PathVariable("orderId") Long orderId) {
-        OrderStatusDto orderStatusDto = orderService.orderCancel(authentication.getName(), orderId);
+    public ResponseEntity<List<OrderItemStatusDto>> orderCancel(Authentication authentication, @PathVariable("orderId") Long orderId) {
+        List<OrderItemStatusDto> orderItemStatusDtoList = orderService.orderAllCancel(authentication.getName(), orderId);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(orderStatusDto);
+                .body(orderItemStatusDtoList);
     }
 
-    @PutMapping("/list/{orderId}/takeback") // 반품 신청
-    public ResponseEntity<OrderStatusDto> orderTakeBack(Authentication authentication, @PathVariable("orderId") Long orderId) {
-        OrderStatusDto orderStatusDto = orderService.orderTakeBack(authentication.getName(), orderId);
+    @PutMapping("/list/{orderId}/{orderItemId}/takeback") // 반품 신청
+    public ResponseEntity<OrderItemStatusDto> orderTakeBack(Authentication authentication, @PathVariable("orderId") Long orderId, @PathVariable("orderItemId")Long orderItemId) {
+        OrderItemStatusDto orderItemStatusDto = orderService.orderTakeBack(authentication.getName(), orderId, orderItemId);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(orderStatusDto);
+                .body(orderItemStatusDto);
     }
     //TODO: 반품 완료는 seller가 수락
 /*    @PutMapping("/list/{orderId}/completed") // 배송 확정
