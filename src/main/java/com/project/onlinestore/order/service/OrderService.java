@@ -174,13 +174,23 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderItemStatusDto takeBackCompleted(String userName, Long orderId) {
+    public OrderItemStatusDto takeBackCompleted(String userName, Long orderItemId) {    // 반품 확정 (판매자가)
         User seller = findUser(userName);
-        Order order = findOrder(orderId);
+        OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() ->
+                new ApplicationException(ErrorCode.ORDER_NOT_FOUND, null));
 
+        if (seller != orderItem.getItem().getUser()){
+            throw new ApplicationException(ErrorCode.INVALID_USER, null);
+        }
+        if(!orderItem.getOrderStatus().equals(OrderStatus.TAKE_BACK_APPLICATION)) { // 반품 신청하지 않은 상품을 반품완료 상태로 변경 시도시 에러
+            throw new ApplicationException(ErrorCode.NOT_TAKE_BACK_APPLICATION, null);
+        }
 
-        return new OrderItemStatusDto(orderId, null, OrderStatus.TAKE_BACK_COMPLETE);
+        orderItemRepository.updateOrderStatus(OrderStatus.TAKE_BACK_COMPLETE, orderItemId);
+
+        return new OrderItemStatusDto(orderItem.getOrder().getId(), orderItemId, OrderStatus.TAKE_BACK_COMPLETE);
     }
+
 
     private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->

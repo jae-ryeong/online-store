@@ -418,7 +418,7 @@ class OrderServiceTest {
 
     @DisplayName("반품이 완료될 경우 판매자가 반품 완료 상태로 변경")
     @Test
-    public void test() throws Exception{
+    public void takeBackCompletedTest() throws Exception{
         //given
         Cart cart1 = createCart();
         User seller = sellerUser(cart1);
@@ -427,18 +427,64 @@ class OrderServiceTest {
         Cart cart2 = createCart();
         User customer = customerUser(cart2);
 
-        OrderItem orderItem = OrderItem.builder().item(item).count(1).orderPrice(10000).orderStatus(OrderStatus.ORDER).build();
-
         Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).build();
 
+        OrderItem orderItem = OrderItem.builder().item(item).count(1).orderPrice(10000).orderStatus(OrderStatus.TAKE_BACK_APPLICATION).order(order).build();
+
         given(userRepository.findByUserName(seller.getUserName())).willReturn(Optional.of(seller));
-        given(orderRepository.findById(any())).willReturn(Optional.of(order));
+        given(orderItemRepository.findById(any())).willReturn(Optional.of(orderItem));
 
         //when
-        orderService.takeBackCompleted(seller.getUserName(), order.getId());
+        orderService.takeBackCompleted(seller.getUserName(), orderItem.getId());
 
         //then
         verify(orderItemRepository).updateOrderStatus(OrderStatus.TAKE_BACK_COMPLETE, orderItem.getId());
+    }
+
+    @DisplayName("판매자가 자신의 상품이 아닌 상품을 반품 완료 상태로 변경 시도시 에러 발생")
+    @Test
+    public void takeBackCompleted_NotEqualSeller_Test() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).build();
+
+        OrderItem orderItem = OrderItem.builder().item(item).count(1).orderPrice(10000).orderStatus(OrderStatus.TAKE_BACK_APPLICATION).order(order).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(orderItemRepository.findById(any())).willReturn(Optional.of(orderItem));
+
+        //then
+        assertThatThrownBy(() -> orderService.takeBackCompleted(customer.getUserName(), orderItem.getId())).isInstanceOf(ApplicationException.class)
+                .hasMessage("Not Authorized USER");
+    }
+
+    @DisplayName("반품을 요청하지 않은 상품의 상태 변경 시도시 에러 발생")
+    @Test
+    public void takeBackCompleted_StatusError_Test() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).build();
+
+        OrderItem orderItem = OrderItem.builder().item(item).count(1).orderPrice(10000).orderStatus(OrderStatus.ORDER).order(order).build();
+
+        given(userRepository.findByUserName(seller.getUserName())).willReturn(Optional.of(seller));
+        given(orderItemRepository.findById(any())).willReturn(Optional.of(orderItem));
+
+        //then
+        assertThatThrownBy(() -> orderService.takeBackCompleted(seller.getUserName(), orderItem.getId())).isInstanceOf(ApplicationException.class)
+                .hasMessage("This product has not been requested to be returned.");
     }
 
     private User sellerUser(Cart cart) {

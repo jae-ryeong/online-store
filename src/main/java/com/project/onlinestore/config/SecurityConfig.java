@@ -45,7 +45,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/*/item/**", "/api/*/like/*/*").authenticated()
                                 .requestMatchers("/api/*/review/*", "/api/*/review/*/*").authenticated()
                                 .requestMatchers("/api/*/order/*", "/api/*/order/*/*", "/api/*/order/*/*/*", "/api/*/order/*/*/*/*").authenticated()
-                        )
+                        )   // TODO: ROLE로 나눠보기
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtTokenFilter(key, userDetailsService), UsernamePasswordAuthenticationFilter.class)

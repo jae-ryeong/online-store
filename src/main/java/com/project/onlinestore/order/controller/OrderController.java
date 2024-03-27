@@ -63,9 +63,20 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(orderItemStatusDto);
     }
-    //TODO: 반품 완료는 seller가 수락
-/*    @PutMapping("/list/{orderId}/completed") // 배송 확정
-    public ResponseEntity<?> orderCompleted(@PathVariable("orderId") Long orderId) {
 
+    @PutMapping("/list/{orderItemId}/takeback/completed") // 반품 확정
+    public ResponseEntity<OrderItemStatusDto> orderTakeBackCompleted(Authentication authentication, @PathVariable("orderItemId")Long orderItemId) {
+        OrderItemStatusDto orderItemStatusDto = orderService.takeBackCompleted(authentication.getName(), orderItemId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(orderItemStatusDto);
+    }
+
+/*    @PutMapping("/list/{orderItemId}/completed") // 배송 확정
+    public ResponseEntity<OrderItemStatusDto> orderCompleted(Authentication authentication, @PathVariable("orderItemId")Long orderItemId) {
+        OrderItemStatusDto orderItemStatusDto = orderService.orderTakeBack(authentication.getName(), orderItemId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(orderItemStatusDto);
     }*/
 }
