@@ -1,7 +1,9 @@
 package com.project.onlinestore.Item.service;
 
 import com.project.onlinestore.Item.dto.request.RegistrationRequestDto;
+import com.project.onlinestore.Item.dto.request.itemQuantityRequestDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
+import com.project.onlinestore.Item.dto.response.itemQuantityResponseDto;
 import com.project.onlinestore.Item.entity.Item;
 import com.project.onlinestore.Item.entity.enums.Category;
 import com.project.onlinestore.Item.repository.ItemRepository;
@@ -176,6 +178,25 @@ class ItemServiceTest {
 
         //then
         assertThatThrownBy(() -> itemService.deleteItem(any(), item.getId())).isInstanceOf(ApplicationException.class);
+    }
+
+    @DisplayName("판매자가 상품의 재고 변경")
+    @Test
+    public void itemQuantityUpdateTest() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        given(userRepository.findByUserName(seller.getUserName())).willReturn(Optional.of(seller));
+        given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
+
+        //when
+        itemQuantityResponseDto result = itemService.itemQuantityUpdate(seller.getUserName(), item.getId(), new itemQuantityRequestDto(1));
+
+        //then
+        verify(itemRepository).itemQuantityUpdate(1, item.getId());
+        assertThat(result.resultQuantity()).isEqualTo(101);
     }
 
     @DisplayName("재고가 0이하인 제품의 isSoldOut을 True로 업데이트한다.")
