@@ -487,6 +487,77 @@ class OrderServiceTest {
                 .hasMessage("This product has not been requested to be returned.");
     }
 
+    @DisplayName("배송이 완료될 경우 구매자가 배송 완료 상태로 변경")
+    @Test
+    public void orderCompletedTest() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).build();
+
+        OrderItem orderItem = OrderItem.builder().item(item).count(1).orderPrice(10000).orderStatus(OrderStatus.ORDER).order(order).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(orderItemRepository.findById(any())).willReturn(Optional.of(orderItem));
+
+        //when
+        orderService.orderCompleted(customer.getUserName(), orderItem.getId());
+
+        //then
+        verify(orderItemRepository).updateOrderStatus(OrderStatus.COMPLETE, orderItem.getId());
+    }
+
+    @DisplayName("구매자가 자신의 상품이 아닌 상품을 배송 완료 상태로 변경 시도시 에러 발생")
+    @Test
+    public void orderCompleted_NotEqualCustomer_Test() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).build();
+
+        OrderItem orderItem = OrderItem.builder().item(item).count(1).orderPrice(10000).orderStatus(OrderStatus.ORDER).order(order).build();
+
+        given(userRepository.findByUserName(seller.getUserName())).willReturn(Optional.of(seller));
+        given(orderItemRepository.findById(any())).willReturn(Optional.of(orderItem));
+
+        //then
+        assertThatThrownBy(() -> orderService.orderCompleted(seller.getUserName(), orderItem.getId())).isInstanceOf(ApplicationException.class)
+                .hasMessage("Not Authorized USER");
+    }
+
+    @DisplayName("order 배송 상태를 제외한 배송 상태일 때 상품의 상태 변경 시도시 에러 발생")
+    @Test
+    public void orderCompleted_StatusError_Test() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        Order order = Order.builder().user(customer).orderDate(LocalDateTime.now()).build();
+
+        OrderItem orderItem = OrderItem.builder().item(item).count(1).orderPrice(10000).orderStatus(OrderStatus.TAKE_BACK_APPLICATION).order(order).build();
+
+        given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
+        given(orderItemRepository.findById(any())).willReturn(Optional.of(orderItem));
+
+        //then
+        assertThatThrownBy(() -> orderService.orderCompleted(customer.getUserName(), orderItem.getId())).isInstanceOf(ApplicationException.class)
+                .hasMessage("Order status is not Order");
+    }
+    
     private User sellerUser(Cart cart) {
         return User.builder().userName("seller")
                 .password("1234")
