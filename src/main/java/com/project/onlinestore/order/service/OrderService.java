@@ -176,8 +176,7 @@ public class OrderService {
     @Transactional
     public OrderItemStatusDto takeBackCompleted(String userName, Long orderItemId) {    // 반품 확정 (판매자가)
         User seller = findUser(userName);
-        OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() ->
-                new ApplicationException(ErrorCode.ORDER_NOT_FOUND, null));
+        OrderItem orderItem = findOrderItem(orderItemId);
 
         if (seller != orderItem.getItem().getUser()){
             throw new ApplicationException(ErrorCode.INVALID_USER, null);
@@ -189,6 +188,23 @@ public class OrderService {
         orderItemRepository.updateOrderStatus(OrderStatus.TAKE_BACK_COMPLETE, orderItemId);
 
         return new OrderItemStatusDto(orderItem.getOrder().getId(), orderItemId, OrderStatus.TAKE_BACK_COMPLETE);
+    }
+
+    @Transactional
+    public OrderItemStatusDto orderCompleted(String userName, Long orderItemId) {    // 구매 확정 (구매자가)
+        User customer = findUser(userName);
+        OrderItem orderItem = findOrderItem(orderItemId);
+
+        if (customer != orderItem.getOrder().getUser()){
+            throw new ApplicationException(ErrorCode.INVALID_USER, null);
+        }
+        if(!orderItem.getOrderStatus().equals(OrderStatus.ORDER)) { // Order상태가 아닌 상품을 구매 확정 상태로 변경 시도시 에러
+            throw new ApplicationException(ErrorCode.NOT_ORDER_STATUS, null);
+        }
+
+        orderItemRepository.updateOrderStatus(OrderStatus.COMPLETE, orderItemId);
+
+        return new OrderItemStatusDto(orderItem.getOrder().getId(), orderItemId, OrderStatus.COMPLETE);
     }
 
 

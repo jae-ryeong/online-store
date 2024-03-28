@@ -72,11 +72,11 @@ public class OrderController {
                 .body(orderItemStatusDto);
     }
 
-/*    @PutMapping("/list/{orderItemId}/completed") // 배송 확정
+    @PutMapping("/list/{orderItemId}/completed") // 배송 확정
     public ResponseEntity<OrderItemStatusDto> orderCompleted(Authentication authentication, @PathVariable("orderItemId")Long orderItemId) {
-        OrderItemStatusDto orderItemStatusDto = orderService.orderTakeBack(authentication.getName(), orderItemId);
+        OrderItemStatusDto orderItemStatusDto = orderService.orderCompleted(authentication.getName(), orderItemId);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(orderItemStatusDto);
-    }*/
+    }
 }
