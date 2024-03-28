@@ -1,6 +1,7 @@
 package com.project.onlinestore.order.Entity;
 
 import com.project.onlinestore.Item.entity.Item;
+import com.project.onlinestore.order.Entity.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,9 @@ public class OrderItem {
 
     @Column(name = "order_item_count")
     private Integer count; // 상품의 수량 ( 몇 개 살 것 인지 )
+    
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     private Integer orderPrice;
 }
