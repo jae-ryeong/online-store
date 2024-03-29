@@ -11,7 +11,6 @@ import com.project.onlinestore.Item.repository.LikeRepository;
 import com.project.onlinestore.Item.repository.ReviewRepository;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.user.entity.Cart;
-import com.project.onlinestore.user.entity.ItemCart;
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.entity.enums.RoleType;
 import com.project.onlinestore.user.repository.ItemCartRepository;
@@ -26,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -180,6 +178,23 @@ class ItemServiceTest {
         assertThatThrownBy(() -> itemService.deleteItem(any(), item.getId())).isInstanceOf(ApplicationException.class);
     }
 
+    @DisplayName("재고가 0이하인 제품의 isSoldOut을 True로 업데이트한다.")
+    @Test
+    public void itemSoldOutCheckTest() throws Exception{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller);
+
+        given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
+
+        //when
+        itemService.itemSoldOutCheck(item.getId(), 100);
+
+        //then
+        verify(itemRepository).itemSoldOutTrue(any());
+    }
+
     @DisplayName("판매자가 상품의 재고 변경")
     @Test
     public void itemQuantityUpdateTest() throws Exception{
@@ -199,21 +214,24 @@ class ItemServiceTest {
         assertThat(result.resultQuantity()).isEqualTo(101);
     }
 
-    @DisplayName("재고가 0이하인 제품의 isSoldOut을 True로 업데이트한다.")
+    @DisplayName("상품의 재고 변경시 soldOut도 변경")
     @Test
-    public void itemSoldOutCheckTest() throws Exception{
+    public void itemQuantityUpdateSoldOutTest() throws Exception{
         //given
         Cart cart1 = createCart();
         User seller = sellerUser(cart1);
         Item item = createItem(seller);
 
+        given(userRepository.findByUserName(seller.getUserName())).willReturn(Optional.of(seller));
         given(itemRepository.findById(item.getId())).willReturn(Optional.of(item));
 
         //when
-        itemService.itemSoldOutCheck(item.getId(), 100);
+        itemQuantityResponseDto result = itemService.itemQuantityUpdate(seller.getUserName(), item.getId(), new itemQuantityRequestDto(-100));
 
         //then
-        verify(itemRepository).itemSoldOut(any());
+        verify(itemRepository).itemSoldOutTrue(item.getId());
+        verify(itemRepository).itemQuantityUpdate(-100, item.getId());
+        assertThat(result.resultQuantity()).isEqualTo(0);
     }
 
     private User sellerUser(Cart cart) {

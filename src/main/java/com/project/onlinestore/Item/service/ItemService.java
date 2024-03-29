@@ -74,7 +74,7 @@ public class ItemService {
         Item item = findItem(itemId);
 
         if (item.getQuantity() - itemCount <= 0){
-            itemRepository.itemSoldOut(itemId);
+            itemRepository.itemSoldOutTrue(itemId);
         }
     }
 
@@ -87,9 +87,23 @@ public class ItemService {
             throw new ApplicationException(ErrorCode.INVALID_USER, null);
         }
 
+        int resultQuantity = item.getQuantity() + dto.quantity();
+
+        if (resultQuantity < 0) {
+            throw new ApplicationException(ErrorCode.QUANTITY_OUT_OF_RANGE, "재고는 0보다 작을 수 없습니다.");
+        }
+
+        // 재고 갯수를 파악해 soldOut 체크
+        if (item.isSoldOut() == true && resultQuantity > 0){
+            itemRepository.itemSoldOutFalse(itemId);
+        }
+        if (item.isSoldOut() == false && resultQuantity == 0){
+            itemRepository.itemSoldOutTrue(itemId);
+        }
+
         itemRepository.itemQuantityUpdate(dto.quantity(), itemId);
 
-        return new itemQuantityResponseDto(seller.getStoreName(), itemId, dto.quantity(), item.getQuantity() + dto.quantity());
+        return new itemQuantityResponseDto(seller.getStoreName(), itemId, dto.quantity(), resultQuantity);
     }
 
     public Page<ItemSearchResponseDto> findAllItem(Pageable pageable) {
