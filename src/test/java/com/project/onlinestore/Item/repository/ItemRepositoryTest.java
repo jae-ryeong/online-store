@@ -60,7 +60,7 @@ class ItemRepositoryTest {
         itemRepository.save(item);
 
         //when
-        itemRepository.itemSoldOut(item.getId());
+        itemRepository.itemSoldOutTrue(item.getId());
         Item result = itemRepository.findById(item.getId()).get();
 
         //then
