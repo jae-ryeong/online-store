@@ -2,8 +2,10 @@ package com.project.onlinestore.Item.controller;
 
 import com.project.onlinestore.Item.dto.request.DeleteItemRequestDto;
 import com.project.onlinestore.Item.dto.request.RegistrationRequestDto;
+import com.project.onlinestore.Item.dto.request.itemQuantityRequestDto;
 import com.project.onlinestore.Item.dto.response.ItemSearchResponseDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
+import com.project.onlinestore.Item.dto.response.itemQuantityResponseDto;
 import com.project.onlinestore.Item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -44,5 +46,13 @@ public class ItemController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(allItem);
+    }
+
+    @PutMapping("/{itemId}/quantityupdate")
+    public ResponseEntity<itemQuantityResponseDto> quantityUpdate(Authentication authentication, @PathVariable("itemId") Long itemId, @RequestBody itemQuantityRequestDto dto) {
+        itemQuantityResponseDto itemQuantityResponseDto = itemService.itemQuantityUpdate(authentication.getName(), itemId, dto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(itemQuantityResponseDto);
     }
 }

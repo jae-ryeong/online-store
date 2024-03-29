@@ -1,8 +1,10 @@
 package com.project.onlinestore.Item.service;
 
 import com.project.onlinestore.Item.dto.request.RegistrationRequestDto;
+import com.project.onlinestore.Item.dto.request.itemQuantityRequestDto;
 import com.project.onlinestore.Item.dto.response.ItemSearchResponseDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
+import com.project.onlinestore.Item.dto.response.itemQuantityResponseDto;
 import com.project.onlinestore.Item.entity.Item;
 import com.project.onlinestore.Item.repository.ItemRepository;
 import com.project.onlinestore.Item.repository.LikeRepository;
@@ -75,7 +77,20 @@ public class ItemService {
             itemRepository.itemSoldOut(itemId);
         }
     }
-    // TODO: 아이템 재고 +, - (판매자가)
+
+    @Transactional
+    public itemQuantityResponseDto itemQuantityUpdate(String userName, Long itemId, itemQuantityRequestDto dto) {
+        User seller = findUser(userName);
+        Item item = findItem(itemId);
+
+        if (seller.getRoleType() != RoleType.SELLER || item.getUser() != seller){
+            throw new ApplicationException(ErrorCode.INVALID_USER, null);
+        }
+
+        itemRepository.itemQuantityUpdate(dto.quantity(), itemId);
+
+        return new itemQuantityResponseDto(seller.getStoreName(), itemId, dto.quantity(), item.getQuantity() + dto.quantity());
+    }
 
     public Page<ItemSearchResponseDto> findAllItem(Pageable pageable) {
         return itemRepository.findAll(pageable).map(ItemSearchResponseDto::fromEntity);
