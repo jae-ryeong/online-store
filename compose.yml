@@ -14,3 +14,10 @@ services:
     restart: always
     volumes:
       - ./database/init:/docker-entrypoint-initdb.d
+
+  redis:
+    image: 'redis:latest'
+    container_name: 'online-store-redis'
+    ports:
+      - '6379:6379'
+  # redis insight 추후 설치

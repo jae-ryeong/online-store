@@ -15,7 +15,13 @@ spring:
         show_sql: true
         dialect: org.hibernate.dialect.MariaDBDialect
 
+  data:
+    redis:
+      port: 6379
+      host: localhost
+
 
 jwt:
   secret-key: secret-key_secret-key_secret-key_secret-key.secret-key
-  expired-time-ms: 3600000  # 1hour
+  access-expired-time-ms: 3600000  # 1hour
+  refresh-expiration-time: 3600000 * 24 # 1day
