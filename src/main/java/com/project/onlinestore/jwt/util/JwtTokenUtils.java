@@ -6,11 +6,13 @@ import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -20,7 +22,11 @@ public class JwtTokenUtils {
     @Value("${jwt.secret-key}")
     private String key;
     @Value("${jwt.access-expired-time-ms}")
-    private Long expireTime;
+    private Long accessExpireTime;
+    @Value("${jwt.refresh-expiration-time}")
+    private Long refreshExpireTime;
+
+    private final RedisTemplate<String, String> redisTemplate;
 
     public String generateToken(String userName) {
         Claims claims = Jwts.claims();
@@ -30,9 +36,33 @@ public class JwtTokenUtils {
                 .setSubject(userName)
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expireTime))
+                .setExpiration(new Date(System.currentTimeMillis() + accessExpireTime))
                 .signWith(getKey(key), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String generateRefreshToken(String userName) {
+        Claims claims = Jwts.claims();
+        claims.put("userName", userName);
+
+        Date now = new Date();
+
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + refreshExpireTime))
+                .signWith(getKey(key), SignatureAlgorithm.HS256)
+                .compact();
+
+        // redis에 저장
+        redisTemplate.opsForValue().set(
+                userName,
+                refreshToken,
+                refreshExpireTime,  // key에 대한 만료 타임아웃
+                TimeUnit.MILLISECONDS
+        );
+
+        return refreshToken;
     }
 
     // 토근의 유효성 검증 수행
