@@ -72,11 +72,13 @@ public class UserService {
             throw new ApplicationException(ErrorCode.INVALID_PASSWORD, password + ", 패스워드가 일치하지 않습니다.");
         }
 
-        String token = jwtTokenUtils.generateToken(userName);
+        String accessToken = jwtTokenUtils.generateToken(userName);
+        String refreshToken = jwtTokenUtils.generateRefreshToken(userName);
 
         return LoginResponseDto.builder()
                 .userName(user.getUserName())
-                .token(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 

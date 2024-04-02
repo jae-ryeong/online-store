@@ -43,7 +43,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            // get username from token
+            // get username from accessToken
             String userName = JwtTokenUtils.getUserName(token, key);
 
             // user valid check
