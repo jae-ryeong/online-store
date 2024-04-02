@@ -24,4 +24,4 @@ spring:
 jwt:
   secret-key: secret-key_secret-key_secret-key_secret-key.secret-key
   access-expired-time-ms: 3600000  # 1hour
-  refresh-expiration-time: 3600000 * 24 # 1day
+  refresh-expiration-time: 86400000 # 1day
