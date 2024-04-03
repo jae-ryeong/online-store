@@ -28,6 +28,15 @@ public class JwtTokenUtils {
 
     private final RedisTemplate<String, String> redisTemplate;
 
+    /*
+    1. 로그인을 하면 Access Token 과 Refresh Token을 발급해준다. ( Refresh 토큰은 레디스에 저장)
+    2. 클라이언트는 API를 호출할 때마다 발급받은 Access Token을 활용하여 요청을 한다.
+    3. 토큰을 사용하던 중, 만료되어 Invalid Token Error가 발생한다면 header에서 Refresh Token을 추출 후 레디스의 Refresh Token과 비교하여 Refresh 토큰이 유효하다면, Access Token을 다시 발급해준다.
+    4. Redis에 Refresh Token과 짝을 이루는 Access Token을 새로 발급한 토큰으로 업데이트한다.
+    5. 만약, Refresh Token도 만료되었다면, 다시 로그인을 하도록 요청한다.
+    6.  만약 사용자가 로그아웃을 하면, refresh token을 삭제하고 사용이 불가하도록 한다.
+    */
+
     public String generateToken(String userName) {
         Claims claims = Jwts.claims();
         claims.put("userName", userName);

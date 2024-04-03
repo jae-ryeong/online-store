@@ -13,6 +13,8 @@ import com.project.onlinestore.user.repository.CartRepository;
 import com.project.onlinestore.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,11 @@ public class UserService {
 
     private final JwtTokenUtils jwtTokenUtils;
     private final BCryptPasswordEncoder encoder;
+
+    @Value("${jwt.secret-key}")
+    private String key;
+
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public void customerJoin(CustomerRequestDto dto) {
@@ -82,5 +89,20 @@ public class UserService {
                 .build();
     }
 
+    public LoginResponseDto checkRefreshAndReIssueAccess(String refreshToken) {
+        // refreshToken 검증
+        JwtTokenUtils.validationToken(refreshToken, key);
 
+        String userName = JwtTokenUtils.getUserName(refreshToken, key);
+
+        String redisRefreshToken = redisTemplate.opsForValue().get(userName);
+        if(!redisRefreshToken.equals(refreshToken)){    // refreshToken 값 비교 후 다르면 에러 발생
+            throw new ApplicationException(ErrorCode.NOT_FOUNT_REFRESH_TOKEN, null);
+        }
+
+        // 토큰 재발행
+        String accessToken = jwtTokenUtils.generateToken(userName);
+
+        return new LoginResponseDto(userName, accessToken, refreshToken);
+    }
 }
