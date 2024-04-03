@@ -39,8 +39,6 @@ public class OrderService {
     private final ItemCartRepository itemCartRepository;
     private final AddressRepository addressRepository;
 
-    // TODO: 서비스코드 (취소하기, 재고 없으면 soldout만들기 등등
-
     //장바구니에 상품들을 담아놓는다 -> 주문할 상품들을 check -> 주문버튼
     @Transactional
     public OrderResponseDto itemOrder(String userName, OrderAddressRequestDto dto) {
