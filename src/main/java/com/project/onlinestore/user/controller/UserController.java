@@ -48,6 +48,14 @@ public class UserController {
                 .body(responseDto);
     }
 
+    @PostMapping("/token/refresh")
+    public ResponseEntity<LoginResponseDto> reIssuedAccessToken(@RequestHeader(value = "REFRESH_TOKEN") String refreshToken) {
+        LoginResponseDto loginResponseDto = userService.checkRefreshAndReIssueAccess(refreshToken);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(loginResponseDto);
+    }
+
     @PostMapping("/cart/add")
     public ResponseEntity<AddCartResponseDto> addCart(@RequestBody AddCartRequestDto dto, Authentication authentication) {
         AddCartResponseDto addCartResponseDto = cartService.addCart(authentication.getName(), dto.itemId());
