@@ -48,6 +48,14 @@ public class UserController {
                 .body(responseDto);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String accessToken) {
+        userService.logout(accessToken.split(" ")[1]);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("로그아웃 되었습니다.");
+    }
+
     @PostMapping("/token/refresh")
     public ResponseEntity<LoginResponseDto> reIssuedAccessToken(@RequestHeader(value = "REFRESH_TOKEN") String refreshToken) {
         LoginResponseDto loginResponseDto = userService.checkRefreshAndReIssueAccess(refreshToken);

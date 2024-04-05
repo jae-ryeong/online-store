@@ -41,7 +41,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/*/user/*/join", "/api/*/user/login", "/api/*/user/token/refresh").permitAll()
                                 .requestMatchers( "/api/*/item/search", "/api/*/item/detail/*").permitAll()
                                 .requestMatchers("/api/*/review/view/*").permitAll()
-                                .requestMatchers("/api/*/user/cart/*", "/api/*/user/cart/*/*", "/api/*/user/cart/*/*/*", "/api/*/user/setting/*", "/api/*/user/setting/*/*", "/api/*/user/setting/*/*/*").authenticated()
+                                .requestMatchers("/api/*/user/logout", "/api/*/user/cart/*", "/api/*/user/cart/*/*", "/api/*/user/cart/*/*/*", "/api/*/user/setting/*", "/api/*/user/setting/*/*", "/api/*/user/setting/*/*/*").authenticated()
                                 .requestMatchers("/api/*/item/**", "/api/*/like/*/*").authenticated()
                                 .requestMatchers("/api/*/review/*", "/api/*/review/*/*").authenticated()
                                 .requestMatchers("/api/*/order/*", "/api/*/order/*/*", "/api/*/order/*/*/*", "/api/*/order/*/*/*/*").authenticated()
