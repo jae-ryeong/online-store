@@ -1,14 +1,14 @@
 package com.project.onlinestore.user.service;
 
+import com.project.onlinestore.exception.ApplicationException;
+import com.project.onlinestore.exception.ErrorCode;
+import com.project.onlinestore.jwt.util.JwtTokenUtils;
 import com.project.onlinestore.user.dto.request.CustomerRequestDto;
 import com.project.onlinestore.user.dto.request.SellerRequestDto;
 import com.project.onlinestore.user.dto.response.LoginResponseDto;
 import com.project.onlinestore.user.entity.Cart;
 import com.project.onlinestore.user.entity.User;
 import com.project.onlinestore.user.entity.enums.RoleType;
-import com.project.onlinestore.exception.ApplicationException;
-import com.project.onlinestore.exception.ErrorCode;
-import com.project.onlinestore.jwt.util.JwtTokenUtils;
 import com.project.onlinestore.user.repository.CartRepository;
 import com.project.onlinestore.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +18,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -104,5 +106,28 @@ public class UserService {
         String accessToken = jwtTokenUtils.generateToken(userName);
 
         return new LoginResponseDto(userName, accessToken, refreshToken);
+    }
+
+    public void logout(String accessToken) {
+        JwtTokenUtils.validationToken(accessToken, key);
+        String userName = JwtTokenUtils.getUserName(accessToken, key);
+
+        if (redisTemplate.opsForValue().get(userName) != null) {
+            // Refresh Token 삭제
+            redisTemplate.delete(userName);
+        } else {
+            throw new ApplicationException(ErrorCode.INVALID_USER, "이미 로그아웃한 유저입니다.");
+        }
+
+        // Access Token의 유효시간을 가지고 와서 BlackList에 저장
+        Long expiration = jwtTokenUtils.getExpiration(accessToken);
+        System.out.println("expiration = " + expiration);
+
+        redisTemplate.opsForValue().set(
+                accessToken
+                , "logout"
+                , expiration
+                , TimeUnit.MILLISECONDS
+        );
     }
 }

@@ -98,6 +98,19 @@ public class JwtTokenUtils {
         return extractClaims(token, key).get("userName", String.class);
     }
 
+    public Long getExpiration(String accessToken) {
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(getKey(key))
+                .build()
+                .parseClaimsJws(accessToken)
+                .getBody()
+                .getExpiration();
+
+        long now = new Date().getTime();
+
+        return (expiration.getTime() - now);
+    }
+
     private static Key getKey(String key) {
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
