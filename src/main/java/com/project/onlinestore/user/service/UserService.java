@@ -35,8 +35,6 @@ public class UserService {
     @Value("${jwt.secret-key}")
     private String key;
 
-    private final RedisTemplate<String, String> redisTemplate;
-
     @Transactional
     public void customerJoin(CustomerRequestDto dto) {
         userRepository.findByUserName(dto.userName()).ifPresent(user -> {
@@ -93,11 +91,11 @@ public class UserService {
 
     public LoginResponseDto checkRefreshAndReIssueAccess(String refreshToken) {
         // refreshToken 검증
-        JwtTokenUtils.validationToken(refreshToken, key);
+        jwtTokenUtils.validationToken(refreshToken, key);
 
-        String userName = JwtTokenUtils.getUserName(refreshToken, key);
+        String userName = jwtTokenUtils.getUserName(refreshToken, key);
 
-        String redisRefreshToken = redisTemplate.opsForValue().get(userName);
+        String redisRefreshToken = jwtTokenUtils.getRedisRefreshToken(userName);
         if(!redisRefreshToken.equals(refreshToken)){    // refreshToken 값 비교 후 다르면 에러 발생
             throw new ApplicationException(ErrorCode.NOT_FOUNT_REFRESH_TOKEN, null);
         }
@@ -109,25 +107,20 @@ public class UserService {
     }
 
     public void logout(String accessToken) {
-        JwtTokenUtils.validationToken(accessToken, key);
-        String userName = JwtTokenUtils.getUserName(accessToken, key);
+        jwtTokenUtils.validationToken(accessToken, key);
+        String userName = jwtTokenUtils.getUserName(accessToken, key);
 
-        if (redisTemplate.opsForValue().get(userName) != null) {
+        // Redis에 refresh Token이 존재한다면
+        if (jwtTokenUtils.getRedisRefreshToken(userName) != null) {
             // Refresh Token 삭제
-            redisTemplate.delete(userName);
+            jwtTokenUtils.deleteRefreshToken(userName);
         } else {
             throw new ApplicationException(ErrorCode.INVALID_USER, "이미 로그아웃한 유저입니다.");
         }
 
         // Access Token의 유효시간을 가지고 와서 BlackList에 저장
         Long expiration = jwtTokenUtils.getExpiration(accessToken);
-        System.out.println("expiration = " + expiration);
 
-        redisTemplate.opsForValue().set(
-                accessToken
-                , "logout"
-                , expiration
-                , TimeUnit.MILLISECONDS
-        );
+        jwtTokenUtils.accessTokenBlackList(accessToken, expiration);
     }
 }

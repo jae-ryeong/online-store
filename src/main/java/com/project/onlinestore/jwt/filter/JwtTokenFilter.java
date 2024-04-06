@@ -23,6 +23,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final String key;
     private final UserDetailsServiceImpl userService;
+    private final JwtTokenUtils jwtTokenUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,13 +39,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         try {
             final String token = header.split(" ")[1].trim();   // trim 양쪽 공백 제거
 
-            if (!JwtTokenUtils.validationToken(token, key)){
+            if (!jwtTokenUtils.validationToken(token, key)){
                 log.error("[validationToken Error]");
                 filterChain.doFilter(request, response);
                 return;
             }
             // get username from accessToken
-            String userName = JwtTokenUtils.getUserName(token, key);
+            String userName = jwtTokenUtils.getUserName(token, key);
 
             // user valid check
             UserDetails user = userService.loadUserByUsername(userName);

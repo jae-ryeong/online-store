@@ -75,7 +75,7 @@ public class JwtTokenUtils {
     }
 
     // 토근의 유효성 검증 수행
-    public static boolean validationToken(String token, String key) {
+    public boolean validationToken(String token, String key) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(getKey(key))
@@ -94,7 +94,7 @@ public class JwtTokenUtils {
         return false;
     }
 
-    public static String getUserName(String token, String key) {
+    public String getUserName(String token, String key) {
         return extractClaims(token, key).get("userName", String.class);
     }
 
@@ -111,12 +111,29 @@ public class JwtTokenUtils {
         return (expiration.getTime() - now);
     }
 
-    private static Key getKey(String key) {
+    public void accessTokenBlackList(String accessToken, Long expiration){
+        redisTemplate.opsForValue().set(
+                accessToken
+                , "logout"
+                , expiration
+                , TimeUnit.MILLISECONDS
+        );
+    }
+
+    public String getRedisRefreshToken(String userName) {
+        return redisTemplate.opsForValue().get(userName);
+    }
+
+    public void deleteRefreshToken(String userName){
+        redisTemplate.delete(userName);
+    }
+
+    private Key getKey(String key) {
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private static Claims extractClaims(String token, String key) {
+    private Claims extractClaims(String token, String key) {
         return Jwts.parserBuilder().setSigningKey(getKey(key))
                 .build().parseClaimsJws(token).getBody();
     }
