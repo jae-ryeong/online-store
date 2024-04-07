@@ -28,7 +28,8 @@ public enum ErrorCode {
     ORDER_ITEM_NOT_FOUNT_IN_ORDER(HttpStatus.NOT_FOUND, "I couldn't find the item in your order list"),
     NOT_TAKE_BACK_APPLICATION(HttpStatus.CONFLICT, "This product has not been requested to be returned."),
     NOT_ORDER_STATUS(HttpStatus.CONFLICT, "Order status is not Order"),
-    NOT_FOUNT_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "Refresh token not found");
+    NOT_FOUNT_REFRESH_TOKEN(HttpStatus.NOT_FOUND, "Refresh token not found"),
+    ACCESS_TOKEN_IN_BLACKLIST(HttpStatus.CONFLICT, "Access Token in blacklist");
 
     private HttpStatus status;
     private String errorMessage;
