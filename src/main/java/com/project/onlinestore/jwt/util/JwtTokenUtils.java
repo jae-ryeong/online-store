@@ -1,5 +1,7 @@
 package com.project.onlinestore.jwt.util;
 
+import com.project.onlinestore.exception.ApplicationException;
+import com.project.onlinestore.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
@@ -136,5 +138,12 @@ public class JwtTokenUtils {
     private Claims extractClaims(String token, String key) {
         return Jwts.parserBuilder().setSigningKey(getKey(key))
                 .build().parseClaimsJws(token).getBody();
+    }
+
+    private void validBlackToken(String accessToken) {
+        // Redis 블랙리스트에 올라온 accessToken인지 검증
+        if(!redisTemplate.opsForValue().get(accessToken).isEmpty()){
+            throw new ApplicationException(ErrorCode.ACCESS_TOKEN_IN_BLACKLIST, null);
+        }
     }
 }

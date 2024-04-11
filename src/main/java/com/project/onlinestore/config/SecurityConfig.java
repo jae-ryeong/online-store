@@ -3,6 +3,7 @@ package com.project.onlinestore.config;
 import com.project.onlinestore.jwt.filter.JwtAccessDeniedHandler;
 import com.project.onlinestore.jwt.filter.JwtAuthenticationEntryPoint;
 import com.project.onlinestore.jwt.filter.JwtTokenFilter;
+import com.project.onlinestore.jwt.util.JwtTokenUtils;
 import com.project.onlinestore.jwt.util.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,8 @@ public class SecurityConfig {
     @Value("${jwt.secret-key}")
     private String key;
 
+    private final JwtTokenUtils jwtTokenUtils;
+
     /*
     CustomUserDetails -> CustomUserDetailsService ->
     JwtTokenProvider -> JwtTokenFilter -> WebSecurityConfig
@@ -48,7 +51,7 @@ public class SecurityConfig {
                         )   // TODO: ROLE로 나눠보기
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtTokenFilter(key, userDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(key, userDetailsService, jwtTokenUtils), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
                                 .accessDeniedHandler(jwtAccessDeniedHandler)    // 인증이 실패했을 때 실행
