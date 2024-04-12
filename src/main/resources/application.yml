@@ -20,6 +20,10 @@ spring:
       port: 6379
       host: localhost
 
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
 
 jwt:
   secret-key: secret-key_secret-key_secret-key_secret-key.secret-key
