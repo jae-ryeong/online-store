@@ -83,6 +83,8 @@ public class JwtTokenUtils {
                     .setSigningKey(getKey(key))
                     .build()
                     .parseClaimsJws(token);
+
+            validBlackListToken(token);
             return true;
         } catch (ExpiredJwtException e) {
             log.error("만료된 JWT 토큰입니다.");
@@ -92,6 +94,8 @@ public class JwtTokenUtils {
             log.error("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
             log.error("JWT 토큰이 잘못되었습니다.");
+        } catch (ApplicationException e){
+            log.error("이미 로그아웃된 JWT 토큰입니다.");
         }
         return false;
     }
@@ -140,9 +144,9 @@ public class JwtTokenUtils {
                 .build().parseClaimsJws(token).getBody();
     }
 
-    private void validBlackToken(String accessToken) {
+    private void validBlackListToken(String accessToken) {
         // Redis 블랙리스트에 올라온 accessToken인지 검증
-        if(!redisTemplate.opsForValue().get(accessToken).isEmpty()){
+        if(redisTemplate.opsForValue().get(accessToken) != null) {
             throw new ApplicationException(ErrorCode.ACCESS_TOKEN_IN_BLACKLIST, null);
         }
     }
