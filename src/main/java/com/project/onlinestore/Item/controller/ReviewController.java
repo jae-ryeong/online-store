@@ -7,7 +7,6 @@ import com.project.onlinestore.Item.dto.response.ReviewUpdateResponseDto;
 import com.project.onlinestore.Item.dto.response.ReviewViewResponseDto;
 import com.project.onlinestore.Item.service.ReviewService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
