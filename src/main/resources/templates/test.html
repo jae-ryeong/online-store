@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 데이터 표현</title>
+</head>
+<body>
+<h1>API 데이터 표현</h1>
+<div id="data-container"></div>
+
+<script>
+    // 페이지가 로드될 때 API 호출
+    window.addEventListener('DOMContentLoaded', function() {
+        // API 호출
+        fetch('/api/v1/item/test')
+            .then(response => response.json())
+            .then(data => {
+                // 데이터를 받아와서 화면에 표시
+                var html = "<p>Name: </p>";
+                document.getElementById('data-container').innerHTML = html;
+            })
+            .catch(error => console.error('API 호출 에러:', error));
+    });
+</script>
+</body>
+</html>

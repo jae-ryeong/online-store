@@ -22,6 +22,12 @@ public class ItemController {
 
     private final ItemService itemService;
 
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("test");
+    }
+
     @PostMapping("/registration")
     public ResponseEntity<RegistrationResponseDto> registration(@RequestBody RegistrationRequestDto dto, Authentication authentication) {
 
