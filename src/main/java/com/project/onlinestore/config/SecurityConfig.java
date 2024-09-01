@@ -41,13 +41,14 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                .requestMatchers("/api/*/user/*/join", "/api/*/user/login", "/api/*/user/token/refresh").permitAll()
+                                .requestMatchers("/api/*/user/*/join", "/api/*/user/login", "/api/*/user/token/refresh", "/api/*/item/test", "/*").permitAll()
                                 .requestMatchers( "/api/*/item/search", "/api/*/item/detail/*").permitAll()
                                 .requestMatchers("/api/*/review/view/*").permitAll()
                                 .requestMatchers("/api/*/user/logout", "/api/*/user/cart/*", "/api/*/user/cart/*/*", "/api/*/user/cart/*/*/*", "/api/*/user/setting/*", "/api/*/user/setting/*/*", "/api/*/user/setting/*/*/*").authenticated()
                                 .requestMatchers("/api/*/item/**", "/api/*/like/*/*").authenticated()
                                 .requestMatchers("/api/*/review/*", "/api/*/review/*/*").authenticated()
                                 .requestMatchers("/api/*/order/*", "/api/*/order/*/*", "/api/*/order/*/*/*", "/api/*/order/*/*/*/*").authenticated()
+                                .requestMatchers("/api/movie", "/demo/api/data").permitAll()
                         )   // TODO: ROLE로 나눠보기
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
