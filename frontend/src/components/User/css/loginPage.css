@@ -1,0 +1,139 @@
+body{
+    font-family: 'Montserrat', sans-serif;
+    background: white;
+}
+
+.links{
+    list-style-type: none;
+    li{
+        display: inline-block;
+        margin: 0 20px 0 0;
+        transition: .2s linear;
+
+        a{
+            text-decoration: none;
+            color: #0f132a;
+            font-weight: bolder;
+            text-align: center;
+            cursor:pointer;
+        }
+    }
+}
+
+.form{
+    .input_block{
+        display: block;
+        margin:20px auto;
+        position: relative;
+
+        input{
+            display: block;
+            width:90%; max-width: 680px;
+            height: 50px;
+            margin:0 auto;
+            border-radius: 8px;
+            border:none;
+            background: #0f132a1a;
+            color: #0f132a3a;
+            padding: 0 0 0 15px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            &:focus, &:active{
+                outline: none;
+                border:none;
+                color: 0f132a1a;
+            }
+        }
+    }
+
+    .signin_btn{
+        background: #e91e63;
+        color: white;
+        display: block;
+        width: 92.5%; max-width: 680px;
+        height: 50px;
+        border-radius: 8px;
+        margin: 0 auto;
+        border:none;
+        cursor: pointer;
+        font-size: 14px;
+        font-family: 'Montserrat', sans-serif;
+        box-shadow: 0 15px 30px #e91e633a;
+        transition: .2s linear;
+        &:hover{
+            box-shadow: 0 0 0  rgba(233, 30, 99, 0);
+        }
+    }
+}
+
+.separator{
+    display:block;
+    margin: 30px auto 10px;
+    text-align: center;
+    height: 40px;
+    position: relative;
+    background: transparent;
+    color: #0f132a4a;
+    font-size: 13px;
+    width: 90%; max-width: 680px;
+    
+    &::before{
+        content:"";
+        position: absolute;
+        top: 8px;
+        left: 0;
+        background: #0f132a2a;
+        height: 1px;
+        width: 45%;
+    }
+
+    &::after{
+        content:"";
+        position: absolute;
+        top: 8px;
+        right: 0;
+        background: #0f132a2a;
+        height: 1px;
+        width: 45%;
+    }
+}
+
+.google_btn, .github_btn{
+    display:block;
+    width: 90%; max-width: 680px;
+    margin: 20px auto;
+    height: 50px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 8px;
+    border: none;
+    line-height: 40px;
+
+    &.google_btn{
+        background: #5b90f0;
+        color: white;
+        box-shadow: 0 15px 30px rgba(91, 144, 240, 0.36);
+        transition: .2s linear;
+        .fa{
+            font-size: 20px;
+            padding: 0 5px 0 0;
+        }
+        &:hover{
+            box-shadow: 0 0 0 #5b90f000;
+        }
+    }
+
+    &.github_btn{
+        background: #25282d;
+        color:white;
+        box-shadow: 0 15px 30px rgba(37, 40, 45, 0.36);
+        .fa{
+            font-size: 20px;
+            padding: 0 5px 0 0;
+        }
+        &:hover{
+            box-shadow: 0 0 0 #25282d00;
+        }
+    }
+}

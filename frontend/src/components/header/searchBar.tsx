@@ -21,11 +21,12 @@ const SearchContainer = styled.form`
   }
 `;
 
-const SearchDeleteButton = styled.button`
+const SearchDeleteButton = styled.button<{deleteButtonShow:boolean}>`
   background-color: transparent;
   border: none;
   cursor: pointer;
   
+  display: ${({deleteButtonShow}) => deleteButtonShow ? "block" : "none"};
   &:hover{
     color: #db0f0fd3;
   }
@@ -43,13 +44,11 @@ const SearchBarContainer = styled.input`
     font-size: 1.2rem;
     border:none;
     outline: none;
-    
+    background-color: transparent;   
+    font-family : GmarketMedium;
 `;
 
-function searchFocus() {
-    
-}
-export default function SearchBar(props:any) { //any 타입 고치기
+export default function SearchBar(props:any) { // Todo: any 타입 고치기
     const [searchKeyword, setSearchKeyword] = useState<string>("");
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,19 +63,18 @@ export default function SearchBar(props:any) { //any 타입 고치기
         <SearchContainer>
             <SearchBarContainer placeholder="검색어를 입력해주세요." 
             type="text"
-            onFocus={searchFocus}
             value={searchKeyword}
             onChange={handleInputChange}
-            > 
+            /> 
 
-            </SearchBarContainer>
-
-            <SearchDeleteButton onClick={clearSearch} type="button">
+            <SearchDeleteButton 
+            deleteButtonShow={searchKeyword != ""} 
+            onClick={clearSearch} type="button">
               <MdOutlineCancel className="deleteButton"/>
             </SearchDeleteButton>
 
             <SearchClick>
-            <PiMagnifyingGlass className="searchButton" />
+              <PiMagnifyingGlass className="searchButton" />
             </SearchClick>
         </SearchContainer>
         

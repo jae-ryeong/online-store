@@ -3,13 +3,16 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Home from './pages/main';
+import { AuthProvider } from './AuthProvider';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <Home/>
+    <AuthProvider>
+      <Home/>    
+    </AuthProvider>
   </React.StrictMode>
 );
 
