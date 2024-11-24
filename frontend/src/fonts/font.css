@@ -1,0 +1,29 @@
+@font-face {
+    font-family: "GmarketBold";
+    src: url("./GmarketSansTTF/GmarketSansTTFBold.ttf");
+}
+
+@font-face {
+    font-family: "GmarketLight";
+    src: url("./GmarketSansTTF/GmarketSansTTFLight.ttf");
+}
+
+@font-face {
+    font-family: "GmarketMedium";
+    src: url("./GmarketSansTTF/GmarketSansTTFMedium.ttf");
+}
+
+@font-face {
+    font-family: "LineBd";
+    src: url("./LINE_Seed_Sans_KR/LINESeedKR-Bd.ttf");
+}
+
+@font-face {
+    font-family: "LineRg";
+    src: url("./LINE_Seed_Sans_KR/LINESeedKR-Rg.ttf");
+}
+
+@font-face {
+    font-family: "LineTh";
+    src: url("./LINE_Seed_Sans_KR/LINESeedKR-Th.ttf");
+}
