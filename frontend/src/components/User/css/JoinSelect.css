@@ -1,0 +1,58 @@
+@import '../../../fonts/font.css';
+
+.totalContainer {
+        display: flex;
+        justify-content: center;
+}
+
+.container{
+        display: block;
+        align-items: center;   /* 가로 가운데 정렬 */
+        justify-items: center;
+        height: 500px;
+        width: 470px;
+        margin-top: 15vh;
+}
+
+.formBox{
+        background-color: white;
+        padding: 32px;
+        border-radius: 8px;
+        text-align: left;
+        max-width: 400px;
+        width: 100%;
+}
+
+.radioGroup{
+        margin-bottom: 24px;
+}
+
+.radioLabel{
+        display: block;
+        height: 22px;
+        padding-left: 20px;
+        padding-top: 17px;
+        padding-bottom: 15px;
+        /* padding: 17px 16px 15px 48px; */
+        margin-bottom: 12px;
+        font-size: 18px;
+        font-weight: 500;
+        border: 1px solid #ddd; 
+        border-radius: 10px;  
+        cursor: pointer;
+}
+
+.radioInput {
+        margin-right: 10px;
+}
+.button{
+        background-color: #3cb043;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 400px;
+        margin: auto 0;
+}
