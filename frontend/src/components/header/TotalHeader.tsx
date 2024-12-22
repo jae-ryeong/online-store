@@ -60,6 +60,7 @@ const LogoutButton = styled.button`
   text-decoration: none;
   color: inherit;
   font-family: "LineRg";
+  cursor: pointer;
 `;
 export default function Header(){
   const {isLogin, logout} = useAuth();
