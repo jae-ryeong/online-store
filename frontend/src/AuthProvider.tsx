@@ -33,6 +33,7 @@ export const AuthProvider = ({children} : {children:ReactNode}) => {
         setAuth(null);
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        window.location.reload();   // 로그아웃시 페이지 새로고침
     }
 
     const isLogin = !!auth;
