@@ -120,4 +120,8 @@ public class UserService {
 
         jwtTokenUtils.accessTokenBlackList(accessToken, expiration);
     }
+
+    public boolean idCheck(String userName) {
+        return userRepository.existsByUserName(userName);
+    }
 }

@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
+//@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -135,5 +136,11 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(dtoList);
+    }
+
+    @PostMapping("/join/idcheck")
+    public boolean idCheck(@RequestBody String userName) {
+        return userService.idCheck(userName);
+        // true: 중복O, false: 중복X
     }
 }
