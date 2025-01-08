@@ -38,5 +38,5 @@ public class User{
     @JoinColumn(name = "cart_id")
     private Cart cart;
     
-    // grade 나중에 추가예정
+    // TODO: grade 나중에 추가예정
 }

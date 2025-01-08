@@ -124,4 +124,8 @@ public class UserService {
     public boolean idCheck(String userName) {
         return userRepository.existsByUserName(userName);
     }
+
+    public RoleType roleTypeCheck(String userName){
+        return userRepository.findRoleByUserName(userName);
+    }
 }

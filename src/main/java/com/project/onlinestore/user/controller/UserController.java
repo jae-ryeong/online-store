@@ -143,4 +143,9 @@ public class UserController {
         return userService.idCheck(userName);
         // true: 중복O, false: 중복X
     }
+
+    @PostMapping("/role/check")
+    public ResponseEntity<String> roleTypeCheck(@RequestBody String userName) {
+        return ResponseEntity.ok(userService.roleTypeCheck(userName).toString());
+    }
 }
