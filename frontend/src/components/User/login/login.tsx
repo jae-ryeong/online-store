@@ -56,11 +56,13 @@ export default function Login(){
         }
     }
     
+    const homeNav = () => { // 매개변수가 없으므로 타입선언X
+        navigate("/")
+    }
 
     return(
         <LoginWrapper className="container">
-            <Title>Login</Title>
-
+            <Title onClick={homeNav} style={{cursor:"pointer"}}>Login</Title>
         <LoginForm className="form" action="post" onSubmit={handleLogin}>
             {/* email input */}
             <div className="input_block">
