@@ -9,6 +9,9 @@ import Profile from "../components/test/profile";
 import Settings from "../components/test/Settings";
 import Tts from "../components/test/tts";
 import SellerJoin from "../components/User/Join/SellerJoin";
+import MyPage from "../components/User/myPage/myPage";
+import CartCard from "../components/User/myPage/cart/CartCard";
+import OrderList from "../components/User/myPage/orderList";
 
 interface AuthContextType {
     isLogIn: boolean;
@@ -53,6 +56,14 @@ export default function Home() {
         {
             path: "join/sellerjoin",
             element: <SellerJoin />
+        },
+        {
+            path: "mypage",
+            element: <MyPage />,
+            children: [
+                {path: "orderlist", element: <OrderList/>},
+                {path: "cart", element: <CartCard/>}
+            ]
         },
         {
             path: "test",
