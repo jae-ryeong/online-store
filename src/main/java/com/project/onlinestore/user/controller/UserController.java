@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")
-//@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -76,6 +75,7 @@ public class UserController {
     @GetMapping("/cart/view")
     public ResponseEntity<List<CartViewResponseDto>> allSearch(Authentication authentication) {
         List<CartViewResponseDto> itemCarts = cartService.allItemCartView(authentication.getName());
+        System.out.println(authentication.getName());
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(itemCarts);
@@ -144,8 +144,8 @@ public class UserController {
         // true: 중복O, false: 중복X
     }
 
-    @PostMapping("/role/check")
-    public ResponseEntity<String> roleTypeCheck(@RequestBody String userName) {
-        return ResponseEntity.ok(userService.roleTypeCheck(userName).toString());
+    @GetMapping("/role/check")
+    public ResponseEntity<String> roleTypeCheck(Authentication authentication) {
+        return ResponseEntity.ok(userService.roleTypeCheck(authentication.getName()).toString());
     }
 }
