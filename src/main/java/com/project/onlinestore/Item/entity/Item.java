@@ -38,4 +38,10 @@ public class Item {
 
     @Column(nullable = false)
     private boolean soldOut; // 판매여부
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "MAIN_IMAGE_URL", nullable = false)
+    private String mainImageUrl;
 }
