@@ -28,6 +28,12 @@ spring:
       prefix: /WEB-INF/views/
       suffix: .jsp
 
+  cloud:
+    gcp:
+      storage:
+        bucket: gcs_image_12321
+
+
 logging:
   level.org.hibernate:
     SQL: DEBUG

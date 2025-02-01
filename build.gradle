@@ -53,6 +53,10 @@ dependencies {
 
 	// logback
 	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+
+	// GCP
+	implementation 'org.springframework.cloud:spring-cloud-gcp-starters:1.2.5.RELEASE'
+	implementation 'org.springframework.cloud:spring-cloud-gcp-storage:1.2.5.RELEASE'
 }
 
 tasks.named('test') {
