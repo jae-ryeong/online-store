@@ -1,0 +1,54 @@
+.FormTotalWrapper{
+    width: 750px; height: auto;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 7px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.image-preview img {
+    width: 220px;
+    height: 220px;
+    margin-top: 9px;
+    border: 1px solid #ddd;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.image-previews {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 9px;
+}
+
+button[type="submit"] {
+    background-color: #4CAF50;
+    color:white;
+    padding: 11px 22px;
+    border:none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
