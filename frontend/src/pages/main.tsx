@@ -4,26 +4,12 @@ import Login from "../components/User/login/login";
 import { createContext, useEffect, useState } from "react";
 import UserTypeSelectForm from "../components/User/Join/JoinSelect";
 import CustomerJoinForm from "../components/User/Join/CustomerJoin";
-import DashboardLayout from "../components/test/dashboardlayout";
-import Profile from "../components/test/profile";
-import Settings from "../components/test/Settings";
-import Tts from "../components/test/tts";
 import SellerJoin from "../components/User/Join/SellerJoin";
 import MyPage from "../components/User/myPage/myPage";
 import CartCard from "../components/User/myPage/cart/CartCard";
 import OrderList from "../components/User/myPage/orderList";
-
-interface AuthContextType {
-    isLogIn: boolean;
-    accessToken: string | null;
-    setAccessToken: (token: string | null) => void;
-}
-
-const AuthContext = createContext<AuthContextType>({
-    isLogIn: false,
-    accessToken: null,
-    setAccessToken: () => { }
-});
+import ItemManagement from "../components/User/myPage/seller/itemManagement";
+import ItemForm from "../components/User/myPage/seller/itemForm";
 
 export default function Home() {
     const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -62,23 +48,12 @@ export default function Home() {
             element: <MyPage />,
             children: [
                 {path: "orderlist", element: <OrderList/>},
-                {path: "cart", element: <CartCard/>}
+                {path: "cart", element: <CartCard/>},
+                {path: "seller/itemManagement", element: <ItemManagement/>},
+                {path: "seller/itemRegistration", element:<ItemForm/>}
             ]
         },
-        {
-            path: "test",
-            element: <Tts />,
-            children: [
-                {
-                    path: "dashboard",
-                    element: <DashboardLayout />, // 대시보드 레이아웃
-                    children: [
-                        { path: "profile", element: <Profile /> }, // 프로필 페이지
-                        { path: "settings", element: <Settings /> }, // 설정 페이지
-                    ],
-                },
-            ],
-        }
+        
     ]);
 
     return (
