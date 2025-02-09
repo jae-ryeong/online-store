@@ -21,6 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+
 @Service
 @RequiredArgsConstructor
 public class ItemService {
@@ -30,27 +32,32 @@ public class ItemService {
     private final ReviewRepository reviewRepository;
     private final LikeRepository likeRepository;
 
-    public RegistrationResponseDto registration(String userName, RegistrationRequestDto dto) {
+    @Transactional(rollbackFor = IOException.class) // 이미지 업로드 실패 시 DB 롤백
+    public RegistrationResponseDto createItem(String userName, RegistrationRequestDto dto) throws IOException{
         User user = findUser(userName);
-
         // seller type check
         if (user.getRoleType() == RoleType.CUSTOMER) {
             throw new ApplicationException(ErrorCode.INVALID_ROLE, "접근권한이 없습니다.");
         }
 
-        itemRepository.save(
-                Item.builder()
-                        .itemName(dto.itemName())
-                        .quantity(dto.quantity())
-                        .price(dto.price())
-                        .category(dto.category())
-                        .user(user)
-                        .soldOut(false)
-                        .count(0L)
-                        .build()
-        );
+        // Item 엔티티 생성
+        Item item = Item.builder()
+                .itemName(dto.itemName())
+                .quantity(dto.quantity())
+                .price(dto.price())
+                .soldCount(0L)
+                .category(dto.category())
+                .soldOut(false)
+                .mainImageUrl(dto.mainImageUrl())
+                .description(dto.description())
+                .user(user)
+                .build();
 
-        return new RegistrationResponseDto(dto.itemName(), dto.quantity(), dto.price(), user.getId(), user.getStoreName(), dto.category());
+        Item savedItem = itemRepository.save(item);
+        return new RegistrationResponseDto(savedItem.getItemName(),
+                savedItem.getQuantity(),
+                savedItem.getPrice(),
+                savedItem.getUser().getId(), savedItem.getUser().getStoreName(), savedItem.getCategory(), savedItem.getMainImageUrl(), savedItem.getDescription());
     }
 
     @Transactional
@@ -119,4 +126,5 @@ public class ItemService {
         return itemRepository.findById(itemId).orElseThrow(() ->
                 new ApplicationException(ErrorCode.ITEM_ID_NOT_FOUND, itemId + "를 찾을 수 없습니다."));
     }
+
 }

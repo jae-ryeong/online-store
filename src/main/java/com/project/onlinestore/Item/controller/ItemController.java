@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/v1/item")
 @RequiredArgsConstructor
@@ -22,19 +24,13 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("test");
-    }
-
     @PostMapping("/registration")
-    public ResponseEntity<RegistrationResponseDto> registration(@RequestBody RegistrationRequestDto dto, Authentication authentication) {
+    public ResponseEntity<RegistrationResponseDto> registration(Authentication authentication, @RequestBody RegistrationRequestDto dto) throws IOException {
 
-        RegistrationResponseDto registration = itemService.registration(authentication.getName(), dto);
+        RegistrationResponseDto responseDto = itemService.createItem(authentication.getName(), dto);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(registration);
+                .body(responseDto);
     }
 
     @DeleteMapping("/delete")
