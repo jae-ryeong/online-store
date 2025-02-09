@@ -29,8 +29,8 @@ public class Item {
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;  // 판매자
 
-    @Column(name = "ITEM_COUNT", nullable = false)
-    private Long count;; // 팔린 갯수
+    @Column(name = "SOLD_COUNT", nullable = false)
+    private Long soldCount; // 팔린 갯수
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -39,9 +39,9 @@ public class Item {
     @Column(nullable = false)
     private boolean soldOut; // 판매여부
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String description;
-
     @Column(name = "MAIN_IMAGE_URL", nullable = false)
     private String mainImageUrl;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String description;
 }
