@@ -1,8 +1,6 @@
 package com.project.onlinestore.Item.controller;
 
-import com.project.onlinestore.Item.dto.response.GCPMainImageResponseDto;
 import com.project.onlinestore.Item.service.GCPService;
-import com.project.onlinestore.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,30 +17,23 @@ public class GCPController {
 
     private final GCPService gcpService;
 
-    @PostMapping("/main/image/upload")
-    public ResponseEntity<GCPMainImageResponseDto> imageUpload(Authentication authentication, @RequestParam("file") MultipartFile file) throws IOException {
-
-        GCPMainImageResponseDto gcpMainImageResponseDto = null;
-
+    @PostMapping("/image/upload")
+    public ResponseEntity<String> imageUpload(Authentication authentication, @RequestParam("file") MultipartFile file) throws IOException {
         try {
-            gcpMainImageResponseDto = gcpService.mainImageUploadFile(file, authentication.getName());
+            String imageUrl = gcpService.uploadImage(file, authentication.getName());
+            System.out.println(imageUrl);
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(gcpMainImageResponseDto);
+                    .body(imageUrl);
         } catch (IOException e) {
-            return ResponseEntity.status(500).body(gcpMainImageResponseDto);
+            return ResponseEntity.status(500).body("Error uploading image: " + e.getMessage());
         }
     }
 
-    @PostMapping("/content/image/upload")
-    public ResponseEntity<Void> contentImageUpload(Authentication authentication, @RequestParam("file") MultipartFile file) throws IOException {
+    @DeleteMapping("/image/delete/{filename}")
+    public ResponseEntity<String> deleteImage(Authentication authentication, @PathVariable("filename") String fileName) {
 
-        return ResponseEntity.ok(null);
-    }
-
-    @DeleteMapping("/image/delete/{objectName}")
-    public ResponseEntity<String> deleteImage(@PathVariable String objectName) {
         try{
-            gcpService.deleteImage(objectName);
+            gcpService.deleteImage(authentication.getName(), fileName);
             return ResponseEntity.ok("File deleted successfully");
         } catch (IOException e) {
             return ResponseEntity
