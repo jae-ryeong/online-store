@@ -10,6 +10,8 @@ public record RegistrationResponseDto(
         Integer price,
         Long userId,
         String storeName,
-        Category category
+        Category category,
+        String mainImageUrl,
+        String description
 ) {
 }
