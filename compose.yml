@@ -20,4 +20,5 @@ services:
     container_name: 'online-store-redis'
     ports:
       - '6379:6379'
+    restart: always
   # redis insight 추후 설치
