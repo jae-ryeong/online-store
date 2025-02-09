@@ -128,4 +128,8 @@ public class UserService {
     public RoleType roleTypeCheck(String userName){
         return userRepository.findRoleByUserName(userName);
     }
+
+    public String storeNameReturn(String userName) {
+        return userRepository.returnStoreName(userName);
+    }
 }

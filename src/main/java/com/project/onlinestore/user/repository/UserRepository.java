@@ -16,4 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     RoleType findRoleByUserName(@Param("userName")String userName);
 
     boolean existsByUserName(String userName);
+
+    @Query("select u.storeName from User u where u.userName = :userName")
+    String returnStoreName(@Param("userName")String userName);
 }
