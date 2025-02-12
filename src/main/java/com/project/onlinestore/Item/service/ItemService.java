@@ -2,10 +2,12 @@ package com.project.onlinestore.Item.service;
 
 import com.project.onlinestore.Item.dto.request.RegistrationRequestDto;
 import com.project.onlinestore.Item.dto.request.itemQuantityRequestDto;
+import com.project.onlinestore.Item.dto.response.CategoryItemResponseDto;
 import com.project.onlinestore.Item.dto.response.ItemSearchResponseDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
 import com.project.onlinestore.Item.dto.response.itemQuantityResponseDto;
 import com.project.onlinestore.Item.entity.Item;
+import com.project.onlinestore.Item.entity.enums.Category;
 import com.project.onlinestore.Item.repository.ItemRepository;
 import com.project.onlinestore.Item.repository.LikeRepository;
 import com.project.onlinestore.Item.repository.ReviewRepository;
@@ -22,6 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -113,6 +118,33 @@ public class ItemService {
         return new itemQuantityResponseDto(seller.getStoreName(), itemId, dto.quantity(), resultQuantity);
     }
 
+    @Transactional(readOnly = true)
+    public List<CategoryItemResponseDto> findByCategory(String category) {
+
+        String categoryUpper = category.toUpperCase();
+
+        boolean match = Arrays.stream(Category.values())
+                .anyMatch(type -> categoryUpper.contains(type.name()));
+
+        if(!match){
+            throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND, "존재하지 않는 CATEGORY 입니다.");
+        }
+
+        List<Item> allByCategory = itemRepository.findAllByCategory(Category.valueOf(categoryUpper));
+        List<CategoryItemResponseDto> allItem = new ArrayList<>();
+
+        for (Item item : allByCategory) {
+            allItem.add(
+                    CategoryItemResponseDto.builder()
+                            .itemName(item.getItemName())
+                            .price(item.getPrice())
+                            .mainImageUrl(item.getMainImageUrl())
+                            .build()
+            );
+        };
+        return allItem;
+    }
+
     public Page<ItemSearchResponseDto> findAllItem(Pageable pageable) {
         return itemRepository.findAll(pageable).map(ItemSearchResponseDto::fromEntity);
     }
@@ -126,5 +158,7 @@ public class ItemService {
         return itemRepository.findById(itemId).orElseThrow(() ->
                 new ApplicationException(ErrorCode.ITEM_ID_NOT_FOUND, itemId + "를 찾을 수 없습니다."));
     }
+
+
 
 }

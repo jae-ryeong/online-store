@@ -3,9 +3,11 @@ package com.project.onlinestore.Item.controller;
 import com.project.onlinestore.Item.dto.request.DeleteItemRequestDto;
 import com.project.onlinestore.Item.dto.request.RegistrationRequestDto;
 import com.project.onlinestore.Item.dto.request.itemQuantityRequestDto;
+import com.project.onlinestore.Item.dto.response.CategoryItemResponseDto;
 import com.project.onlinestore.Item.dto.response.ItemSearchResponseDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
 import com.project.onlinestore.Item.dto.response.itemQuantityResponseDto;
+import com.project.onlinestore.Item.entity.enums.Category;
 import com.project.onlinestore.Item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/item")
@@ -56,5 +59,13 @@ public class ItemController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(itemQuantityResponseDto);
+    }
+
+    @PostMapping("/find/{category}")
+    public ResponseEntity<List<CategoryItemResponseDto>> itemCategoryFind(@PathVariable("category") String category) {
+        List<CategoryItemResponseDto> byCategory = itemService.findByCategory(category);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(byCategory);
     }
 }
