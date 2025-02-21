@@ -3,7 +3,6 @@ package com.project.onlinestore.Item.service;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
-import com.project.onlinestore.Item.dto.response.GCPMainImageResponseDto;
 import com.project.onlinestore.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
