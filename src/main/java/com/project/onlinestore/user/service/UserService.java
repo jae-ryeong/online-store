@@ -14,6 +14,7 @@ import com.project.onlinestore.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ public class UserService {
 
     private final JwtTokenUtils jwtTokenUtils;
     private final BCryptPasswordEncoder encoder;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${jwt.secret-key}")
     private String key;
@@ -131,5 +133,15 @@ public class UserService {
 
     public String storeNameReturn(String userName) {
         return userRepository.returnStoreName(userName);
+    }
+
+    public boolean jwtValidate(String accessToken) {
+        if (!jwtTokenUtils.validationToken(accessToken, key)) {
+            return false;
+        }
+        String userName = jwtTokenUtils.getUserName(accessToken, key);
+        String redisToken = (String) redisTemplate.opsForValue().get(userName);
+
+        return accessToken.equals(redisToken);
     }
 }

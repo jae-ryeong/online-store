@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -147,5 +149,17 @@ public class UserController {
     @GetMapping("/role/check")
     public ResponseEntity<String> roleTypeCheck(Authentication authentication) {
         return ResponseEntity.ok(userService.roleTypeCheck(authentication.getName()).toString());
+    }
+
+    // 토큰이 유효한지 체크
+    @PostMapping("/auth/check")
+    public ResponseEntity<Map<String, Boolean>> tokenCheck(@RequestHeader(value = "Authorization") String authHeader) {
+        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.ok(Collections.singletonMap("valid", false));
+        }
+
+        String token = authHeader.substring(7);
+        boolean isValid = userService.jwtValidate(token);
+        return ResponseEntity.ok(Collections.singletonMap("valid", isValid));
     }
 }
