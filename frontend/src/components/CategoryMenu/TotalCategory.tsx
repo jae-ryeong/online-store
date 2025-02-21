@@ -7,17 +7,21 @@ const CategoryTotalWrapper = styled.div`
     justify-content: center;
     width: 1190px;
     height: 60px;
-    background-color: #DCE2F0;
+    background-color: #F5F5F5;
 
     margin-top: 4rem;
     margin-bottom: 4rem;
 `;
 
-export default function Category(){
+interface CategoryComponentProps {
+    setPage: React.Dispatch<React.SetStateAction<number>>
+}
+
+export default function Category({setPage} : CategoryComponentProps){
     
     return(
         <CategoryTotalWrapper>
-            <MainCategory categories={['HOME','OUTER', 'PET', 'SHOESdsadasdsads']}/>
+            <MainCategory categories={['HOME','BOOK', 'FOOD', 'CLOTHES', 'PET']} setPage={setPage}/>
         </CategoryTotalWrapper>
     )
 }
