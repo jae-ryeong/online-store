@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import { ImAppleinc} from "react-icons/im";
 import SearchBar from "./searchBar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthProvider";
 import "../../fonts/font.css";
 
@@ -28,7 +28,7 @@ const HeaderContainer = styled.div`
       }
       // 클릭시 마이페이지, 장바구니 등 표시
     }
-    border-bottom: rgba(0,0,0,0.3) 1px solid;
+    //border-bottom: rgba(0,0,0,0.3) 1px solid;
 `;
 
 const UserBar =  styled.div`
@@ -38,6 +38,14 @@ const UserBar =  styled.div`
   align-items: center;
   
   .loginTo{
+    padding-right: 10px;
+    font-size: 15px;
+    text-decoration: none;
+    color: inherit;
+    font-family: "LineRg";
+  }
+
+  .myPage{
     padding-right: 10px;
     font-size: 15px;
     text-decoration: none;
@@ -64,18 +72,21 @@ const LogoutButton = styled.button`
 `;
 export default function Header(){
   const {isLogin, logout} = useAuth();
+  const navigate = useNavigate();
+
+  const iconClick = () => {
+      navigate("/category/home");
+  }
 
     return(
       <HeaderContainer>
-        <ImAppleinc className="logo"/>
+        <ImAppleinc className="logo" onClick={iconClick}/>
 
           <SearchBar>
           </SearchBar>
         
         <UserBar>
-          <Link className="loginTo" to={"/login"}>
-            {isLogin ? "마이페이지" : `로그인`}
-          </Link>
+          {isLogin ? <Link className="myPage" to={"/mypage/orderlist"}>마이페이지</Link> : <Link className="loginTo" to={"/login"}>로그인</Link>}
           
           {isLogin ? <LogoutButton onClick={() => logout()}>로그아웃</LogoutButton> : <Link className="joinTo" to={"/join"}>            
             회원가입
