@@ -50,14 +50,14 @@ export default function Login(){
 
             login(accessToken); // 새로고침 하지 않아도 로그인 상태
 
-            navigate('/');
+            navigate('/category/home');
         } catch (err) {
             setError("Invalid username or password");
         }
     }
     
     const homeNav = () => { // 매개변수가 없으므로 타입선언X
-        navigate("/")
+        navigate("/category/home")
     }
 
     return(
