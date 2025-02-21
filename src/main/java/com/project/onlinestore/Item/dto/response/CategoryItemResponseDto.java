@@ -6,6 +6,7 @@ import lombok.Builder;
 public record CategoryItemResponseDto(
         String itemName,
         Integer price,
-        String mainImageUrl
+        String mainImageUrl,
+        Long itemId
 ) {
 }

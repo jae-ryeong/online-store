@@ -20,7 +20,7 @@ public class Item {
     private String itemName;
 
     @Column(nullable = false)
-    private Integer quantity;
+    private Integer quantity;   // 재고
 
     @Column(nullable = false)
     private Integer price;

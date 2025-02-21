@@ -4,10 +4,9 @@ import com.project.onlinestore.Item.dto.request.DeleteItemRequestDto;
 import com.project.onlinestore.Item.dto.request.RegistrationRequestDto;
 import com.project.onlinestore.Item.dto.request.itemQuantityRequestDto;
 import com.project.onlinestore.Item.dto.response.CategoryItemResponseDto;
-import com.project.onlinestore.Item.dto.response.ItemSearchResponseDto;
+import com.project.onlinestore.Item.dto.response.ItemDetailViewResponseDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
 import com.project.onlinestore.Item.dto.response.itemQuantityResponseDto;
-import com.project.onlinestore.Item.entity.enums.Category;
 import com.project.onlinestore.Item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/item")
@@ -45,9 +43,10 @@ public class ItemController {
                 .body("등록하신 상품이 삭제되었습니다.");
     }
 
+    // item 전체 조회
     @GetMapping("/search")
-    public ResponseEntity<Page<ItemSearchResponseDto>> searchAll(Pageable pageable) {
-        Page<ItemSearchResponseDto> allItem = itemService.findAllItem(pageable);
+    public ResponseEntity<Page<CategoryItemResponseDto>> searchAll(Pageable pageable) {
+        Page<CategoryItemResponseDto> allItem = itemService.findAllItem(pageable);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(allItem);
@@ -61,11 +60,20 @@ public class ItemController {
                 .body(itemQuantityResponseDto);
     }
 
-    @PostMapping("/find/{category}")
-    public ResponseEntity<List<CategoryItemResponseDto>> itemCategoryFind(@PathVariable("category") String category) {
-        List<CategoryItemResponseDto> byCategory = itemService.findByCategory(category);
+    // item 카테고리 조회
+    @GetMapping("/find/{category}")
+    public ResponseEntity<Page<CategoryItemResponseDto>> itemCategoryFind(@PathVariable("category") String category, Pageable pageable) {
+        Page<CategoryItemResponseDto> allItem = itemService.findByCategory(category, pageable);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(byCategory);
+                .body(allItem);
+    }
+
+    @GetMapping("/detail/{itemId}")
+    public ResponseEntity<ItemDetailViewResponseDto> itemDetailView(@PathVariable("itemId")Long itemId){
+        ItemDetailViewResponseDto itemDetailViewResponseDto = itemService.itemDetailView(itemId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(itemDetailViewResponseDto);
     }
 }
