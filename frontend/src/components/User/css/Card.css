@@ -2,7 +2,11 @@
     width: 750px; height: auto;
     display: flex;
     justify-content: center;
-    margin: 0 auto;    
+    margin: 0 auto;
+}
+.align_items_center{
+    align-items: center;
+    font-size: large;
 }
 
 .CardWrapper{

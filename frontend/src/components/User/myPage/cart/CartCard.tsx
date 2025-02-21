@@ -11,6 +11,14 @@ interface CartItem {
     cartCheck: boolean;
 }
 
+const NoCartPage: React.FC = () => {
+    return(
+        <div className="CardTotalWrapper align_items_center">
+            장바구니가 비어있습니다.
+        </div>
+    )
+}
+
 const CartCard2: React.FC = () => {
     const nav = useNavigate();
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -20,7 +28,7 @@ const CartCard2: React.FC = () => {
 
             if (!token) {
                 console.error("JWT 토큰이 없습니다. 로그인 해주세요.");
-                nav("/");   // 로그인 되어 있지 않을때 메인페이지로 이동
+                nav("/category/home");   // 로그인 되어 있지 않을때 메인페이지로 이동
                 return;
             }
         return token;
@@ -43,7 +51,6 @@ const CartCard2: React.FC = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setCartItems(data); // 받아온 데이터를 상태에 저장
-                    console.log(data);
                 } else {
                     console.error("서버 응답 에러:", response.status);
                 }
@@ -138,7 +145,7 @@ const CartCard2: React.FC = () => {
 
     return (
         <div className="TotalWrapper flex">
-            {cartItems.length === 0 ? null : (
+            {cartItems.length === 0 ? <NoCartPage/> : (
                 <div>
                     {cartItems.map((item, index) => (
                         <div className="CardTotalWrapper flex" key={index}>
