@@ -3,7 +3,7 @@ package com.project.onlinestore.Item.service;
 import com.project.onlinestore.Item.dto.request.RegistrationRequestDto;
 import com.project.onlinestore.Item.dto.request.itemQuantityRequestDto;
 import com.project.onlinestore.Item.dto.response.CategoryItemResponseDto;
-import com.project.onlinestore.Item.dto.response.ItemSearchResponseDto;
+import com.project.onlinestore.Item.dto.response.ItemDetailViewResponseDto;
 import com.project.onlinestore.Item.dto.response.RegistrationResponseDto;
 import com.project.onlinestore.Item.dto.response.itemQuantityResponseDto;
 import com.project.onlinestore.Item.entity.Item;
@@ -24,9 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -106,10 +104,10 @@ public class ItemService {
         }
 
         // 재고 갯수를 파악해 soldOut 체크
-        if (item.isSoldOut() == true && resultQuantity > 0){
+        if (item.isSoldOut() && resultQuantity > 0){
             itemRepository.itemSoldOutFalse(itemId);
         }
-        if (item.isSoldOut() == false && resultQuantity == 0){
+        if (!item.isSoldOut() && resultQuantity == 0){
             itemRepository.itemSoldOutTrue(itemId);
         }
 
@@ -119,7 +117,7 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryItemResponseDto> findByCategory(String category) {
+    public Page<CategoryItemResponseDto> findByCategory(String category, Pageable pageable) {
 
         String categoryUpper = category.toUpperCase();
 
@@ -130,23 +128,42 @@ public class ItemService {
             throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND, "존재하지 않는 CATEGORY 입니다.");
         }
 
-        List<Item> allByCategory = itemRepository.findAllByCategory(Category.valueOf(categoryUpper));
-        List<CategoryItemResponseDto> allItem = new ArrayList<>();
+        Page<Item> itemPage = itemRepository.findAllByCategory(Category.valueOf(categoryUpper), pageable);
 
-        for (Item item : allByCategory) {
-            allItem.add(
-                    CategoryItemResponseDto.builder()
-                            .itemName(item.getItemName())
-                            .price(item.getPrice())
-                            .mainImageUrl(item.getMainImageUrl())
-                            .build()
-            );
-        };
-        return allItem;
+        return itemPage.map(item -> CategoryItemResponseDto.builder()
+                .itemName(item.getItemName())
+                .price(item.getPrice())
+                .mainImageUrl(item.getMainImageUrl())
+                .itemId(item.getId())
+                .build());
     }
 
-    public Page<ItemSearchResponseDto> findAllItem(Pageable pageable) {
-        return itemRepository.findAll(pageable).map(ItemSearchResponseDto::fromEntity);
+    @Transactional(readOnly = true)
+    public Page<CategoryItemResponseDto> findAllItem(Pageable pageable) {
+        Page<Item> items = itemRepository.findAll(pageable);
+
+        return items.map(item -> CategoryItemResponseDto.builder()
+                .itemName(item.getItemName())
+                .price(item.getPrice())
+                .mainImageUrl(item.getMainImageUrl())
+                .itemId(item.getId())
+                .build());
+    }
+
+    @Transactional(readOnly = true)
+    public ItemDetailViewResponseDto itemDetailView(Long itemId) {
+        Item item = findItem(itemId);
+
+        return ItemDetailViewResponseDto.builder()
+                .itemName(item.getItemName())
+                .price(item.getPrice())
+                .mainImageUrl(item.getMainImageUrl())
+                .description(item.getDescription())
+                .storeName(item.getUser().getStoreName())
+                .soldCount(item.getSoldCount())
+                .soldOut(item.isSoldOut())
+                .quantity(item.getQuantity())
+                .build();
     }
 
     private User findUser(String userName) {
