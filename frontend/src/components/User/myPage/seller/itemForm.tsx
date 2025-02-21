@@ -41,7 +41,6 @@ export default function ItemForm() {
             ...prev,
             [name]: name === 'price' || name === 'quantity' ? Number(value) : value
         }));
-        console.log(formData);
     }
 
     // 메인 이미지 핸들러
@@ -70,7 +69,6 @@ export default function ItemForm() {
                 });
                 setFormData(prev => ({ ...prev, mainImageUrl: decodeURI(response.data)}));
                 setMainImagePreview(decodeURI(response.data));
-                console.log(decodeURI(response.data));
                 return decodeURI(response.data);
             } catch(error){
                 console.error("Image upload failed: ", error);
@@ -124,7 +122,7 @@ export default function ItemForm() {
         } catch(error){
             console.error("Item registration failed: ", error);
         }
-        nav("/");
+        nav("/category/home");
     }
 
     // 'onChange' 함수가 리렌더링될 때마다 새로 생성되는 것을 방지
