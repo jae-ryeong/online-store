@@ -9,7 +9,7 @@
         display: block;
         align-items: center;   /* 가로 가운데 정렬 */
         justify-items: center;
-        height: 500px;
+        height: 100vh;
         width: 470px;
         margin-top: 15vh;
 }

@@ -1,0 +1,52 @@
+.totalContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.container{
+    display: block;
+    align-items: center;   /* 가로 가운데 정렬 */
+    justify-items: center;
+    margin-top: 15vh;
+}
+
+form{
+    .input_block{
+        display: block;
+        margin:20px auto;
+        position: relative;
+
+        input{
+            display: block;
+            width:400px; max-width: 680px;
+            height: 50px;
+            margin:0 auto;
+            border-radius: 8px;
+            border:none;
+            background: #0f132a1a;
+            color: #0f132a3a;
+            padding: 0 0 0 15px;
+            font-size: 14px;
+            color:black;
+            font-family: 'Montserrat', sans-serif;
+            &:focus, &:active{
+                outline: none;
+                border:none;
+                color: 0f132a1a;
+            }
+        }
+    }
+
+    .btn{
+        background-color: #3cb043;
+        color: white;
+        font-size: 16px;
+        display: block;
+        width: 400px;
+        height: 50px;
+        border-radius: 5px;
+        margin: 0 auto;
+        border:none;
+        cursor: pointer;
+    }
+}
