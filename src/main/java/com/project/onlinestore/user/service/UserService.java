@@ -136,12 +136,6 @@ public class UserService {
     }
 
     public boolean jwtValidate(String accessToken) {
-        if (!jwtTokenUtils.validationToken(accessToken, key)) {
-            return false;
-        }
-        String userName = jwtTokenUtils.getUserName(accessToken, key);
-        String redisToken = (String) redisTemplate.opsForValue().get(userName);
-
-        return accessToken.equals(redisToken);
+        return jwtTokenUtils.validationToken(accessToken, key);
     }
 }
