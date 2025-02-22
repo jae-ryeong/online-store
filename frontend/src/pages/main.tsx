@@ -12,41 +12,15 @@ import ItemManagement from "../components/User/myPage/seller/itemManagement";
 import ItemForm from "../components/User/myPage/seller/itemForm";
 import Contents from "../components/content/contents";
 import ItemDetail from "../components/item/detail/ItemDetail";
-import axios from "axios";
+import { checkAuth } from "../hook/checkAuth";
 
 export default function Home() {
-    const [accessToken, setAccessToken] = useState<string | null>(null);
     const [page, setPage] = useState(0);    // 현재 페이지
-    const [isAuth, setIsAuth] = useState<boolean>(false);
 
     useEffect(() => {
-        const checkAuth = async() => {
-            const token = localStorage.getItem("accessToken");
-
-            if(!token){
-                console.log("토큰이 없습니다.")
-                setIsAuth(false);
-                return;
-            }
-
-            try{
-                const response = await axios.post("http://localhost:8080/api/v1/user/auth/check",{},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
-                });
-                setIsAuth(response.data.valid);
-            }catch(error){
-                console.error("JWT 검증 실패: ", error);
-                localStorage.removeItem("accessToken");
-                window.location.reload();
-                setIsAuth(false);
-            }
-        }
         checkAuth();
-    },[])
-
+    },[]);
+    
     const router = createBrowserRouter([
         {
             path: "category",
