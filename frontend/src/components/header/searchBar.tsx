@@ -21,12 +21,12 @@ const SearchContainer = styled.form`
   }
 `;
 
-const SearchDeleteButton = styled.button<{deleteButtonShow:boolean}>`
+const SearchDeleteButton = styled.button<{$deleteButtonShow:boolean}>`
   background-color: transparent;
   border: none;
   cursor: pointer;
   
-  display: ${({deleteButtonShow}) => deleteButtonShow ? "block" : "none"};
+  display: ${({$deleteButtonShow}) => $deleteButtonShow ? "block" : "none"};
   &:hover{
     color: #db0f0fd3;
   }
@@ -68,7 +68,7 @@ export default function SearchBar(props:any) { // Todo: any 타입 고치기
             /> 
 
             <SearchDeleteButton 
-            deleteButtonShow={searchKeyword != ""} 
+            $deleteButtonShow={searchKeyword != ""} 
             onClick={clearSearch} type="button">
               <MdOutlineCancel className="deleteButton"/>
             </SearchDeleteButton>
