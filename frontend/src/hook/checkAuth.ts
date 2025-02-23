@@ -7,14 +7,12 @@ export const checkAuth = async () => {
     }
 
     try {
-        console.log(token);
         const response = await axios.post("http://localhost:8080/api/v1/user/auth/check", {},
             {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
             });
-        console.log(response.data);
         if (response.data.valid) {
         } else {
             localStorage.removeItem("accessToken");
