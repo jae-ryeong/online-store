@@ -4,6 +4,7 @@ import com.project.onlinestore.Item.entity.Item;
 import com.project.onlinestore.Item.repository.ItemRepository;
 import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.exception.ErrorCode;
+import com.project.onlinestore.user.dto.request.AddCartRequestDto;
 import com.project.onlinestore.user.dto.response.AddCartResponseDto;
 import com.project.onlinestore.user.dto.response.CartCheckResponseDto;
 import com.project.onlinestore.user.dto.response.CartQuantityResponseDto;
@@ -30,18 +31,18 @@ public class CartService {
     private final ItemCartRepository itemCartRepository;
 
     @Transactional
-    public AddCartResponseDto addCart(String userName, Long itemId) {
+    public AddCartResponseDto addCart(String userName, AddCartRequestDto dto) {
         User user = findUser(userName);
-        Item item = findItem(itemId);
+        Item item = findItem(dto.itemId());
 
         Cart cart = cartRepository.findById(user.getCart().getId()).orElseThrow(() ->
                         new ApplicationException(ErrorCode.CART_NOT_FOUND, userName + "의 cart를 찾을 수 없습니다."));
 
         if (itemCartRepository.existsByCartAndItem(cart, item)) {   // 중복 체크
             ItemCart itemCart = itemCartRepository.findByCartAndItem(cart, item);
-            itemCartRepository.addQuantity(cart, item); // 중복된 제품을 장바구니 한번 더 넣을 경우 구매 수량을 +1 한다.
+            itemCartRepository.addQuantity(cart, item, dto.quantity()); // 중복된 제품을 장바구니 한번 더 넣을 경우 구매 수량을 +1 한다.
             return new AddCartResponseDto(
-                    itemId, user.getId(), item.getUser().getId(), item.getItemName(), item.getUser().getStoreName(), itemCart.getQuantity()+1
+                    dto.itemId(), user.getId(), item.getUser().getId(), item.getItemName(), item.getUser().getStoreName(), itemCart.getQuantity()+dto.quantity()
             );
         }
 
@@ -49,13 +50,13 @@ public class CartService {
                 ItemCart.builder()
                         .cart(cart)
                         .item(item)
-                        .quantity(1)    // 장바구니에 넣을 시 기본 구매 수량은 1
+                        .quantity(dto.quantity())    // 장바구니에 넣을 시 기본 구매 수량은 1
                         .cartCheck(true)    // 기본은 체크되어 있는 상태로
                         .build()
         );
 
         return new AddCartResponseDto(
-                itemId, user.getId(), item.getUser().getId(), item.getItemName(), item.getUser().getStoreName(), 1
+                dto.itemId(), user.getId(), item.getUser().getId(), item.getItemName(), item.getUser().getStoreName(), dto.quantity()
         );
     }
 
@@ -92,7 +93,7 @@ public class CartService {
         Item item = findItem(itemCart.getItem().getId());
         String storeName = item.getUser().getStoreName();   // LAZY init
 
-        itemCartRepository.addQuantity(user.getCart(), item);
+        itemCartRepository.addQuantity(user.getCart(), item, 1);
 
         return new CartQuantityResponseDto(item.getItemName(), item.getPrice(), storeName, itemCart.getQuantity()+1);
     }

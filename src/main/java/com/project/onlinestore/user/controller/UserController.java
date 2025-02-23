@@ -68,7 +68,7 @@ public class UserController {
 
     @PostMapping("/cart/add")
     public ResponseEntity<AddCartResponseDto> addCart(@RequestBody AddCartRequestDto dto, Authentication authentication) {
-        AddCartResponseDto addCartResponseDto = cartService.addCart(authentication.getName(), dto.itemId());
+        AddCartResponseDto addCartResponseDto = cartService.addCart(authentication.getName(), dto);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(addCartResponseDto);

@@ -18,8 +18,8 @@ public interface ItemCartRepository extends JpaRepository<ItemCart, Long> {
     ItemCart findByCartAndItem(Cart cart, Item item);
 
     @Modifying
-    @Query("update item_cart i set i.quantity = i.quantity+1 where i.cart = :cart and  i.item = :item")
-    void addQuantity(@Param("cart")Cart cart, @Param("item")Item item);
+    @Query("update item_cart i set i.quantity = i.quantity+:quantity where i.cart = :cart and  i.item = :item")
+    void addQuantity(@Param("cart")Cart cart, @Param("item")Item item, @Param("quantity")Integer quantity);
 
     @Modifying(clearAutomatically = true)
     @Query("update item_cart i set i.quantity = i.quantity-1 where i.cart = :cart and  i.item = :item")
