@@ -97,9 +97,7 @@ export default function Contents({page, setPage}:ContentsProps) {
         
         const fetchData = async() => {
             try{
-                let apiUrl = "";
-                console.log(page);
-    
+                let apiUrl = "";    
                 switch(category) {
                     case "book":
                         apiUrl = `http://localhost:8080/api/v1/item/find/book?page=${page}`;

@@ -3,7 +3,7 @@ import "../css/loginPage.css"
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../AuthProvider";
+import { useAuth } from "../../../hook/AuthProvider";
 
 const LoginWrapper = styled.div`
     display: block;

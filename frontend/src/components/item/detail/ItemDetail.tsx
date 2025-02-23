@@ -29,7 +29,6 @@ export default function ItemDetail(){
     const { elementRef: reviewWrapperRef, onMoveToElement: moveToReview } = useMoveScroll();
 
     useEffect(() => {
-        checkAuth();
         const fetchData = async() => {
             try{
                 const response = await axios.get(`http://localhost:8080/api/v1/item/detail/${itemId}`)
@@ -75,7 +74,6 @@ export default function ItemDetail(){
 
     //장바구니 추가 함수
     const handleAddToCart = async() => {
-        // 로그인 되어 있지 않다면 로그인 페이지로 이동
         if(!isLogin){
             alert("로그인이 필요한 서비스입니다.");
             nav("/login");
@@ -85,7 +83,6 @@ export default function ItemDetail(){
             await axios.post(`http://localhost:8080/api/v1/user/cart/add`,{
                 itemId: itemId,
                 quantity: orderQuantity
-                // 장바구니 담기는 OK 근데 갯수도 같이 전송해서 그 수만큼 +되게 수정
             },{
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -99,6 +96,10 @@ export default function ItemDetail(){
             console.error("API 호출 실패: ", error);
         }
     }
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setOrderQuantity(Number(event.target.value));
+    };
 
     return(
         <div className="totalWrapper">
@@ -122,7 +123,7 @@ export default function ItemDetail(){
 
                         <div className="quantityWrapper">
                             <button className="quantityButton" onClick={() => setOrderQuantity(Math.max(1,orderQuantity - 1))}>-</button>
-                            <input type="text" className="quantityInput" value={orderQuantity} maxLength={6}/>
+                            <input type="text" className="quantityInput" value={orderQuantity} onChange={handleInputChange} maxLength={6}/>
                             <button className="quantityButton" onClick={() => setOrderQuantity(orderQuantity + 1)}>+</button>
                         </div>
 

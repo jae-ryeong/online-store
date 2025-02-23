@@ -55,7 +55,6 @@ const TextEditor = memo(({
             if(input.files) {
                 const file = input.files[0];
                 const imageUrl = await onImageUpload(file)
-                console.log(imageUrl);
                 if(imageUrl) {
                     const quill = document.querySelector(".ql-editor") as HTMLElement;
                     quill.innerHTML += `<img src="${imageUrl}" alt="uploaded image" />`;
