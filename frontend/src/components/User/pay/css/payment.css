@@ -1,0 +1,192 @@
+
+.payment-container {
+    width: 1100px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.payment-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.payment-form {
+    display: block;
+}
+
+.form-columns {
+    display: flex;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+/* 구매자 정보 */
+.payment-section {
+    background-color: white;
+    width: 500px;
+    padding: 25px;
+    border-radius: 25px;
+    background: #ffffff;
+    box-shadow: -5px 5px 10px #e6e6e6, 5px -5px 10px #ffffff;
+
+    margin-left: 50px;
+}
+
+.section-title {
+    margin-bottom: 20px;
+    color: #444;
+}
+
+.form-group {
+    margin-bottom: 20px;
+
+    input[type="text"]{
+        width: 200px;
+        height: 15px;
+    }
+
+    .input-style {
+        width: 200px; height: 15px;
+        border: 1px solid #ddd;
+        padding: 7px;
+        border-radius: 5px;
+        margin-top: 5px;
+    }
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.error-message {
+    color: #ff4444;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.order-items {
+    margin-bottom: 20px;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.total-amount {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 20px 0;
+}
+
+.pay-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pay-button:hover {
+    background-color: #45a049;
+}
+
+.pay-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* 결제 요약 섹션 */
+.summary-section {
+    background-color: white;
+    width: 500px;
+    padding: 25px;
+    border-radius: 25px;
+    background: #ffffff;
+    box-shadow: 5px 5px 10px #e6e6e6,
+        -5px -5px 10px #ffffff;
+
+    margin-right: 50px;
+}
+
+.product-item {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.product-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.product-price {
+    color: #666;
+    font-size: 14px;
+}
+
+.price-summary {
+    margin: 20px 0;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.total-price {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+.errorStyle {
+    color: #ff4444;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.agree-terms {
+    margin-bottom: 15px;
+}
+
+.checkbox-style {
+    margin-bottom: 10px;
+}
