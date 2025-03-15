@@ -19,6 +19,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -57,6 +58,18 @@ dependencies {
 	// GCP
 	implementation 'org.springframework.cloud:spring-cloud-gcp-starters:1.2.5.RELEASE'
 	implementation 'org.springframework.cloud:spring-cloud-gcp-storage:1.2.5.RELEASE'
+
+	// https://mvnrepository.com/artifact/com.github.iamport/iamport-rest-client-java
+	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
+
+	// https://mvnrepository.com/artifact/io.portone/server-sdk
+	implementation 'io.portone:server-sdk:0.15.0'
+
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+	// https://mvnrepository.com/artifact/org.json/json
+	implementation 'org.json:json:20250107'
+
 }
 
 tasks.named('test') {

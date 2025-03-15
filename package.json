@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "react-icon": "^1.0.0"
+    "@portone/browser-sdk": "^0.0.13",
+    "react-icon": "^1.0.0",
+    "react-quill": "^2.0.0"
   }
 }

@@ -44,3 +44,10 @@ jwt:
   access-expired-time-ms: 600000  # 10min
   refresh-expiration-time: 6000000 # 100min
 
+
+portone:
+  api:
+    key: dsa # V2 API Key
+  secret:
+    api: tGbG1l5bHXbFNQCBDED402RmMm7EP38L95w3Q5mNz8kQCmKIzIClAD3R4LMqV1O1Nbdn1szl6729ZmV5 # V2 API 시크릿
+    webhook: whsec_00000000000000000000000000000000000000000000 # V2 웹훅 시크릿
