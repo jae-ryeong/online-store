@@ -10,9 +10,8 @@ import com.project.onlinestore.order.dto.OrderAddressDto;
 import com.project.onlinestore.order.dto.OrderItemDto;
 import com.project.onlinestore.order.dto.OrderItemStatusDto;
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
-import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
-import com.project.onlinestore.order.dto.response.OrderResponseDto;
-import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
+import com.project.onlinestore.order.dto.request.createOrderRequestDto;
+import com.project.onlinestore.order.dto.response.*;
 import com.project.onlinestore.order.repository.OrderItemRepository;
 import com.project.onlinestore.order.repository.OrderRepository;
 import com.project.onlinestore.user.entity.Address;
@@ -74,8 +73,7 @@ public class OrderService {
                     orderItem.getItem().getId(),
                     orderItem.getItem().getItemName(),
                     orderItem.getCount(),
-                    orderItem.getOrderPrice(),
-                    orderItem.getOrderStatus()));
+                    orderItem.getOrderPrice()));
 
             totalPrice += i.getQuantity() * i.getItem().getPrice();
             itemCartRepository.deleteById(i.getId());   // 주문했으므로 주문한 상품들은 장바구니에서 삭제
@@ -99,8 +97,7 @@ public class OrderService {
                         orderItem.getItem().getId(),
                         orderItem.getItem().getItemName(),
                         orderItem.getCount(),
-                        orderItem.getOrderPrice(),
-                        orderItem.getOrderStatus()));
+                        orderItem.getOrderPrice()));
             }
             dtoList.add(new OrderViewResponseDto(user.getId(), order.getId(), order.getOrderDate(), orderItemDtoList));
         }
@@ -117,7 +114,7 @@ public class OrderService {
         Integer totalPrice = 0;
         for (OrderItem orderItem : orderItems) {
             totalPrice += orderItem.getOrderPrice();
-            orderItemDtoList.add(new OrderItemDto(orderItem.getItem().getId(), orderItem.getItem().getItemName(), orderItem.getCount(), orderItem.getOrderPrice(), orderItem.getOrderStatus()));
+            orderItemDtoList.add(new OrderItemDto(orderItem.getItem().getId(), orderItem.getItem().getItemName(), orderItem.getCount(), orderItem.getOrderPrice()));
         }
 
         OrderAddressDto orderAddressDto = new OrderAddressDto(order.getAddress().getAddresseeName(), order.getAddress().getAddress(), order.getAddress().getDetailAddress(), order.getAddress().getPostalCode(), order.getAddress().getTel());
@@ -205,6 +202,78 @@ public class OrderService {
         return new OrderItemStatusDto(orderItem.getOrder().getId(), orderItemId, OrderStatus.COMPLETE);
     }
 
+    // item cart에서 check가 true인 item들을 주문결제창에 불러오는 파일
+    @Transactional(readOnly = true)
+    public List<OrderItemResponseDto> orderitemList(String userName) {
+        User user = findUser(userName);
+
+        List<ItemCart> itemCarts = itemCartRepository.findAllCheckedCart(user.getCart());
+        System.out.println("itemCarts = " + itemCarts);
+        List<OrderItemResponseDto> orderItemResponseDtos = new ArrayList<>();
+
+        for (ItemCart itemCart : itemCarts) {
+            orderItemResponseDtos.add(new OrderItemResponseDto(itemCart.getItem().getItemName(), itemCart.getItem().getPrice(), itemCart.getQuantity()));
+        }
+
+        return orderItemResponseDtos;
+    }
+
+    @Transactional
+    public CreateOrderResponseDto createOrder(String userName, createOrderRequestDto dto) {
+        User user = findUser(userName);
+        Address address = findAdd();
+
+        List<ItemCart> itemCarts = itemCartRepository.findAllCheckedCart(user.getCart());
+
+        Order order = orderRepository.save(
+                Order.builder()
+                        .user(user)
+                        .paymentStatus(false)
+                        .amount(dto.amount())
+                        .address(address)
+                        .itemName(dto.itemName())
+                        .review(false)
+                        .build()
+        );
+        System.out.println("order.getId = " + order.getId());
+        System.out.println("order.getItemName() = " + order.getItemName());
+
+        List<OrderItemDto> orderItemDtoList = new ArrayList<>();
+        //int totalPrice = 0;
+
+        for (ItemCart i : itemCarts) {
+            if (i.getItem().getQuantity() < i.getQuantity()) {
+                // TODO: 에러 발생 시 처리 코드 구현하기
+                throw new ApplicationException(ErrorCode.NOT_ENOUGH_QUANTITY, i.getItem().getItemName()); // 한 상품 이라도 재고가 부족할 시 에러 발생
+            }
+
+            OrderItem orderItem = orderItemRepository.save(OrderItem.builder()
+                    .item(i.getItem())
+                    .order(order)
+                    .orderPrice(i.getQuantity() * i.getItem().getPrice())
+                    .count(i.getQuantity())
+                    .orderStatus(OrderStatus.ORDER)
+                    .build());
+
+            orderItemDtoList.add(new OrderItemDto(
+                    orderItem.getItem().getId(),
+                    orderItem.getItem().getItemName(),
+                    orderItem.getCount(),
+                    orderItem.getOrderPrice()));
+            itemRepository.itemQuantityDown(i.getQuantity(), i.getItem().getId());    // 주문 시 주문 갯수 만큼 quantity 감소
+        }
+
+        itemCartRepository.deleteAllBySuccessPayment(user.getCart());   // 주문시 장바구니 속 주문상품 삭제
+        return new CreateOrderResponseDto(order.getId(), dto.amount(), false);
+    }
+
+/*    @Transactional
+    public void cancelOrder(String userName, Long orderId) {
+        User user = findUser(userName);
+
+        orderRepository.deleteByOrderId(orderId);
+    }*/
+
 
     private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
@@ -225,5 +294,10 @@ public class OrderService {
     private OrderItem findOrderItem(Long OrderItemId) {
         return orderItemRepository.findById(OrderItemId).orElseThrow(() ->
                 new ApplicationException(ErrorCode.ORDER_ITEM_NOT_FOUNT_IN_ORDER, null));
+    }
+
+    // 임시
+    private Address findAdd() {
+        return addressRepository.findById(1L).orElseThrow(() -> new ApplicationException(ErrorCode.ADDRESS_NOT_FOUNT, null));
     }
 }

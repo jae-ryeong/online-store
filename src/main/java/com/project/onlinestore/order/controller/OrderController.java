@@ -1,11 +1,10 @@
 package com.project.onlinestore.order.controller;
 
 import com.project.onlinestore.Item.service.ItemService;
+import com.project.onlinestore.order.dto.request.createOrderRequestDto;
 import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
 import com.project.onlinestore.order.dto.OrderItemStatusDto;
-import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
-import com.project.onlinestore.order.dto.response.OrderResponseDto;
-import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
+import com.project.onlinestore.order.dto.response.*;
 import com.project.onlinestore.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -78,5 +77,23 @@ public class OrderController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(orderItemStatusDto);
+    }
+
+    @PostMapping("/createorder")
+    public ResponseEntity<CreateOrderResponseDto> createOrder(Authentication authentication, @RequestBody createOrderRequestDto dto){
+        System.out.println("dto: " + dto);
+        CreateOrderResponseDto createOrderResponseDto = orderService.createOrder(authentication.getName(), dto);
+
+        System.out.println("createOrderResponseDto = " + createOrderResponseDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(createOrderResponseDto);
+    }
+
+    @PostMapping("/list/orderitem")
+    public ResponseEntity<List<OrderItemResponseDto>> orderItemList(Authentication authentication) {
+        List<OrderItemResponseDto> orderItemResponseDtos = orderService.orderitemList(authentication.getName());
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(orderItemResponseDtos);
     }
 }

@@ -26,5 +26,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("update item i set i.quantity = i.quantity + :quantity where i.id =:itemId")
     void itemQuantityUpdate(@Param("quantity")Integer quantity, @Param("itemId")Long itemId);
 
+    @Modifying
+    @Query("update item i set i.quantity = i.quantity - :quantity where i.id = :itemId")
+    void itemQuantityDown(@Param("quantity")Integer quantity, @Param("itemId")Long itemId);
+
     Page<Item> findAllByCategory(Category category, Pageable pageable);
 }
