@@ -267,12 +267,11 @@ public class OrderService {
         return new CreateOrderResponseDto(order.getId(), dto.amount(), false);
     }
 
-/*    @Transactional
+    @Transactional
     public void cancelOrder(String userName, Long orderId) {
         User user = findUser(userName);
-
-        orderRepository.deleteByOrderId(orderId);
-    }*/
+        orderRepository.deleteOrder(orderId, user);
+    }
 
 
     private User findUser(String userName) {

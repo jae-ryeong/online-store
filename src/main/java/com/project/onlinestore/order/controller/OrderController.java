@@ -96,4 +96,12 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(orderItemResponseDtos);
     }
+
+    @DeleteMapping("/deleteorder")
+    public ResponseEntity<String> orderDelete(Authentication authentication, @RequestBody Long orderId) {
+        System.out.println("orderId = " + orderId);
+        orderService.cancelOrder(authentication.getName(), orderId);
+
+        return ResponseEntity.ok("결제 실패로 인해 order 데이터가 삭제되었습니다");
+    }
 }
