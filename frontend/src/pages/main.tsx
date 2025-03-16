@@ -12,14 +12,10 @@ import ItemManagement from "../components/User/myPage/seller/itemManagement";
 import ItemForm from "../components/User/myPage/seller/itemForm";
 import Contents from "../components/content/contents";
 import ItemDetail from "../components/item/detail/ItemDetail";
-import { checkAuth } from "../hook/checkAuth";
+import PaymentForm from "../components/User/pay/PaymentForm";
 
 export default function Home() {
     const [page, setPage] = useState(0);    // 현재 페이지
-
-    useEffect(() => {
-        checkAuth();
-    },[]);
     
     const router = createBrowserRouter([
         {
@@ -60,10 +56,13 @@ export default function Home() {
             ]
         },
         {
+            path: "cart/checkout",
+            element: <PaymentForm/>
+        },
+        {
             path: "detail/:itemId",
             element: <ItemDetail/>
-        }
-        
+        }        
     ]);
 
     return (

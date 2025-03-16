@@ -8,9 +8,10 @@ public record CartViewResponseDto(
         Integer price,
         String storeName,
         Integer quantity,
-        boolean cartCheck
+        boolean cartCheck,
+        String mainImageUrl
 ) {
     public static CartViewResponseDto fromEntity(ItemCart itemCart) {
-        return new CartViewResponseDto(itemCart.getId(), itemCart.getItem().getItemName(), itemCart.getItem().getPrice(), itemCart.getItem().getUser().getStoreName(), itemCart.getQuantity(), itemCart.isCartCheck());
+        return new CartViewResponseDto(itemCart.getId(), itemCart.getItem().getItemName(), itemCart.getItem().getPrice(), itemCart.getItem().getUser().getStoreName(), itemCart.getQuantity(), itemCart.isCartCheck(), itemCart.getItem().getMainImageUrl());
     }
 }

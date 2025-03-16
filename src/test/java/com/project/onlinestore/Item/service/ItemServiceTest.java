@@ -58,7 +58,7 @@ class ItemServiceTest {
         given(userRepository.findByUserName(user.getUserName())).willReturn(Optional.of(user));
 
         //when
-        RegistrationResponseDto registration = itemService.registration(user.getUserName(), itemDto());
+        RegistrationResponseDto registration = itemService.createItem(user.getUserName(), itemDto());
 
         //then
         verify(userRepository).findByUserName(any());
@@ -75,7 +75,7 @@ class ItemServiceTest {
         given(userRepository.findByUserName(user.getUserName())).willReturn(Optional.of(user));
 
         //then
-        assertThatThrownBy(() -> itemService.registration(user.getUserName(), itemDto())).isInstanceOf(ApplicationException.class);
+        assertThatThrownBy(() -> itemService.createItem(user.getUserName(), itemDto())).isInstanceOf(ApplicationException.class);
     }
 
     @DisplayName("item 전체 목록 조회")
@@ -263,6 +263,6 @@ class ItemServiceTest {
     }
 
     private RegistrationRequestDto itemDto() {
-        return new RegistrationRequestDto("item", 100, 10000, Category.PET);
+        return new RegistrationRequestDto("item", 100, 10000, Category.PET, null, null);
     }
 }

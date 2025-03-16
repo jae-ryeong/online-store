@@ -41,10 +41,7 @@ const Selector = styled.ul`
     position: relative;
 `
 
-interface SelectorItemProps {
-    isSelected: boolean;
-}
-const SelectorItem = styled.li<SelectorItemProps>`
+const SelectorItem = styled.li<{selected?: boolean}>`
     white-space: nowrap;
     padding: 0.75rem 1.5rem;
     cursor: pointer;
@@ -90,12 +87,15 @@ export default function MainCategory({ categories, setPage }: CategoryComponentP
                 <HighLight className="highlight" ref={highLightRef} />
                 {
                     categories.map((category, index) => (
-                        <SelectorItem key={index} onClick={() => handleClick(index, category)} ref={(el) => (targetRef.current[index] = el)} isSelected={activeIndex === index}> {category} </SelectorItem>
+                        <SelectorItem
+                        key={index}
+                        onClick={() => handleClick(index, category)}
+                        ref={(el) => (targetRef.current[index] = el)}
+                        selected={activeIndex === index} // `selected` prop으로 전달
+                    > {category} </SelectorItem>
                     ))
                 }
-
             </Selector>
         </MainCategoryWrapper>
     );
 }
-

@@ -41,8 +41,8 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                .requestMatchers("/api/*/user/*/join", "/api/*/user/join/idcheck", "/api/*/user/role/check", "/api/*/user/login", "/api/*/user/token/refresh", "/api/*/item/test", "/*").permitAll()
-                                .requestMatchers( "/api/*/item/search", "/api/*/item/detail/*").permitAll()
+                                .requestMatchers("/api/*/user/*/join", "/api/*/user/join/idcheck", "/api/*/user/role/check", "/api/*/user/login", "/api/*/user/token/refresh", "/api/*/item/test", "/*", "/api/*/user/auth/*").permitAll()
+                                .requestMatchers( "/api/*/item/search", "/api/*/item/detail/*", "/api/*/item/find/*").permitAll()
                                 .requestMatchers("/api/*/review/view/*").permitAll()
                                 .requestMatchers("/api/*/item/gcp/image/upload", "/api/*/item/gcp/image/delete/*").authenticated()
                                 .requestMatchers("/api/*/user/logout", "/api/*/user/cart/*", "/api/*/user/cart/*/*", "/api/*/user/cart/*/*/*", "/api/*/user/setting/*", "/api/*/user/setting/*/*", "/api/*/user/setting/*/*/*").authenticated()
@@ -50,6 +50,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/*/review/*", "/api/*/review/*/*").authenticated()
                                 .requestMatchers("/api/*/order/*", "/api/*/order/*/*", "/api/*/order/*/*/*", "/api/*/order/*/*/*/*").authenticated()
                                 .requestMatchers("/api/movie", "/demo/api/data", "/api/test").permitAll()
+                                .requestMatchers("/api/*/pay/**").permitAll()
                         )   // TODO: ROLE로 나눠보기
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

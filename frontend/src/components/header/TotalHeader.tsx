@@ -2,7 +2,7 @@ import styled from "styled-components"
 import { ImAppleinc} from "react-icons/im";
 import SearchBar from "./searchBar";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../AuthProvider";
+import { useAuth } from "../../hook/AuthProvider";
 import "../../fonts/font.css";
 
 const HeaderContainer = styled.div`
