@@ -235,18 +235,36 @@ public class OrderService {
                         .review(false)
                         .build()
         );
-        System.out.println("order.getId = " + order.getId());
-        System.out.println("order.getItemName() = " + order.getItemName());
-
-        List<OrderItemDto> orderItemDtoList = new ArrayList<>();
-        //int totalPrice = 0;
 
         for (ItemCart i : itemCarts) {
             if (i.getItem().getQuantity() < i.getQuantity()) {
                 // TODO: 에러 발생 시 처리 코드 구현하기
                 throw new ApplicationException(ErrorCode.NOT_ENOUGH_QUANTITY, i.getItem().getItemName()); // 한 상품 이라도 재고가 부족할 시 에러 발생
             }
+        }
+        return new CreateOrderResponseDto(order.getId(), dto.amount(), false);
+    }
 
+    @Transactional
+    public void cancelOrder(String userName, Long orderId) {
+        User user = findUser(userName);
+        orderRepository.deleteOrder(orderId, user);
+    }
+
+    @Transactional
+    public void orderItemDelete(String userName) {
+        User user = findUser(userName);
+
+    }
+
+    @Transactional
+    public void successOrder(String userName, Long orderId) {
+        User user = findUser(userName);
+        Order order = findOrder(orderId);
+        List<ItemCart> itemCarts = itemCartRepository.findAllCheckedCart(user.getCart());
+        List<OrderItemDto> orderItemDtoList = new ArrayList<>();
+
+        for (ItemCart i : itemCarts) {
             OrderItem orderItem = orderItemRepository.save(OrderItem.builder()
                     .item(i.getItem())
                     .order(order)
@@ -262,15 +280,7 @@ public class OrderService {
                     orderItem.getOrderPrice()));
             itemRepository.itemQuantityDown(i.getQuantity(), i.getItem().getId());    // 주문 시 주문 갯수 만큼 quantity 감소
         }
-
-        itemCartRepository.deleteAllBySuccessPayment(user.getCart());   // 주문시 장바구니 속 주문상품 삭제
-        return new CreateOrderResponseDto(order.getId(), dto.amount(), false);
-    }
-
-    @Transactional
-    public void cancelOrder(String userName, Long orderId) {
-        User user = findUser(userName);
-        orderRepository.deleteOrder(orderId, user);
+        itemCartRepository.deleteAllBySuccessPayment(user.getCart()); // 주문시 장바구니 속 주문상품 삭제
     }
 
 

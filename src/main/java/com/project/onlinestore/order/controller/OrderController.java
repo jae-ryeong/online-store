@@ -97,11 +97,26 @@ public class OrderController {
                 .body(orderItemResponseDtos);
     }
 
-    @DeleteMapping("/deleteorder")
-    public ResponseEntity<String> orderDelete(Authentication authentication, @RequestBody Long orderId) {
+    // 결제 실패 시 order 데이터 삭제
+    @DeleteMapping("/deleteorder/{orderId}")
+    public ResponseEntity<String> orderDelete(Authentication authentication, @PathVariable("orderId") Long orderId) {
         System.out.println("orderId = " + orderId);
         orderService.cancelOrder(authentication.getName(), orderId);
 
         return ResponseEntity.ok("결제 실패로 인해 order 데이터가 삭제되었습니다");
+    }
+    
+    @DeleteMapping("/deleteorderitem")
+    public ResponseEntity<String> orderItemDelete(Authentication authentication) {
+        orderService.orderItemDelete(authentication.getName());
+        return ResponseEntity.ok("결제 성공으로 주문한 상품들이 장바구니에서 삭제되었습니다.");
+    }
+
+    @PutMapping("/successorder/{orderId}")
+    public ResponseEntity<String> successOrder(Authentication authentication, @PathVariable("orderId") Long orderId) {
+        System.out.println("orderId = " + orderId);
+        orderService.successOrder(authentication.getName(), orderId);
+
+        return ResponseEntity.ok("결제가 정상적으로 완료되었습니다.");
     }
 }

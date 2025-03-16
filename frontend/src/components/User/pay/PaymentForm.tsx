@@ -115,8 +115,9 @@ export default function PaymentForm() {
 
     // 결제 실패 시 order 삭제 함수
     const deleteOrder = async (orderId: number) => {
+        console.log("주문 삭제 실행");
         const token = getAuth();
-        const response = await fetch(`http://localhost:8080/api/v1/order/deleteorder`, {
+        const response = await fetch(`http://localhost:8080/api/v1/order/deleteorder/${orderId}`, {
             method: "DELETE",
             body: JSON.stringify({
                 orderId
@@ -129,6 +130,26 @@ export default function PaymentForm() {
             console.log("주문 삭제 성공");
         } else {
             console.error("주문 삭제 실패");
+        }
+    }
+
+    // 결제 성공 시 itemCart 삭제 및 quantity 감소 함수
+    const successOrder = async (orderId: number) => {
+        console.log("주문 성공 실행");
+        const token = getAuth();
+        const response = await fetch(`http://localhost:8080/api/v1/order/successorder/${orderId}`, {
+            method: "PUT",
+            body: JSON.stringify({
+                orderId
+            }),
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (response.ok) {
+            console.log("주문 성공 성공");
+        } else {
+            console.error("주문 성공 실패");
         }
     }
 
@@ -171,6 +192,8 @@ export default function PaymentForm() {
                     status: "FAILED",
                     message: response.message,
                 });
+                // order 삭제 메소드
+                deleteOrder(order.orderId);
                 return;
             }
 
@@ -186,12 +209,12 @@ export default function PaymentForm() {
 
             if (completeResponse.ok) {
                 setPaymentStatus({ status: "PAID" });
+                successOrder(order.orderId);
             } else {
                 setPaymentStatus({
                     status: "FAILED",
                     message: await completeResponse.text(),
                 });
-
                 // order 삭제 메소드
                 deleteOrder(order.orderId);
             }
