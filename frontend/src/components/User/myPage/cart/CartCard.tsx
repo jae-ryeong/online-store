@@ -9,8 +9,8 @@ interface CartItem {
     quantity: number;
     price: number;
     cartCheck: boolean;
+    mainImageUrl: string;
 }
-
 const NoCartPage: React.FC = () => {
     return(
         <div className="CardTotalWrapper align_items_center">
@@ -143,6 +143,11 @@ const CartCard2: React.FC = () => {
     // 총 상품 가격 계산
     const totalPrice = checkedItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
+    // 결제하기 버튼 클릭
+    const handlePayment = async() => {
+    nav("/cart/checkout");
+    }
+
     return (
         <div className="TotalWrapper flex">
             {cartItems.length === 0 ? <NoCartPage/> : (
@@ -153,7 +158,7 @@ const CartCard2: React.FC = () => {
                             <div className="CardWrapper flex">
                                 <div className="checkWrapper">
                                     <input className="checkBox" type="checkbox" checked={item.cartCheck} onChange={() => handleCheckboxChange(item.itemCartId)}/>
-                                    {/** 여기에 img 추가(가로로) */}
+                                    <img src={item.mainImageUrl} alt="상품이미지" className="mainImage"/>
                                 </div>
 
                                 <div className="productWrpper">
@@ -187,7 +192,7 @@ const CartCard2: React.FC = () => {
                     <h4>{totalPrice.toLocaleString()} 원</h4>
                 </div>
 
-                <button className="summaryButton">결제하기</button>
+                <button className="summaryButton" onClick={()=> handlePayment()}>결제하기</button>
 
             </div>
 

@@ -110,8 +110,26 @@ export default function PaymentForm() {
             },
         });
         const order = await response.json();
-        console.log("orderId: " + order.orderId)
         return order;
+    }
+
+    // 결제 실패 시 order 삭제 함수
+    const deleteOrder = async (orderId: number) => {
+        const token = getAuth();
+        const response = await fetch(`http://localhost:8080/api/v1/order/deleteorder`, {
+            method: "DELETE",
+            body: JSON.stringify({
+                orderId
+            }),
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        if (response.ok) {
+            console.log("주문 삭제 성공");
+        } else {
+            console.error("주문 삭제 실패");
+        }
     }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -156,7 +174,6 @@ export default function PaymentForm() {
                 return;
             }
 
-            console.log()
             const completeResponse = await fetch("/api/v1/pay/verify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -174,9 +191,13 @@ export default function PaymentForm() {
                     status: "FAILED",
                     message: await completeResponse.text(),
                 });
+
+                // order 삭제 메소드
+                deleteOrder(order.orderId);
             }
         } catch (error) {
             console.error("결제 검증 실패: ", error);
+            deleteOrder(order.orderId);
         }
     };
 
