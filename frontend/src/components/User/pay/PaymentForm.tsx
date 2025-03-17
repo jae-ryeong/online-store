@@ -46,7 +46,6 @@ export default function PaymentForm() {
         email: ""
     });
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>({
         status: "IDLE",
@@ -98,19 +97,34 @@ export default function PaymentForm() {
     // 결제 함수
     const createOrder = async () => {
         const token = getAuth();
-        const response = await fetch("http://localhost:8080/api/v1/order/createorder", {
-            method: "POST",
-            body: JSON.stringify({
-                amount: totalAmount,
-                itemName: orderItems.length > 1 ? `${orderItems[0].itemName} 외 ${orderItems.length - 1}건` : orderItems[0].itemName,
-            }),
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        const order = await response.json();
-        return order;
+        try {
+            const response = await fetch("http://localhost:8080/api/v1/order/createorder", {
+                method: "POST",
+                body: JSON.stringify({
+                    amount: totalAmount,
+                    itemName: orderItems.length > 1 ? `${orderItems[0].itemName} 외 ${orderItems.length - 1}건` : orderItems[0].itemName,
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(JSON.stringify(errorData)); // 예외 발생
+            }
+            const order = await response.json();
+            return order;
+        } catch (error: any) {
+            try {
+                const errorObj = JSON.parse(error.message);
+                alert(`${errorObj.message} 상품의 재고가 부족합니다.`);
+                return;
+            } catch {
+                alert('알 수 없는 오류가 발생했습니다.');
+                return;
+            }
+        }
     }
 
     // 결제 실패 시 order 삭제 함수
@@ -156,6 +170,10 @@ export default function PaymentForm() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const order = await createOrder();
+        console.log(order);
+        if (order === undefined){
+            return;
+        }
 
         try {
             // randomId 생성
@@ -238,7 +256,7 @@ export default function PaymentForm() {
     return (
         <div className="totalWrapper">
             <Header />
-            <div className="payment-container">                
+            <div className="payment-container">
                 <h2 className="payment-title">결제 정보 입력</h2>
 
                 <form onSubmit={handleSubmit} className="payment-form">

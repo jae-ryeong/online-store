@@ -15,6 +15,6 @@ public class ApplicationException extends RuntimeException {
         if (errorMessage == null) {
             return errorCode.getErrorMessage();
         }
-        return String.format("%s, %s", errorCode.getErrorMessage(), errorMessage);
+        return String.format(errorMessage);
     }
 }

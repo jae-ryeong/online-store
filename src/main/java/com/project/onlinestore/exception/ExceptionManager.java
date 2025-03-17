@@ -18,7 +18,7 @@ public class ExceptionManager {
 
     // (2) 기존에 만들어둔 에러(ApplicationException)가 발생시 동작
     @ExceptionHandler(ApplicationException.class)
-    public ResponseEntity<?> hospitalReviewAppExceptionHandler(ApplicationException e){
+    public ResponseEntity<?> AppExceptionHandler(ApplicationException e){
         return ResponseEntity.status(e.getErrorCode().getStatus())
                 .body(new ErrorDto(e.getErrorCode(), e.getMessage()));
     }
