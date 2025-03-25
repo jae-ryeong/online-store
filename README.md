@@ -4,6 +4,9 @@
 온라인 스토어 프로젝트는 사용자가 다양한 상품을 검색, 조회, 구매할 수 있는 웹 기반 쇼핑몰 플랫폼입니다. 
 이 프로젝트는 React(TypeScript)와 Spring Boot를 사용하여 풀스택 웹 애플리케이션으로 개발되었으며, 포트원 V2 API를 사용하여 결제 기능을 구현하였습니다.
 
+## E-R 다이어그램
+![Image](https://github.com/user-attachments/assets/1ffc3171-113e-4986-badb-40dc6abb8aa7)
+
 ## 프론트엔드 개발 (React + TypeScript)
 프론트엔드는 React와 TypeScript를 활용하여 개발하였으며, 컴포넌트 기반 아키텍처를 적용하여 유지보수성을 높였습니다.
 
