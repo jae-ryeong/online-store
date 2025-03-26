@@ -12,6 +12,22 @@
 ## E-R 다이어그램
 ![Image](https://github.com/user-attachments/assets/1ffc3171-113e-4986-badb-40dc6abb8aa7)
 
+## 기술 스택
+### 프론트엔드
+- **React.js**: UI 구성
+- **TypeScript**: 타입 안정성 확보
+
+### 백엔드
+- **Spring Boot**: REST API 개발
+- **Spring Security & JWT**: 사용자 인증 및 보안
+
+### 기타
+- **Docker**: 컨테이너화 및 배포
+- **GCP (Google Cloud Platform)**: 이미지 업로드
+- **포트원 결제 API**: 온라인 결제 기능 구현
+- **MariaDB**: 관계형 데이터베이스 사용
+- **Redis**: JWT 처리를 위한 NoSql 사용
+
 ## 프론트엔드 개발 (React + TypeScript)
 프론트엔드는 React와 TypeScript를 활용하여 개발하였으며, 컴포넌트 기반 아키텍처를 적용하여 유지보수성을 높였습니다.
 
@@ -60,20 +76,3 @@
 
 ### 5. 리뷰 및 평점
 - 상품별 리뷰 작성
-
-## 기술 스택
-### 프론트엔드
-- **React.js**: UI 구성
-- **TypeScript**: 타입 안정성 확보
-
-### 백엔드
-- **Spring Boot**: REST API 개발
-- **Spring Security & JWT**: 사용자 인증 및 보안
-- **JPA (Hibernate)**: 데이터베이스 관리
-
-### 기타
-- **Docker**: 컨테이너화 및 배포
-- **GCP (Google Cloud Platform)**: 이미지 업로드 및 호스팅
-- **아임포트 결제 API**: 온라인 결제 기능 구현
-- **MariaDB**: 관계형 데이터베이스 사용
-- **Redis**: JWT 처리를 위한 NoSql 사용
