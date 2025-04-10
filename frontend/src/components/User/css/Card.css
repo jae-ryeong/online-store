@@ -80,3 +80,18 @@
     display:flex;
     justify-content: space-between;
 }
+
+.productWrpper{
+    width: 250px;
+}
+.cancelWrapper{
+    width:40px;
+    
+    .deleteButton{
+        width: 35px; height: 23px;
+        font-size: 15px;
+        font-weight: 400;
+        padding: 0px;
+        cursor: pointer;
+    }
+}

@@ -13,6 +13,7 @@ import ItemForm from "../components/User/myPage/seller/itemForm";
 import Contents from "../components/content/contents";
 import ItemDetail from "../components/item/detail/ItemDetail";
 import PaymentForm from "../components/User/pay/PaymentForm";
+import AddressModal from "../components/User/pay/AddressModal";
 
 export default function Home() {
     const [page, setPage] = useState(0);    // 현재 페이지
@@ -62,7 +63,15 @@ export default function Home() {
         {
             path: "detail/:itemId",
             element: <ItemDetail/>
-        }        
+        },
+        {
+            path: "/popup/addressmanagement",
+            element: <AddressModal/>
+        },
+        {
+            path: "test",
+            element: <AddressModal/>
+        }
     ]);
 
     return (

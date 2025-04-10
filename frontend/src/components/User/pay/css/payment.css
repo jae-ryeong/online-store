@@ -35,13 +35,39 @@
     box-shadow: -5px 5px 10px #e6e6e6, 5px -5px 10px #ffffff;
 
     margin-left: 50px;
+
+    .lightly{
+        opacity: 0.5;
+    }
 }
 
 .section-title {
     margin-bottom: 20px;
     color: #444;
 }
+.delivery-info-box{
+    .input-style {
+        height: 15px;
+        border: 1px solid #ddd;
+        padding: 7px;
+        border-radius: 5px;
+        margin-top: 5px;
+    }
 
+    .deliver-change{
+        background-color: #ffffff;
+        border: 1px solid rgb(209, 213, 219);
+        border-radius: 0.5rem;
+        color: #111827;
+        font-size: 0.875rem;
+        font-weight: 600;
+        line-height: 0.5rem;
+        padding: 0.75rem 1rem;
+        text-align: center;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+    }
+}
 .form-group {
     margin-bottom: 20px;
 

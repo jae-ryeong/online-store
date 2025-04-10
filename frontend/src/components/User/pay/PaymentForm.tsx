@@ -14,10 +14,11 @@ interface OrderItem {
 }
 interface DeliveryInfo {
     receiverName: string;
-    phoneNumber: string;
+    postalCode: number;
+    tel: string;
     address: string;
     detailAddress: string;
-    deliveryRequest?: string;
+    isDefault?: boolean
 }
 interface PaymentRequest {
     amount: number;
@@ -32,17 +33,11 @@ interface PaymentStatus {
 
 export default function PaymentForm() {
     const nav = useNavigate();
-    const [deliveryInfo, setDeliveryInfo] = useState<DeliveryInfo>({
-        receiverName: "",
-        phoneNumber: "",
-        address: "",
-        detailAddress: "",
-    });
+    const [selectedAddress, setSelectedAddress] = useState<DeliveryInfo|null>(null);
     const [agreeTerms, setAgreeTerms] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         phone: "",
-        address: "",
         email: ""
     });
     const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
@@ -50,6 +45,11 @@ export default function PaymentForm() {
     const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>({
         status: "IDLE",
     });
+
+    // 배송지 선택 팝업 창 오픈
+    const handleOpenPopup = () => {
+        window.open("/popup/addressmanagement", "배송지 선택", "width=600,height=700");
+    }
 
     const getAuth = () => {
         const token = localStorage.getItem("accessToken")
@@ -65,6 +65,7 @@ export default function PaymentForm() {
     useEffect(() => {
         const token = getAuth();
 
+        // CartData API 호출
         const fetchCartData = async () => {
             try {
                 const response = await fetch("http://localhost:8080/api/v1/order/list/orderitem", {
@@ -85,6 +86,17 @@ export default function PaymentForm() {
             }
         }
         fetchCartData();
+
+        // 배송지 정보 API 호출
+        const listener = (event: MessageEvent) => {
+            if (event.origin !== window.origin) return;
+            const data = event.data;
+            if (data?.type === "ADDRESS_SELECTED") {
+                setSelectedAddress(data.payload);
+            }
+        };
+        window.addEventListener("message", listener);
+        return () => window.removeEventListener("message", listener);
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,7 +183,7 @@ export default function PaymentForm() {
         e.preventDefault();
         const order = await createOrder();
         console.log(order);
-        if (order === undefined){
+        if (order === undefined) {
             return;
         }
 
@@ -262,32 +274,62 @@ export default function PaymentForm() {
                 <form onSubmit={handleSubmit} className="payment-form">
                     <div className="form-columns">
                         <div className="payment-section">
-                            <h3>구매자 정보</h3>
+                            {/* <div className="delivery-info">
+                                <h3>배송지 정보</h3>
+                                <div className="delivery-info-box">
+                                    <input type="text" className="input-style" size={6} placeholder="우편번호" disabled />
+                                    <input type="button" value="우편번호 찾기" />
+                                    <br />
+                                    <input type="text" className="input-style" size={50} placeholder="도로명주소" disabled />
+                                    <br />
+                                    <input type="text" className="input-style" size={50} placeholder="지번주소" disabled />
+                                    <br />
+                                    <input type="text" className="input-style" size={50} placeholder="상세주소" />
+                                </div>
+                            </div> */}
 
-                            <div className="form-group">
-                                <label>이름</label>
-                                <input className="input-style"
-                                    type="text" name="name"
-                                    value={formData.name} onChange={handleChange} required />
+                            <div className="delivery-info-box">
+                                <h3>배송지 정보</h3>
+                                <h4 className="">{selectedAddress?.receiverName}</h4>
+                                <div className="">
+                                    <p className="postalCode">{selectedAddress?.postalCode}</p>
+                                    <p className="address">{selectedAddress?.address}</p>
+                                    <p className="detailAddress">{selectedAddress?.detailAddress}</p>
+                                    <p className="tel">{selectedAddress?.tel}</p>
+                                </div>
+
+                                <button className="deliver-change" onClick={handleOpenPopup}>배송지 변경</button>
+                            </div>
+                            <hr className="lightly" />
+                            <div>
+
+                                <h3>구매자 정보</h3>
+                                <div className="form-group">
+                                    <label>이름</label>
+                                    <input className="input-style"
+                                        type="text" name="name"
+                                        value={formData.name} onChange={handleChange} required />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>이메일</label>
+                                    <input className="input-style"
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange} required />
+                                </div>
+
+                                <div className="form-group">
+                                    <label>전화번호</label>
+                                    <input className="input-style"
+                                        type="tel"
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleChange} required />
+                                </div>
                             </div>
 
-                            <div className="form-group">
-                                <label>이메일</label>
-                                <input className="input-style"
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange} required />
-                            </div>
-
-                            <div className="form-group">
-                                <label>전화번호</label>
-                                <input className="input-style"
-                                    type="tel"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleChange} required />
-                            </div>
                         </div>
 
                         <div className="summary-section">

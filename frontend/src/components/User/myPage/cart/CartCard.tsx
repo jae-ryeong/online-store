@@ -148,6 +148,31 @@ const CartCard2: React.FC = () => {
     nav("/cart/checkout");
     }
 
+    // 삭제 버튼
+    const handleDelete = async(itemCartId: number) => {
+        const token = getAuth();
+        try{
+            const response = await fetch(`http://localhost:8080/api/v1/user/cart/view/delete/${itemCartId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+
+            if (!response.ok) {
+                throw new Error(`Failed to delete item with ID ${itemCartId}`);
+            }
+
+            setCartItems((prevItems) => prevItems.filter((item) => item.itemCartId !== itemCartId));
+            
+            window.location.reload();
+        } catch(error){
+            console.error("Failed to delete item:", error);
+            alert("상품을 삭제하는 데 실패했습니다.");
+        }
+    }
+
     return (
         <div className="TotalWrapper flex">
             {cartItems.length === 0 ? <NoCartPage/> : (
@@ -171,6 +196,10 @@ const CartCard2: React.FC = () => {
                                         <span className="quantity">{item.quantity}</span>
                                         <button onClick={() => handleQuantityUp(item.itemCartId)}>+</button>
                                     </div>
+                                </div>
+
+                                <div className="cancelWrapper">
+                                    <div className="deleteButton" onClick={()=>handleDelete(item.itemCartId)}>삭제</div>
                                 </div>
                             </div>
                         </div>

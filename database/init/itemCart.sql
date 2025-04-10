@@ -1,4 +1,4 @@
-drop table if exists item_cart;
+/*drop table if exists item_cart;
 
 create table item_cart
 (
@@ -7,4 +7,4 @@ create table item_cart
     item_id bigint not null,
     quantity integer not null,
     cart_check boolean not null
-) engine = InnoDB;
+) engine = InnoDB;*/

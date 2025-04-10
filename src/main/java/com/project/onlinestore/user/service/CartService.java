@@ -124,6 +124,7 @@ public class CartService {
 
         itemCartRepository.deleteById(itemCartId);
     }
+
     private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
                 new ApplicationException(ErrorCode.USERNAME_NOT_FOUND, userName + "를 찾을 수 없습니다."));

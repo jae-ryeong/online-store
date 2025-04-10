@@ -1,4 +1,4 @@
-drop table if exists orders;
+/*drop table if exists orders;
 
 create table orders
 (
@@ -24,4 +24,4 @@ CREATE TABLE payment
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
-);
+);*/

@@ -1,4 +1,4 @@
-drop table if exists review;
+/*drop table if exists review;
 
 create table review
 (
@@ -8,4 +8,4 @@ create table review
     created_at datetime not null ,
     created_by varchar(255) not null ,
     updated_at datetime not null
-) engine = InnoDB;
+) engine = InnoDB;*/

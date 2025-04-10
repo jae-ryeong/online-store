@@ -17,6 +17,7 @@ spring:
         use_sql_comments: true
         highlight_sql: true
     show-sql: true
+    defer-datasource-initialization: true
 
   data:
     redis:
@@ -32,6 +33,10 @@ spring:
     gcp:
       storage:
         bucket: gcs_image_12321
+
+  sql:
+    init:
+      mode: always
 
 
 logging:

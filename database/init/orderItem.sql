@@ -1,4 +1,4 @@
-drop table if exists order_items;
+/*drop table if exists order_items;
 
 create table order_items
 (
@@ -10,3 +10,4 @@ create table order_items
     order_price INTEGER not null
 ) engine = InnoDB;
 
+*/

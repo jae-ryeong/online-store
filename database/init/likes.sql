@@ -1,4 +1,4 @@
-drop table if exists likes;
+/*drop table if exists likes;
 
 create table likes
 (
@@ -6,4 +6,4 @@ create table likes
     user_id bigint,
     item_id bigint,
     review_id bigint
-) engine = InnoDB;
+) engine = InnoDB;*/

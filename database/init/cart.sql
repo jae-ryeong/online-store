@@ -1,4 +1,4 @@
-drop table if exists cart;
+/*drop table if exists cart;
 
 create table cart
 (
@@ -11,4 +11,4 @@ insert into cart(cart_id) values (2);
 insert into cart(cart_id) values (3);
 insert into cart(cart_id) values (4);
 insert into cart(cart_id) values (5);
-insert into cart(cart_id) values (6);
+insert into cart(cart_id) values (6);*/
