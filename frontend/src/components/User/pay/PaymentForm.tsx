@@ -13,7 +13,7 @@ interface OrderItem {
     options?: string[];
 }
 interface DeliveryInfo {
-    receiverName: string;
+    addresseeName: string;
     postalCode: number;
     tel: string;
     address: string;
@@ -47,7 +47,8 @@ export default function PaymentForm() {
     });
 
     // 배송지 선택 팝업 창 오픈
-    const handleOpenPopup = () => {
+    const handleOpenPopup = (e:React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
         window.open("/popup/addressmanagement", "배송지 선택", "width=600,height=700");
     }
 
@@ -274,23 +275,9 @@ export default function PaymentForm() {
                 <form onSubmit={handleSubmit} className="payment-form">
                     <div className="form-columns">
                         <div className="payment-section">
-                            {/* <div className="delivery-info">
-                                <h3>배송지 정보</h3>
-                                <div className="delivery-info-box">
-                                    <input type="text" className="input-style" size={6} placeholder="우편번호" disabled />
-                                    <input type="button" value="우편번호 찾기" />
-                                    <br />
-                                    <input type="text" className="input-style" size={50} placeholder="도로명주소" disabled />
-                                    <br />
-                                    <input type="text" className="input-style" size={50} placeholder="지번주소" disabled />
-                                    <br />
-                                    <input type="text" className="input-style" size={50} placeholder="상세주소" />
-                                </div>
-                            </div> */}
-
                             <div className="delivery-info-box">
                                 <h3>배송지 정보</h3>
-                                <h4 className="">{selectedAddress?.receiverName}</h4>
+                                <h4 className="">{selectedAddress?.addresseeName}</h4>
                                 <div className="">
                                     <p className="postalCode">{selectedAddress?.postalCode}</p>
                                     <p className="address">{selectedAddress?.address}</p>
@@ -298,7 +285,7 @@ export default function PaymentForm() {
                                     <p className="tel">{selectedAddress?.tel}</p>
                                 </div>
 
-                                <button className="deliver-change" onClick={handleOpenPopup}>배송지 변경</button>
+                                <button className="deliver-change" onClick={handleOpenPopup}>배송지 선택</button>
                             </div>
                             <hr className="lightly" />
                             <div>

@@ -1,54 +1,74 @@
 import { Box, Button, FormControlLabel, Paper, Radio, RadioGroup, Stack, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Address {
     id: number;
-    receiverName: string;
+    addresseeName: string;
     address: string;
     detailAddress: string;
+    postalCode: number;
     tel: string;
     isDefault?: boolean;
 }
 
+// Address에서 id를 제외하고 새로운 타입을 생성
+type RawAddressFromAPI = Omit<Address, "id">;
+
 export default function AddressModal() {
     const [selectedId, setSelectedId] = useState<number>(4);
+    const [addresses, setAddresses] = useState<Address[]>([]);
 
-    const addresses: Address[] = [
-        {
-            id: 1,
-            receiverName: "김재령",
-            address: "대전 동구 동산초교로 46 (신동아파밀리에아파트1단지)",
-            detailAddress: "101동 1001호",
-            tel: "010-7610-6751",
-            
-        },
-        {
-            id: 2,
-            receiverName: "남현숙",
-            address: "대전광역시 서구 갈마로 163",
-            detailAddress: "대한주택종합관리(주)2층",
-            tel: "010-3657-5147",
-            isDefault: true,
-        },
-        {
-            id: 3,
-            receiverName: "김재령",
-            address: "충청북도 충주시 대소원면 검단리 67-3",
-            detailAddress: "대성빌라 303호",
-            tel: "010-8387-0297",
-        },
-        {
-            id: 4,
-            receiverName: "김재령",
-            address: "충청북도 충주시 대소원면 검단리 71-2",
-            detailAddress: "하늘정원 202호",
-            tel: "010-7610-6751",
-        },
-    ];
+    const nav = useNavigate();
+    const getAuth = () => {
+        const token = localStorage.getItem("accessToken")
+
+        if (!token) {
+            console.error("JWT 토큰이 없습니다. 로그인 해주세요.");
+            nav("/category/home");   // 로그인 되어 있지 않을때 메인페이지로 이동
+            return;
+        }
+        return token;
+    }
+
+    // 매핑 함수: id만 프론트에서 생성
+    const mapAddressWithId = (data: RawAddressFromAPI[]): Address[] => {
+        return data.map((item, index) => ({
+            ...item,
+            id: index + 1, // 1부터 시작
+        }));
+    }
+
+    useEffect(() => {
+        const token = getAuth();
+
+        const fetchAddressData = async () => {
+            try {
+                const response = await fetch("http://localhost:8080/api/v1/user/setting/address/view", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to fetch address data");
+                }
+                const data = await response.json();
+                console.log(data);
+                const dataWithId = mapAddressWithId(data); // id 추가
+                setAddresses(dataWithId);
+            } catch (error) {
+                console.error("Error fetching address data:", error);
+            }
+        }
+
+        fetchAddressData();
+    }, [])
 
     const handleSubmit = () => {
         const selected = addresses.find((addr) => addr.id === selectedId);
-        if(selected && window.opener) {
+        if (selected && window.opener) {
             window.opener.postMessage(
                 { type: "ADDRESS_SELECTED", payload: selected },
                 window.origin
@@ -83,7 +103,7 @@ export default function AddressModal() {
                                 label={
                                     <Box>
                                         <Typography variant="subtitle1">
-                                            {addr.receiverName}{" "}
+                                            {addr.addresseeName}{" "}
                                             {addr.isDefault && (
                                                 <Typography
                                                     variant="caption"
