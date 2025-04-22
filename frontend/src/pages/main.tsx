@@ -13,7 +13,9 @@ import ItemForm from "../components/User/myPage/seller/itemForm";
 import Contents from "../components/content/contents";
 import ItemDetail from "../components/item/detail/ItemDetail";
 import PaymentForm from "../components/User/pay/PaymentForm";
-import AddressModal from "../components/User/pay/AddressModal";
+import AddressModal from "../components/User/pay/popup/AddressModal";
+import AddAddress from "../components/User/pay/popup/AddAddressModal";
+import AddressSearch from "../components/User/pay/popup/AddressSearch";
 
 export default function Home() {
     const [page, setPage] = useState(0);    // 현재 페이지
@@ -67,6 +69,14 @@ export default function Home() {
         {
             path: "/popup/addressmanagement",
             element: <AddressModal/>
+        },
+        {
+            path: "/popup/addAddress",
+            element: <AddAddress/>
+        },
+        {
+            path: "/popup/addresssearch",
+            element: <AddressSearch/>
         },
         {
             path: "test",

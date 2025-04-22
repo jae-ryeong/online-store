@@ -16,7 +16,7 @@ interface Address {
 type RawAddressFromAPI = Omit<Address, "id">;
 
 export default function AddressModal() {
-    const [selectedId, setSelectedId] = useState<number>(4);
+    const [selectedId, setSelectedId] = useState<number>(0);
     const [addresses, setAddresses] = useState<Address[]>([]);
 
     const nav = useNavigate();
@@ -79,7 +79,7 @@ export default function AddressModal() {
 
     return (
         <Box maxWidth="600px" margin="auto" padding={2}>
-            <Button variant="contained" color="inherit" fullWidth sx={{ mb: 2 }}>
+            <Button variant="contained" color="inherit" fullWidth sx={{ mb: 2 }} onClick={() => {nav("/popup/addAddress")}}>
                 배송지 추가하기
             </Button>
 
