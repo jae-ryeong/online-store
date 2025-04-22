@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface Address {
-    id: number;
+    addressId: number;
     addresseeName: string;
     address: string;
     detailAddress: string;
@@ -11,9 +11,6 @@ interface Address {
     tel: string;
     isDefault?: boolean;
 }
-
-// Address에서 id를 제외하고 새로운 타입을 생성
-type RawAddressFromAPI = Omit<Address, "id">;
 
 export default function AddressModal() {
     const [selectedId, setSelectedId] = useState<number>(0);
@@ -29,14 +26,6 @@ export default function AddressModal() {
             return;
         }
         return token;
-    }
-
-    // 매핑 함수: id만 프론트에서 생성
-    const mapAddressWithId = (data: RawAddressFromAPI[]): Address[] => {
-        return data.map((item, index) => ({
-            ...item,
-            id: index + 1, // 1부터 시작
-        }));
     }
 
     useEffect(() => {
@@ -56,8 +45,7 @@ export default function AddressModal() {
                 }
                 const data = await response.json();
                 console.log(data);
-                const dataWithId = mapAddressWithId(data); // id 추가
-                setAddresses(dataWithId);
+                setAddresses(data);
             } catch (error) {
                 console.error("Error fetching address data:", error);
             }
@@ -66,8 +54,9 @@ export default function AddressModal() {
         fetchAddressData();
     }, [])
 
-    const handleSubmit = () => {
-        const selected = addresses.find((addr) => addr.id === selectedId);
+    // 배송지 선택 완료
+    const completeSubmit = () => {
+        const selected = addresses.find((addr) => addr.addressId === selectedId);
         if (selected && window.opener) {
             window.opener.postMessage(
                 { type: "ADDRESS_SELECTED", payload: selected },
@@ -75,6 +64,27 @@ export default function AddressModal() {
             );
         }
         window.close();
+    }
+
+    // 배송지 삭제
+    const deleteAddress = async (addressId: number) => {
+        const token = getAuth();
+        try {
+            const response = await fetch(`http://localhost:8080/api/v1/user/setting/address/delete/${addressId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (!response.ok) {
+                throw new Error("Failed to delete address");
+            }
+            setAddresses((prev) => prev.filter((addr) => addr.addressId !== addressId));
+            window.location.reload(); // 페이지 새로고침
+        } catch (error) {
+            console.error("Error deleting address:", error);
+        }
     }
 
     return (
@@ -90,15 +100,15 @@ export default function AddressModal() {
                 <Stack spacing={2}>
                     {addresses.map((addr) => (
                         <Paper
-                            key={addr.id}
+                            key={addr.addressId}
                             variant="outlined"
                             sx={{
-                                borderColor: selectedId === addr.id ? "black" : "grey.300",
+                                borderColor: selectedId === addr.addressId ? "black" : "grey.300",
                                 padding: 2,
                             }}
                         >
                             <FormControlLabel
-                                value={addr.id.toString()}
+                                value={addr.addressId.toString()}
                                 control={<Radio />}
                                 label={
                                     <Box>
@@ -118,10 +128,8 @@ export default function AddressModal() {
                                         <Typography>{addr.detailAddress}</Typography>
                                         <Typography>{addr.tel}</Typography>
                                         <Stack direction="row" spacing={1} mt={1}>
-                                            <Button size="small" variant="outlined">
-                                                수정
-                                            </Button>
-                                            <Button size="small" variant="outlined">
+                                            <Button size="small" variant="outlined"
+                                            onClick={() => deleteAddress(addr.addressId)}>
                                                 삭제
                                             </Button>
                                         </Stack>
@@ -133,7 +141,7 @@ export default function AddressModal() {
                 </Stack>
             </RadioGroup>
 
-            <Button onClick={handleSubmit} variant="contained" color="inherit" fullWidth sx={{ mt: 3 }}>
+            <Button onClick={completeSubmit} variant="contained" color="inherit" fullWidth sx={{ mt: 3 }}>
                 변경하기
             </Button>
         </Box>
