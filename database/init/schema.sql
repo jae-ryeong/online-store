@@ -150,10 +150,15 @@ insert into users(user_name, password, store_name, role_type, cart_id) values ('
 INSERT INTO address (user_id, addressee_name, postal_code, tel, address, detail_address)
 VALUES
     (1, '김철수', 12345, '010-1234-5678', '서울특별시 강남구 테헤란로 123', '101호'),
-    (2, '이영희', 54321, '010-9876-5432', '부산광역시 해운대구 해운대로 456', '202호'),
+    (1, '김민혁', 12589, '010-5678-5678', '부산광역시 강남구 해운대로 456', '아파트'),
+    (2, '이영희', 54321, '010-5678-5432', '부산광역시 해운대구 해운대로 456', '202호'),
+    (2, '이민지', 51221, '010-1234-5432', '대전광역시 해운대구 해운대로 456', '505호'),
+    (2, '이김박', 11321, '010-6666-5432', '광주광역시 해운대구 해운대로 456', '404호'),
     (3, '박민수', 67890, NULL, '대구광역시 중구 중앙대로 789', '303호'),
-    (4, '정수진', 13579, '010-5555-6666', '광주광역시 서구 무진대로 159', '404호'),
-    (5, '최다연', 24680, '010-7777-8888', '대전광역시 유성구 대학로 321', '505호');
+    (4, '정수진', 13579, '010-5555-7777', '서울특별시 서구 무진대로 159', '404호'),
+    (4, '최다연', 51221, '010-5678-6666', '광주광역시 서구 무진대로 159', '202호'),
+    (5, '최다연', 13579, '010-5555-8888', '대전광역시 해운대로 대학로 321', '505호'),
+    (5, '이영희', 24680, '010-7777-6666', '광주광역시 유성구 대학로 321', '50202호');
 
 insert into item (item_name, quantity, price, sold_out, user_id, category, sold_count, description, main_image_url) values ('커피', 1000, 9800, false, 4, 'FOOD', 7, '', 'https://storage.googleapis.com/gcs_image_12321/회사/5d1adce6-854f-4bf4-bd04-993bfa0b9d6a.jpg');
 insert into item (item_name, quantity, price, sold_out, user_id, category, sold_count, description, main_image_url) values ('김치', 100, 18900, false, 5, 'FOOD', 0, '<p><br></p><p><img src="https://storage.googleapis.com/gcs_image_12321/회사/eb1d9993-6195-4d83-a2bd-d4a6e914f956.JPG" alt="uploaded image"></p><p><strong>썰은 배추김치</strong></p><p>김치 한 번 썰고 나면, 뚝뚝 흐르는 김칫국물 때문에 참 번거로울 때도 있는데요. 이제 맛있는 김치를&nbsp;<strong>손질 없이 간편하게&nbsp;</strong>즐겨보세요. 아삭한 절임배추에&nbsp;<strong>매콤하면서도 개운한 풍미</strong>가 쏙 배어 들어 있답니다. 자를 필요 없이 바로 접시에 옮겨 담아 식탁에 올려보세요.</p><p><br></p><p><img src="https://storage.googleapis.com/gcs_image_12321/회사/77202071-e30e-4b72-8d7f-1ad64741324e.JPG" alt="uploaded image"></p><p><strong>체크 포인트</strong></p><p>안심할 수 있는<strong>&nbsp;HACCP 인증</strong></p>', 'https://storage.googleapis.com/gcs_image_12321/회사/4d77c174-2866-4094-9490-a9276e6449cd.JPG');

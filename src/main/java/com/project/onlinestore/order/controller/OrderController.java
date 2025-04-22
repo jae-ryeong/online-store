@@ -39,7 +39,7 @@ public class OrderController {
                 .body(dtoList);
     }
 
-    @GetMapping("/detail/{orderId}")
+    @GetMapping("/detail/{orderId}")    // 상세 주문 내역
     public ResponseEntity<OrderDetailViewResponseDto> orderDetailView(@PathVariable("orderId")Long orderId) {
         OrderDetailViewResponseDto orderDetailView = orderService.orderDetailView(orderId);
 

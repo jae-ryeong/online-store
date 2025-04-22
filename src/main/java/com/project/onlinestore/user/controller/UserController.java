@@ -116,6 +116,7 @@ public class UserController {
                 .body(cartQuantityResponseDto);
     }
 
+    // 배송지 저장
     @PostMapping("/setting/address/create")
     public ResponseEntity<AddressRegistrationResponseDto> addressCreate(Authentication authentication, @RequestBody AddressRegistrationRequestDto dto) {
         AddressRegistrationResponseDto result = addressService.addressRegistration(authentication.getName(), dto);
@@ -124,6 +125,7 @@ public class UserController {
                 .body(result);
     }
 
+    // 배송지 삭제
     @DeleteMapping("/setting/address/delete/{addressId}")
     public ResponseEntity<String> addressDelete(Authentication authentication, @PathVariable("addressId") Long addressId) {
         addressService.addressDelete(authentication.getName(), addressId);
@@ -132,6 +134,7 @@ public class UserController {
                 .body("배송지가 정상적으로 삭제되었습니다.");
     }
 
+    // 배송지 목록에서 배송지 리스트 조회
     @GetMapping("/setting/address/view")
     public ResponseEntity<List<AddressListResponseDto>> addressView(Authentication authentication) {
         List<AddressListResponseDto> dtoList = addressService.addressListView(authentication.getName());
