@@ -159,7 +159,6 @@ public class RedissonTest {
         // 2. 예외 발생 여부 확인
         // Redisson 락을 먼저 획득한 스레드는 성공, 나중에 획득한 스레드는 재고 부족하여 예외
         // 혹은 락 획득 과정에서 실패하여 예외가 발생할 수 있다.
-        long successCount = itemRepository.findById(sharedItem.getId()).get().getQuantity() == initialStock -1 ? 1: 0;
         long failureCount = exceptions.size(); // 예외 발생 횟수
 
         System.out.println("initialStock = " + initialStock);

@@ -301,7 +301,7 @@ public class OrderService {
                         orderItem.getOrderPrice()));
 
                 // 동시성 문제 해결
-                itemRepository.itemQuantityDown(i.getQuantity(), i.getItem().getId());// 주문 시 주문 갯수 만큼 quantity 감소
+                itemRepository.itemCountAndQuantityUpdate(orderItem.getCount(), orderItem.getItem().getId());   // 주문 시 주문 갯수 만큼 quantity 감소 및 판매 수량 증가
 
                 if (i.getItem().getQuantity() == 0) {
                     // 락은 유지되지만, 해당 상품 주문은 실패

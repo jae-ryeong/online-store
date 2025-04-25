@@ -619,8 +619,8 @@ class OrderServiceTest {
         verify(multiLock).unlock();
         verify(orderItemRepository, times(2)).save(any(OrderItem.class));
         verify(itemCartRepository, times(2)).deleteAllBySuccessPayment(customer.getCart());
-        verify(itemRepository).itemQuantityDown(itemCart.getQuantity(), itemCart.getItem().getId()); // item1 (quantity 1)
-        verify(itemRepository).itemQuantityDown(itemCart2.getQuantity(), itemCart2.getItem().getId()); // item2 (quantity 2)
+        verify(itemRepository).itemCountAndQuantityUpdate(itemCart.getQuantity(), itemCart.getItem().getId()); // item1 (quantity 1)
+        verify(itemRepository).itemCountAndQuantityUpdate(itemCart2.getQuantity(), itemCart2.getItem().getId()); // item2 (quantity 2)
     }
 
     private User sellerUser(Cart cart) {
