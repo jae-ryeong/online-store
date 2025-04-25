@@ -113,7 +113,7 @@ public class OrderController {
     }
 
     @PutMapping("/successorder/{orderId}")
-    public ResponseEntity<String> successOrder(Authentication authentication, @PathVariable("orderId") Long orderId) {
+    public ResponseEntity<String> successOrder(Authentication authentication, @PathVariable("orderId") Long orderId) throws InterruptedException {
         System.out.println("orderId = " + orderId);
         orderService.successOrder(authentication.getName(), orderId);
 

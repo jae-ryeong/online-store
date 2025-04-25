@@ -21,12 +21,16 @@ import com.project.onlinestore.user.repository.AddressRepository;
 import com.project.onlinestore.user.repository.ItemCartRepository;
 import com.project.onlinestore.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +41,7 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final ItemCartRepository itemCartRepository;
     private final AddressRepository addressRepository;
+    private final RedissonClient redissonClient;
 
     //장바구니에 상품들을 담아놓는다 -> 주문할 상품들을 check -> 주문버튼
     @Transactional
@@ -76,8 +81,8 @@ public class OrderService {
                     orderItem.getOrderPrice()));
 
             totalPrice += i.getQuantity() * i.getItem().getPrice();
-            itemCartRepository.deleteById(i.getId());   // 주문했으므로 주문한 상품들은 장바구니에서 삭제
-            itemCartRepository.flush(); // delete이후 insert가 있는 경우 delete문 실행 X, 그러므로 flush를 해줘야 한다.
+            //itemCartRepository.deleteById(i.getId());   // 주문했으므로 주문한 상품들은 장바구니에서 삭제
+            //itemCartRepository.flush(); // delete이후 insert가 있는 경우 delete문 실행 X, 그러므로 flush를 해줘야 한다.
             itemRepository.itemCountAndQuantityUpdate(orderItem.getCount(), orderItem.getItem().getId());    // 주문한 상품의 판매 횟수 증가 및 재고 감소
         }
         return new OrderResponseDto(user.getId(), totalPrice, orderItemDtoList, addressDto);
@@ -101,7 +106,6 @@ public class OrderService {
             }
             dtoList.add(new OrderViewResponseDto(user.getId(), order.getId(), order.getOrderDate(), orderItemDtoList));
         }
-
         return dtoList;
     }
 
@@ -134,8 +138,8 @@ public class OrderService {
             throw new ApplicationException(ErrorCode.INVALID_USER, null);
         }
 
-        for (OrderItem orderItem : orderItemList){  // 모든 상품이 배송 시작 전 단계에서만 주문내역 전체를 cancel 가능
-            if (orderItem.getOrderStatus() != OrderStatus.ORDER){
+        for (OrderItem orderItem : orderItemList) {  // 모든 상품이 배송 시작 전 단계에서만 주문내역 전체를 cancel 가능
+            if (orderItem.getOrderStatus() != OrderStatus.ORDER) {
                 throw new ApplicationException(ErrorCode.CAN_NOT_CANCELED, null);
             }
 
@@ -173,10 +177,10 @@ public class OrderService {
         User seller = findUser(userName);
         OrderItem orderItem = findOrderItem(orderItemId);
 
-        if (seller != orderItem.getItem().getUser()){
+        if (seller != orderItem.getItem().getUser()) {
             throw new ApplicationException(ErrorCode.INVALID_USER, null);
         }
-        if(!orderItem.getOrderStatus().equals(OrderStatus.TAKE_BACK_APPLICATION)) { // 반품 신청하지 않은 상품을 반품완료 상태로 변경 시도시 에러
+        if (!orderItem.getOrderStatus().equals(OrderStatus.TAKE_BACK_APPLICATION)) { // 반품 신청하지 않은 상품을 반품완료 상태로 변경 시도시 에러
             throw new ApplicationException(ErrorCode.NOT_TAKE_BACK_APPLICATION, null);
         }
 
@@ -190,10 +194,10 @@ public class OrderService {
         User customer = findUser(userName);
         OrderItem orderItem = findOrderItem(orderItemId);
 
-        if (customer != orderItem.getOrder().getUser()){
+        if (customer != orderItem.getOrder().getUser()) {
             throw new ApplicationException(ErrorCode.INVALID_USER, null);
         }
-        if(!orderItem.getOrderStatus().equals(OrderStatus.ORDER)) { // Order상태가 아닌 상품을 구매 확정 상태로 변경 시도시 에러
+        if (!orderItem.getOrderStatus().equals(OrderStatus.ORDER)) { // Order상태가 아닌 상품을 구매 확정 상태로 변경 시도시 에러
             throw new ApplicationException(ErrorCode.NOT_ORDER_STATUS, null);
         }
 
@@ -236,10 +240,10 @@ public class OrderService {
                         .build()
         );
 
+        // 남은 재고가 구매하려는 갯 수보다 적을 시 에러 발생
         for (ItemCart i : itemCarts) {
             if (i.getItem().getQuantity() < i.getQuantity()) {
-                // TODO: 에러 발생 시 처리 코드 구현하기
-                throw new ApplicationException(ErrorCode.NOT_ENOUGH_QUANTITY, i.getItem().getItemName()); // 한 상품 이라도 재고가 부족할 시 에러 발생
+                throw new ApplicationException(ErrorCode.NOT_ENOUGH_QUANTITY, i.getItem().getItemName());
             }
         }
         return new CreateOrderResponseDto(order.getId(), dto.amount(), false);
@@ -258,29 +262,62 @@ public class OrderService {
     }
 
     @Transactional
-    public void successOrder(String userName, Long orderId) {
+    public void successOrder(String userName, Long orderId) throws InterruptedException {
         User user = findUser(userName);
         Order order = findOrder(orderId);
         List<ItemCart> itemCarts = itemCartRepository.findAllCheckedCart(user.getCart());
         List<OrderItemDto> orderItemDtoList = new ArrayList<>();
 
-        for (ItemCart i : itemCarts) {
-            OrderItem orderItem = orderItemRepository.save(OrderItem.builder()
-                    .item(i.getItem())
-                    .order(order)
-                    .orderPrice(i.getQuantity() * i.getItem().getPrice())
-                    .count(i.getQuantity())
-                    .orderStatus(OrderStatus.ORDER)
-                    .build());
+        // 동시성문제 해결을 위한 Redisson 분산락 활용
+        List<RLock> locks = itemCarts.stream()
+                .sorted(Comparator.comparing(itemCart -> itemCart.getItem().getId()))   // 정렬 -> Deadlock 방지
+                .map(itemCart -> redissonClient.getLock("lock:item:" + itemCart.getItem().getId()))
+                .toList();
 
-            orderItemDtoList.add(new OrderItemDto(
-                    orderItem.getItem().getId(),
-                    orderItem.getItem().getItemName(),
-                    orderItem.getCount(),
-                    orderItem.getOrderPrice()));
-            itemRepository.itemQuantityDown(i.getQuantity(), i.getItem().getId());    // 주문 시 주문 갯수 만큼 quantity 감소
+        RLock multiLock = CreateMultiLock(locks);
+        boolean isLocked = false;
+        try {
+            // 락 획득 시도
+            isLocked = multiLock.tryLock(5, 10, TimeUnit.SECONDS);
+
+            if (!isLocked) {
+                throw new IllegalStateException("상품 락 획득 실패");
+            }
+
+            // 락 획득 성공 후 비즈니스 로직 실행
+            for (ItemCart i : itemCarts) {
+                OrderItem orderItem = orderItemRepository.save(OrderItem.builder()
+                        .item(i.getItem())
+                        .order(order)
+                        .orderPrice(i.getQuantity() * i.getItem().getPrice())
+                        .count(i.getQuantity())
+                        .orderStatus(OrderStatus.ORDER)
+                        .build());
+
+                orderItemDtoList.add(new OrderItemDto(
+                        orderItem.getItem().getId(),
+                        orderItem.getItem().getItemName(),
+                        orderItem.getCount(),
+                        orderItem.getOrderPrice()));
+
+                // 동시성 문제 해결
+                itemRepository.itemQuantityDown(i.getQuantity(), i.getItem().getId());// 주문 시 주문 갯수 만큼 quantity 감소
+
+                if (i.getItem().getQuantity() == 0) {
+                    // 락은 유지되지만, 해당 상품 주문은 실패
+                    // 예외를 던져 전체 트랜잭션을 롤백
+                    throw new IllegalStateException("상품 '" + i.getItem().getItemName() + "'의 재고가 부족합니다.");
+                }
+                itemCartRepository.deleteAllBySuccessPayment(user.getCart()); // 주문시 장바구니 속 주문상품 삭제
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("락 대기 중 인터럽트 발생", e);
+        } finally {
+            if (isLocked) {
+                multiLock.unlock();
+            }
         }
-        itemCartRepository.deleteAllBySuccessPayment(user.getCart()); // 주문시 장바구니 속 주문상품 삭제
     }
 
 
@@ -308,5 +345,11 @@ public class OrderService {
     // 임시
     private Address findAdd() {
         return addressRepository.findById(1L).orElseThrow(() -> new ApplicationException(ErrorCode.ADDRESS_NOT_FOUNT, null));
+    }
+
+    protected RLock CreateMultiLock(List<RLock> locks) {
+        // 여러 락을 하나로 묶어서 관리
+        return redissonClient.getMultiLock(locks.toArray(new RLock[0]));
+        //return new RedissonMultiLock(locks.toArray(new RLock[0]));
     }
 }
