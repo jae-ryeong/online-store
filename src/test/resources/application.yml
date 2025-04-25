@@ -1,15 +1,48 @@
 spring:
   datasource:
+    url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
     username: sa
     password:
-    url: jdbc:h2:mem:test
-
   jpa:
     hibernate:
       ddl-auto: create
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
-    database-platform: org.hibernate.dialect.H2Dialect
+
+  data:
+    redis:
+      port: 6379
+      host: localhost
+
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
+  cloud:
+    gcp:
+      storage:
+        bucket: gcs_image_12321
+
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+
+
+logging:
+  level.org.hibernate:
+    SQL: DEBUG
+    orm.jdbc.bind: TRACE
+
+jwt:
+  secret-key: secret-key_secret-key_secret-key_secret-key.secret-key
+  access-expired-time-ms: 600000  # 10min
+  refresh-expiration-time: 6000000 # 100min
+
+
+portone:
+  api:
+    key: dsa # V2 API Key
+  secret:
+    api: tGbG1l5bHXbFNQCBDED402RmMm7EP38L95w3Q5mNz8kQCmKIzIClAD3R4LMqV1O1Nbdn1szl6729ZmV5 # V2 API 시크릿
+    webhook: whsec_00000000000000000000000000000000000000000000 # V2 웹훅 시크릿

@@ -70,7 +70,7 @@ class ItemCartRepositoryTest {
 
         Item item2 = Item.builder()
                 .user(sellerUser)
-                .itemName("item2").quantity(100).price(10000).count(10000L).category(Category.PET).build();
+                .itemName("item2").quantity(100).price(10000).category(Category.PET).build();
         itemRepository.save(item2);
 
         ItemCart uncheckedItemCart = createUncheckedItemCart(cart, item2);
@@ -100,7 +100,7 @@ class ItemCartRepositoryTest {
         itemCartRepository.save(itemCart);
 
         //when
-        itemCartRepository.addQuantity(cart, item1);
+        itemCartRepository.addQuantity(cart, item1, 10);
         ItemCart result = itemCartRepository.findById(itemCart.getId()).get();
 
         //then
@@ -149,7 +149,7 @@ class ItemCartRepositoryTest {
     private Item createItem(User user) {
         return Item.builder()
                 .user(user)
-                .itemName("item").quantity(100).price(10000).count(10000L).category(Category.PET).build();
+                .itemName("item").quantity(100).price(10000).category(Category.PET).build();
     }
 
     private ItemCart createItemCart(Cart cart, Item item) {

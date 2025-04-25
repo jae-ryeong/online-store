@@ -23,7 +23,7 @@ class ItemRepositoryTest {
     void itemOrderTest() {
         // given
         User user = sellerUser();
-        Item item = Item.builder().itemName("item1").count(0L).price(10000).category(Category.BOOK).user(user).quantity(1000).soldOut(false).build();
+        Item item = Item.builder().itemName("item1").price(10000).category(Category.BOOK).user(user).quantity(1000).soldOut(false).build();
         itemRepository.save(item);
 
         // when
@@ -31,7 +31,6 @@ class ItemRepositoryTest {
         Item result = itemRepository.findById(item.getId()).get();
 
         // then
-        assertThat(result.getCount()).isEqualTo(3);
         assertThat(result.getQuantity()).isEqualTo(997);
     }
 
@@ -39,7 +38,7 @@ class ItemRepositoryTest {
     void itemRefundTest() {
         // given
         User user = sellerUser();
-        Item item = Item.builder().itemName("item1").count(10L).price(10000).category(Category.BOOK).user(user).quantity(1000).soldOut(false).build();
+        Item item = Item.builder().itemName("item1").price(10000).category(Category.BOOK).user(user).quantity(1000).soldOut(false).build();
         itemRepository.save(item);
 
         // when
@@ -47,7 +46,6 @@ class ItemRepositoryTest {
         Item result = itemRepository.findById(item.getId()).get();
 
         // then
-        assertThat(result.getCount()).isEqualTo(7);
         assertThat(result.getQuantity()).isEqualTo(1003);
     }
 
@@ -56,7 +54,7 @@ class ItemRepositoryTest {
         //given
         User user = sellerUser();
         userRepository.save(user);
-        Item item = Item.builder().itemName("item1").count(10L).price(10000).category(Category.BOOK).user(user).quantity(1000).soldOut(false).build();
+        Item item = Item.builder().itemName("item1").price(10000).category(Category.BOOK).user(user).quantity(1000).soldOut(false).build();
         itemRepository.save(item);
 
         //when
@@ -82,7 +80,6 @@ class ItemRepositoryTest {
         Item item = Item.builder()
                 .itemName("item")
                 .user(user)
-                .count(100L)
                 .price(10000)
                 .category(Category.PET)
                 .quantity(1000)

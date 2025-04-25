@@ -6,8 +6,8 @@ import com.project.onlinestore.exception.ApplicationException;
 import com.project.onlinestore.order.Entity.Order;
 import com.project.onlinestore.order.Entity.OrderItem;
 import com.project.onlinestore.order.Entity.enums.OrderStatus;
-import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
 import com.project.onlinestore.order.dto.OrderItemStatusDto;
+import com.project.onlinestore.order.dto.request.OrderAddressRequestDto;
 import com.project.onlinestore.order.dto.response.OrderDetailViewResponseDto;
 import com.project.onlinestore.order.dto.response.OrderResponseDto;
 import com.project.onlinestore.order.dto.response.OrderViewResponseDto;
@@ -21,23 +21,30 @@ import com.project.onlinestore.user.entity.enums.RoleType;
 import com.project.onlinestore.user.repository.AddressRepository;
 import com.project.onlinestore.user.repository.ItemCartRepository;
 import com.project.onlinestore.user.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.redisson.RedissonMultiLock;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -54,38 +61,47 @@ class OrderServiceTest {
     private ItemCartRepository itemCartRepository;
     @Mock
     private AddressRepository addressRepository;
+    @Mock
+    private RedissonClient redissonClient;
 
+    @Mock
+    private RLock lock1;
+    @Mock
+    private RLock lock2;
+    @Mock
+    private RLock  multiLock;
+
+    @Spy
     @InjectMocks
     private OrderService orderService;
 
-    @DisplayName("상품 주문")
+    @DisplayName("상품 주문 성공")
     @Test
-    void itemOrderTest() {
+    void itemOrderTest() throws InterruptedException {
         //given
         Cart cart1 = createCart();
         User seller = sellerUser(cart1);
-        Item item = createItem(seller);
-        Item item2 = Item.builder()
+        Item item = createItem(seller); // 첫 재고 100개
+        Item item2 = Item.builder()     // 첫 재고 200개
                 .user(seller)
                 .itemName("item3").quantity(200).price(30000).build();
 
         Cart cart2 = createCart();
         User customer = customerUser(cart2);
 
-        ItemCart itemCart = createItemCart(cart2, item);
-        ItemCart itemCart2 = createItemCart(cart2, item2);
+        ItemCart itemCart = createItemCart(cart2, item, 1L, 10);
+        ItemCart itemCart2 = createItemCart(cart2, item2, 2L, 20);
 
         Order order = Order.builder().user(customer).build();
-
         OrderItem orderItem = OrderItem.builder().item(item).order(order).count(1).orderStatus(OrderStatus.ORDER).orderPrice(10000).build();
-
         Address address = Address.builder().detailAddress("213").address("321").user(customer).tel("010-0000-0000").build();
 
         given(userRepository.findByUserName(customer.getUserName())).willReturn(Optional.of(customer));
-        given(itemCartRepository.findAllCheckedCart(cart2)).willReturn(List.of(itemCart, itemCart2));
-        given(orderRepository.save(any())).willReturn(order);
-        given(orderItemRepository.save(any())).willReturn(orderItem);
         given(addressRepository.findById(any())).willReturn(Optional.of(address));
+        given(itemCartRepository.findAllCheckedCart(cart2)).willReturn(List.of(itemCart, itemCart2));
+
+        given(orderRepository.save(any(Order.class))).willReturn(order);
+        given(orderItemRepository.save(any(OrderItem.class))).willReturn(orderItem);
 
         //when
         OrderResponseDto orderResponseDto = orderService.itemOrder(customer.getUserName(), new OrderAddressRequestDto(1L));
@@ -95,7 +111,6 @@ class OrderServiceTest {
         verify(itemCartRepository, times(2)).deleteById(any());
         verify(itemRepository, times(2)).itemCountAndQuantityUpdate(any(), any());
 
-        assertThat(orderResponseDto.orderItemDtoList().get(0).orderStatus()).isEqualTo(OrderStatus.ORDER);
         assertThat(orderResponseDto.orderItemDtoList().size()).isEqualTo(2);
     }
 
@@ -112,7 +127,7 @@ class OrderServiceTest {
         Cart cart2 = createCart();
         User customer = customerUser(cart2);
 
-        ItemCart itemCart = createItemCart(cart2, item);
+        ItemCart itemCart = createItemCart(cart2, item, 0L, 10);
 
         Order order = Order.builder().user(customer).build();
 
@@ -418,7 +433,7 @@ class OrderServiceTest {
 
     @DisplayName("반품이 완료될 경우 판매자가 반품 완료 상태로 변경")
     @Test
-    public void takeBackCompletedTest() throws Exception{
+    public void takeBackCompletedTest() throws Exception {
         //given
         Cart cart1 = createCart();
         User seller = sellerUser(cart1);
@@ -443,7 +458,7 @@ class OrderServiceTest {
 
     @DisplayName("판매자가 자신의 상품이 아닌 상품을 반품 완료 상태로 변경 시도시 에러 발생")
     @Test
-    public void takeBackCompleted_NotEqualSeller_Test() throws Exception{
+    public void takeBackCompleted_NotEqualSeller_Test() throws Exception {
         //given
         Cart cart1 = createCart();
         User seller = sellerUser(cart1);
@@ -466,7 +481,7 @@ class OrderServiceTest {
 
     @DisplayName("반품을 요청하지 않은 상품의 상태 변경 시도시 에러 발생")
     @Test
-    public void takeBackCompleted_StatusError_Test() throws Exception{
+    public void takeBackCompleted_StatusError_Test() throws Exception {
         //given
         Cart cart1 = createCart();
         User seller = sellerUser(cart1);
@@ -489,7 +504,7 @@ class OrderServiceTest {
 
     @DisplayName("배송이 완료될 경우 구매자가 배송 완료 상태로 변경")
     @Test
-    public void orderCompletedTest() throws Exception{
+    public void orderCompletedTest() throws Exception {
         //given
         Cart cart1 = createCart();
         User seller = sellerUser(cart1);
@@ -514,7 +529,7 @@ class OrderServiceTest {
 
     @DisplayName("구매자가 자신의 상품이 아닌 상품을 배송 완료 상태로 변경 시도시 에러 발생")
     @Test
-    public void orderCompleted_NotEqualCustomer_Test() throws Exception{
+    public void orderCompleted_NotEqualCustomer_Test() throws Exception {
         //given
         Cart cart1 = createCart();
         User seller = sellerUser(cart1);
@@ -537,7 +552,7 @@ class OrderServiceTest {
 
     @DisplayName("order 배송 상태를 제외한 배송 상태일 때 상품의 상태 변경 시도시 에러 발생")
     @Test
-    public void orderCompleted_StatusError_Test() throws Exception{
+    public void orderCompleted_StatusError_Test() throws Exception {
         //given
         Cart cart1 = createCart();
         User seller = sellerUser(cart1);
@@ -557,7 +572,57 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.orderCompleted(customer.getUserName(), orderItem.getId())).isInstanceOf(ApplicationException.class)
                 .hasMessage("Order status is not Order");
     }
-    
+
+    @DisplayName("성공적인 주문 처리 - 락 획득 및 비즈니스 로직 정상 실행")
+    @Test
+    void testSuccessOrder_Success() throws InterruptedException{
+        //given
+        Cart cart1 = createCart();
+        User seller = sellerUser(cart1);
+        Item item = createItem(seller); // 첫 재고 100개
+        Item item2 = Item.builder()     // 첫 재고 200개
+                .id(2L)
+                .user(seller)
+                .itemName("item3").quantity(200).price(30000).build();
+
+        Cart cart2 = createCart();
+        User customer = customerUser(cart2);
+
+        ItemCart itemCart = createItemCart(cart2, item, 1L, 10);
+        ItemCart itemCart2 = createItemCart(cart2, item2, 2L, 20);
+
+        Order order = Order.builder().user(customer).build();
+        OrderItem orderItem = OrderItem.builder().item(item).order(order).count(1).orderStatus(OrderStatus.ORDER).orderPrice(10000).build();;
+
+        List<ItemCart> itemCarts = List.of(itemCart, itemCart2);
+
+        // Mock Repository 동작 설정
+        given(userRepository.findByUserName(any())).willReturn(Optional.of(customer));
+        given(orderRepository.findById(any())).willReturn(Optional.of(order));
+        given(itemCartRepository.findAllCheckedCart(customer.getCart())).willReturn(itemCarts);
+
+        // Redisson Mock 설정
+        given(redissonClient.getLock("lock:item:" + item.getId())).willReturn(lock1);
+        given(redissonClient.getLock("lock:item:" + item2.getId())).willReturn(lock2);
+        given(redissonClient.getMultiLock(any(RLock[].class))).willReturn(multiLock);
+
+        // Mock Redisson 락 획득 성공
+        given(multiLock.tryLock(anyLong(), anyLong(), any(TimeUnit.class))).willReturn(true);
+
+        // Mock OrderItemRepository 동작 설정 - save 호출 시 인자로 받은 OrderItem 객체 반환
+        given(orderItemRepository.save(any(OrderItem.class))).willReturn(orderItem);
+
+        //when
+        orderService.successOrder(eq(customer.getUserName()), anyLong());
+
+        //then
+        verify(multiLock).unlock();
+        verify(orderItemRepository, times(2)).save(any(OrderItem.class));
+        verify(itemCartRepository, times(2)).deleteAllBySuccessPayment(customer.getCart());
+        verify(itemRepository).itemQuantityDown(itemCart.getQuantity(), itemCart.getItem().getId()); // item1 (quantity 1)
+        verify(itemRepository).itemQuantityDown(itemCart2.getQuantity(), itemCart2.getItem().getId()); // item2 (quantity 2)
+    }
+
     private User sellerUser(Cart cart) {
         return User.builder().userName("seller")
                 .password("1234")
@@ -577,6 +642,7 @@ class OrderServiceTest {
 
     private Item createItem(User user) {
         return Item.builder()
+                .id(1L)
                 .user(user)
                 .itemName("item").quantity(100).price(10000).build();
     }
@@ -586,8 +652,10 @@ class OrderServiceTest {
                 .build();
     }
 
-    private ItemCart createItemCart(Cart cart, Item item) {
+    private ItemCart createItemCart(Cart cart, Item item, Long itemId, Integer quantity) {
         return ItemCart.builder()
-                .cart(cart).item(item).cartCheck(true).quantity(100).build();
+                .id(itemId)
+                .cart(cart).item(item).cartCheck(true).quantity(quantity).build();
     }
+
 }

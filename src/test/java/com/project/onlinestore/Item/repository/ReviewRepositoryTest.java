@@ -62,7 +62,7 @@ class ReviewRepositoryTest {
     private Item createItem(User user) {
         return Item.builder()
                 .user(user)
-                .itemName("item").quantity(100).price(10000).category(Category.PET).count(1L).build();
+                .itemName("item").quantity(100).price(10000).category(Category.PET).build();
     }
 
     private Cart createCart() {

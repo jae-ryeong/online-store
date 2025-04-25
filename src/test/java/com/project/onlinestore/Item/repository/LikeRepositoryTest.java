@@ -79,7 +79,6 @@ class LikeRepositoryTest {
         Item item = Item.builder()
                 .itemName("item")
                 .user(user)
-                .count(100L)
                 .price(10000)
                 .category(Category.PET)
                 .quantity(1000)

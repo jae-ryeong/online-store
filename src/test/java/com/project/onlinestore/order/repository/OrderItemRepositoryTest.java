@@ -42,7 +42,7 @@ class OrderItemRepositoryTest {
         itemRepository.save(item);
         Item item2 = Item.builder()
                 .user(seller)
-                .itemName("item3").count(0L).category(Category.BOOK).quantity(200).price(30000).build();
+                .itemName("item3").category(Category.BOOK).quantity(200).price(30000).build();
         itemRepository.save(item2);
 
         Cart cart2 = createCart();
@@ -114,7 +114,7 @@ class OrderItemRepositoryTest {
     private Item createItem(User user) {
         return Item.builder()
                 .user(user)
-                .itemName("item").quantity(100).count(0L).price(10000).category(Category.PET).build();
+                .itemName("item").quantity(100).price(10000).category(Category.PET).build();
     }
 
     private Cart createCart() {
