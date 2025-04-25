@@ -27,6 +27,7 @@
 - **포트원 결제 API**: 온라인 결제 기능 구현
 - **MariaDB**: 관계형 데이터베이스 사용
 - **Redis**: JWT 처리를 위한 NoSql 사용
+- **Redisson**: Redis와 결합하여 동시성 이슈 해결
 
 ## 프론트엔드 개발 (React + TypeScript)
 프론트엔드는 React와 TypeScript를 활용하여 개발하였으며, 컴포넌트 기반 아키텍처를 적용하여 유지보수성을 높였습니다.
