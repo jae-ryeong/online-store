@@ -14,6 +14,8 @@ services:
     restart: always
     volumes:
       - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
 
   redis:
     image: 'redis:latest'
@@ -21,4 +23,11 @@ services:
     ports:
       - '6379:6379'
     restart: always
+    networks:
+      - app-network
   # redis insight 추후 설치
+
+
+
+networks:
+  app-network:
