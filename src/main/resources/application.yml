@@ -1,58 +1,61 @@
 spring:
-  datasource:
-    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy #org.mariadb.jdbc.Driver
-    username: root
-    password: 1234
-    url: jdbc:log4jdbc:mariadb://localhost:3306/online-store?allowPublicKeyRetrieval=true&useSSL=false
+  config:
+    activate: dev
 
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        globally_quoted_identifiers: true
-        format_sql: true
-        show_sql: true
-        dialect: org.hibernate.dialect.MariaDBDialect
-        use_sql_comments: true
-        highlight_sql: true
-    show-sql: true
-    defer-datasource-initialization: true
-
-  data:
-    redis:
-      port: 6379
-      host: localhost
-
-  mvc:
-    view:
-      prefix: /WEB-INF/views/
-      suffix: .jsp
-
-  cloud:
-    gcp:
-      storage:
-        bucket: gcs_image_12321
-
-  sql:
-    init:
-      mode: always
-
-
-logging:
-  level.org.hibernate:
-    SQL: DEBUG
-    orm.jdbc.bind: TRACE
-
-jwt:
-  secret-key: secret-key_secret-key_secret-key_secret-key.secret-key
-  access-expired-time-ms: 600000  # 10min
-  refresh-expiration-time: 6000000 # 100min
-
-
-portone:
-  api:
-    key: dsa # V2 API Key
-  secret:
-    api: tGbG1l5bHXbFNQCBDED402RmMm7EP38L95w3Q5mNz8kQCmKIzIClAD3R4LMqV1O1Nbdn1szl6729ZmV5 # V2 API 시크릿
-    webhook: whsec_00000000000000000000000000000000000000000000 # V2 웹훅 시크릿
+#  datasource:
+#    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy #org.mariadb.jdbc.Driver
+#    username: ${DB_USER}
+#    password: ${DB_PW}
+#    url: jdbc:log4jdbc:mariadb://localhost:3306/online-store?allowPublicKeyRetrieval=true&useSSL=false
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: validate
+#    properties:
+#      hibernate:
+#        globally_quoted_identifiers: true
+#        format_sql: true
+#        show_sql: true
+#        dialect: org.hibernate.dialect.MariaDBDialect
+#        use_sql_comments: true
+#        highlight_sql: true
+#    show-sql: true
+#    defer-datasource-initialization: true
+#
+#  data:
+#    redis:
+#      port: 6379
+#      host: localhost
+#
+#  mvc:
+#    view:
+#      prefix: /WEB-INF/views/
+#      suffix: .jsp
+#
+#  cloud:
+#    gcp:
+#      storage:
+#        bucket: gcs_image_12321
+#
+#  sql:
+#    init:
+#      mode: always
+#
+#
+#logging:
+#  level.org.hibernate:
+#    SQL: DEBUG
+#    orm.jdbc.bind: TRACE
+#
+#jwt:
+#  secret-key: secret-key_secret-key_secret-key_secret-key.secret-key
+#  access-expired-time-ms: 600000  # 10min
+#  refresh-expiration-time: 6000000 # 100min
+#
+#
+#portone:
+#  api:
+#    key: dsa # V2 API Key
+#  secret:
+#    api: ${API_SECRET_KEY} # V2 API 시크릿
+#    webhook: whsec_00000000000000000000000000000000000000000000 # V2 웹훅 시크릿
