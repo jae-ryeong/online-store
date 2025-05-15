@@ -3,9 +3,6 @@ FROM openjdk:17 as builder
 
 WORKDIR /app
 
-# **** 추가된 부분: xargs 설치 ****
-RUN apt-get update && apt-get install -y findutils && rm -rf /var/lib/apt/lists/*
-
 # gradlew 스크립트와 gradle 디렉토리를 복사
 COPY gradlew .
 COPY gradle ./gradle
@@ -13,15 +10,16 @@ COPY gradle ./gradle
 # gradlew 파일에 실행 권한 부여
 RUN chmod +x ./gradlew
 
-# 의존성 캐시 최적화
+# 먼저 복사하여 의존성 캐시 재사용
 COPY build.gradle settings.gradle ./
+# 그 다음 복사
 COPY src ./src
 
 # 빌드
 RUN ./gradlew build --no-daemon
 
 # 2. 실행용 JRE 이미지
-FROM openjdk:17
+FROM openjdk:17-slim
 
 WORKDIR /app
 
