@@ -27,7 +27,5 @@ services:
       - app-network
   # redis insight 추후 설치
 
-
-
 networks:
   app-network:
