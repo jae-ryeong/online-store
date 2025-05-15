@@ -3,6 +3,9 @@ FROM openjdk:17 as builder
 
 WORKDIR /app
 
+# xargs가 포함된 패키지 설치 (Debian/Ubuntu 기반)
+RUN apt-get update && apt-get install -y findutils && rm -rf /var/lib/apt/lists/*
+
 # gradlew 스크립트와 gradle 디렉토리를 복사
 COPY gradlew .
 COPY gradle ./gradle
