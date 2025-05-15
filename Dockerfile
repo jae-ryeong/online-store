@@ -1,10 +1,10 @@
 # 1. 빌드용 JDK 이미지
-FROM openjdk:17 as builder
+FROM openjdk:17-alpine as builder
 
 WORKDIR /app
 
-# xargs가 포함된 패키지 설치 (Debian/Ubuntu 기반)
-RUN apt-get update && apt-get install -y findutils && rm -rf /var/lib/apt/lists/*
+# xargs가 필요하므로 coreutils 설치
+RUN apk add --no-cache findutils
 
 # gradlew 스크립트와 gradle 디렉토리를 복사
 COPY gradlew .
@@ -22,7 +22,7 @@ COPY src ./src
 RUN ./gradlew build --no-daemon
 
 # 2. 실행용 JRE 이미지
-FROM openjdk:17-slim
+FROM openjdk:17-alpine
 
 WORKDIR /app
 
