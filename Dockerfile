@@ -3,6 +3,9 @@ FROM openjdk:17 as builder
 
 WORKDIR /app
 
+# **** 추가된 부분: xargs 설치 ****
+RUN apt-get update && apt-get install -y findutils && rm -rf /var/lib/apt/lists/*
+
 # gradlew 스크립트와 gradle 디렉토리를 복사
 COPY gradlew .
 COPY gradle ./gradle
