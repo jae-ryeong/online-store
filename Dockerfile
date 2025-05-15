@@ -7,6 +7,9 @@ WORKDIR /app
 COPY gradlew .
 COPY gradle ./gradle
 
+# gradlew 파일에 실행 권한 부여
+RUN chmod +x ./gradlew
+
 # 의존성 캐시 최적화
 COPY build.gradle settings.gradle ./
 COPY src ./src
