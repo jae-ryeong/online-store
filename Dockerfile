@@ -3,6 +3,10 @@ FROM openjdk:17 as builder
 
 WORKDIR /app
 
+# gradlew 스크립트와 gradle 디렉토리를 복사
+COPY gradlew .
+COPY gradle ./gradle
+
 # 의존성 캐시 최적화
 COPY build.gradle settings.gradle ./
 COPY src ./src
