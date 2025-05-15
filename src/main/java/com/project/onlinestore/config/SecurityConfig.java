@@ -40,7 +40,7 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/test").permitAll()
                                 .requestMatchers("/api/*/user/*/join", "/api/*/user/join/idcheck", "/api/*/user/role/check", "/api/*/user/login", "/api/*/user/token/refresh", "/api/*/item/test", "/*", "/api/*/user/auth/*").permitAll()
                                 .requestMatchers( "/api/*/item/search", "/api/*/item/detail/*", "/api/*/item/find/*").permitAll()
                                 .requestMatchers("/api/*/review/view/*").permitAll()

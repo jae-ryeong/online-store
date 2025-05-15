@@ -17,6 +17,15 @@ configurations {
 	}
 }
 
+bootJar {
+	enabled = true
+	archiveFileName = 'app.jar' // Dockerfile에서 java -jar app.jar과 일치
+}
+
+jar {
+	enabled = false // 중복 jar 방지 (선택사항)
+}
+
 repositories {
 	mavenCentral()
 	maven { url 'https://jitpack.io' }
