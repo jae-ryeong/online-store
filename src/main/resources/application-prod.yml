@@ -3,8 +3,12 @@ spring:
     activate:
       on-profile: prod
 
+  docker:
+    compose:
+      file: docker-compose.prod.yml
+
   datasource:
-    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy #org.mariadb.jdbc.Driver
+    driver-class-name: org.mariadb.jdbc.Driver
     username: ${DB_USER}
     password: ${DB_PW}
     url: jdbc:log4jdbc:mariadb://localhost:3306/online-store?allowPublicKeyRetrieval=true&useSSL=false
@@ -15,23 +19,18 @@ spring:
     properties:
       hibernate:
         globally_quoted_identifiers: true
-        format_sql: true
-        show_sql: true
+        format_sql: false
+        show_sql: false
         dialect: org.hibernate.dialect.MariaDBDialect
-        use_sql_comments: true
-        highlight_sql: true
-    show-sql: true
-    defer-datasource-initialization: true
+        use_sql_comments: false
+        highlight_sql: false
+    show-sql: false
+    defer-datasource-initialization: false
 
   data:
     redis:
       port: 6379
       host: localhost
-
-  mvc:
-    view:
-      prefix: /WEB-INF/views/
-      suffix: .jsp
 
   cloud:
     gcp:
@@ -45,8 +44,8 @@ spring:
 
 logging:
   level.org.hibernate:
-    SQL: DEBUG
-    orm.jdbc.bind: TRACE
+    SQL: INFO
+    orm.jdbc.bind: INFO
 
 jwt:
   secret-key: secret-key_secret-key_secret-key_secret-key.secret-key

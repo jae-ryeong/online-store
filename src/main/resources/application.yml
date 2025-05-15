@@ -1,6 +1,6 @@
 spring:
-  config:
-    activate: dev
+  profiles:
+    active: dev
 
 #  datasource:
 #    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy #org.mariadb.jdbc.Driver
