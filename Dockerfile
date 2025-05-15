@@ -1,5 +1,5 @@
 # 1. 빌드용 JDK 이미지
-FROM openjdk:17-jdk-slim as builder
+FROM openjdk:17 as builder
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ COPY src ./src
 RUN ./gradlew build --no-daemon
 
 # 2. 실행용 JRE 이미지
-FROM openjdk:17-jdk-slim
+FROM openjdk:17
 
 WORKDIR /app
 

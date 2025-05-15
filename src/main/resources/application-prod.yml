@@ -58,4 +58,4 @@ portone:
     key: dsa # V2 API Key
   secret:
     api: ${API_SECRET_KEY} # V2 API 시크릿
-    webhook: whsec_00000000000000000000000000000000000000000000 # V2 웹훅 시크릿
+    webhook: ${API_SECRET_WEBHOOK} # V2 웹훅 시크릿
