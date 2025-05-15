@@ -1,5 +1,5 @@
 # React 앱 빌드
-FROM node:22.13.1-alpine as build
+FROM node:22.13.1-alpine as builder
 
 WORKDIR /app
 
