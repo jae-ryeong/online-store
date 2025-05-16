@@ -10,14 +10,12 @@
 # Nginx로 정적 파일 서빙
 FROM nginx:stable-alpine
 
-# Nginx 설정 파일 제거 (optional)
-RUN rm /etc/nginx/conf.d/default.conf
+# 빌드된 파일 복사 (로컬에서 옮긴 build 폴더 기준)
+COPY build /usr/share/nginx/html
 
-# 사용자 정의 설정 복사 (필요한 경우)
-# COPY nginx.conf /etc/nginx/conf.d
+# Nginx 설정 복사
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# React 빌드 결과 복사
-COPY /build /usr/share/nginx/html
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
