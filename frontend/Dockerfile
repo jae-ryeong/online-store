@@ -1,10 +1,10 @@
-# React 앱 빌드
-FROM node:22.13.1-alpine as builder
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install
+## React 앱 빌드
+#FROM node:22.13.1-alpine as builder
+#
+#WORKDIR /app
+#
+#COPY package*.json ./
+#RUN npm install
 
 
 # Nginx로 정적 파일 서빙
@@ -17,7 +17,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 # COPY nginx.conf /etc/nginx/conf.d
 
 # React 빌드 결과 복사
-COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=builder /build /usr/share/nginx/html
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
