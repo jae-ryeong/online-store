@@ -7,15 +7,21 @@
 #RUN npm install
 
 
-# Nginx로 정적 파일 서빙
 FROM nginx:stable-alpine
 
-# 빌드된 파일 복사 (로컬에서 옮긴 build 폴더 기준)
+# 기본 Nginx 설정 파일 제거 (우리가 직접 작성한 설정 파일을 사용하기 위함)
+RUN rm /etc/nginx/conf.d/default.conf
+
+# 사용자 정의 Nginx 설정 파일 복사
+# Dockerfile이 있는 디렉토리(my-react-app)의 nginx/nginx.conf 경로를 참조합니다.
+COPY nginx/nginx.conf /etc/nginx/conf.d/
+
+# 로컬에서 빌드된 React 앱의 'build' 결과물 복사
+# Dockerfile이 있는 디렉토리(my-react-app)의 build 폴더를 참조합니다.
 COPY build /usr/share/nginx/html
 
-# Nginx 설정 복사
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
+# Nginx가 수신 대기할 포트 명시
 EXPOSE 80
 
+# Nginx 시작 명령
 CMD ["nginx", "-g", "daemon off;"]
