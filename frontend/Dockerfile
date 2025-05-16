@@ -6,8 +6,6 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-COPY . .
-RUN npm run build
 
 # Nginx로 정적 파일 서빙
 FROM nginx:stable-alpine
