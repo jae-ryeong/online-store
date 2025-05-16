@@ -2,8 +2,6 @@ services:
   mariadb:
     container_name: "online-store-mariadb"
     image: 'mariadb:latest'
-    build:
-      context: ./database
     environment:
       - 'MARIADB_DATABASE=online_store'
       - 'MARIADB_PASSWORD=1234'
