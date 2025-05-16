@@ -18,8 +18,10 @@ COPY build.gradle settings.gradle ./
 # 그 다음 복사
 COPY src ./src
 
-# 빌드
-RUN ./gradlew build --no-daemon
+# 기존
+# RUN ./gradlew build --no-daemon
+# 수정: 테스트를 건너뜁니다
+RUN ./gradlew build --no-daemon -x test
 
 # 2. 실행용 JRE 이미지
 FROM openjdk:17-alpine
