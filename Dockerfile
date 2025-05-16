@@ -28,7 +28,7 @@ FROM openjdk:17-alpine
 
 WORKDIR /app
 
-COPY /app/build/libs/*.jar app.jar
+COPY /build/libs/*.jar app.jar
 
 # 포트 노출
 EXPOSE 8080
