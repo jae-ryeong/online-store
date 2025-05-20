@@ -7,7 +7,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     username: user
     password: 1234
-    #url: jdbc:log4jdbc:mariadb://mariadb:3306/online_store?allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mariadb://mariadb:3306/online_store?allowPublicKeyRetrieval=true&useSSL=false
 
   jpa:
     hibernate:
