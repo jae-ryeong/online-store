@@ -27,6 +27,10 @@ services:
 
   backend:
     container_name: "online-store-backend"
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PW=${DB_PW}
+      - PROFILES_ACTIVE=prod
     build:
       context: .
       dockerfile: Dockerfile
