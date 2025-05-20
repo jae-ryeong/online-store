@@ -39,3 +39,5 @@ out/
 
 ### JSON ###
 *.json
+
+*.env
