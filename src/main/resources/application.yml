@@ -1,6 +1,63 @@
 spring:
   profiles:
-    active: prod
+    active: ${PROFILES_ACTIVE:default}
+
+  docker:
+    compose:
+      file: docker-compose.prod.yml
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: user
+    password: 1234
+    #url: jdbc:log4jdbc:mariadb://mariadb:3306/online_store?allowPublicKeyRetrieval=true&useSSL=false
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        format_sql: false
+        show_sql: false
+        dialect: org.hibernate.dialect.MariaDBDialect
+        use_sql_comments: false
+        highlight_sql: false
+    show-sql: false
+    defer-datasource-initialization: false
+
+  data:
+    redis:
+      port: 6379
+      host: localhost
+
+  cloud:
+    gcp:
+      storage:
+        bucket: gcs_image_12321
+
+  sql:
+    init:
+      mode: always
+
+
+logging:
+  level.org.hibernate:
+    SQL: INFO
+    orm.jdbc.bind: INFO
+
+jwt:
+  secret-key: secret-key_secret-key_secret-key_secret-key.secret-key
+  access-expired-time-ms: 600000  # 10min
+  refresh-expiration-time: 6000000 # 100min
+
+
+portone:
+  api:
+    key: dsa # V2 API Key
+  secret:
+    api: ${API_SECRET_KEY} # V2 API 시크릿
+    webhook: ${API_SECRET_WEBHOOK} # V2 웹훅 시크릿
 ---
 spring:
   config:
