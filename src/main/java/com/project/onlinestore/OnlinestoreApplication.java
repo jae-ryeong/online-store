@@ -24,7 +24,7 @@ public class OnlinestoreApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins(apiUrl + ":3000")
+				registry.addMapping("/**").allowedOrigins(apiUrl)
 						.allowedMethods("GET", "POST", "PUT", "DELETE");
 			}
 		};
