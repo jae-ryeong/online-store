@@ -100,19 +100,19 @@ export default function Contents({page, setPage}:ContentsProps) {
                 let apiUrl = "";    
                 switch(category) {
                     case "book":
-                        apiUrl = `http://localhost:8080/api/v1/item/find/book?page=${page}`;
+                        apiUrl = process.env.REACT_APP_API_BASE_URL + `/api/v1/item/find/book?page=${page}`;
                         break;
                     case "food":
-                        apiUrl = `http://localhost:8080/api/v1/item/find/food?page=${page}`;
+                        apiUrl = process.env.REACT_APP_API_BASE_URL + `/api/v1/item/find/food?page=${page}`;
                         break;
                     case "clothes":
-                        apiUrl = `http://localhost:8080/api/v1/item/find/clothes?page=${page}`;
+                        apiUrl = process.env.REACT_APP_API_BASE_URL + `/api/v1/item/find/clothes?page=${page}`;
                         break;
                     case "pet":
-                        apiUrl = `http://localhost:8080/api/v1/item/find/pet?page=${page}`;
+                        apiUrl = process.env.REACT_APP_API_BASE_URL + `/api/v1/item/find/pet?page=${page}`;
                         break;
                     case "home":
-                        apiUrl = `http://localhost:8080/api/v1/item/search?page=${page}`;
+                        apiUrl = process.env.REACT_APP_API_BASE_URL + `/api/v1/item/search?page=${page}`;
                         break;
                     default:
                         apiUrl = "error";
