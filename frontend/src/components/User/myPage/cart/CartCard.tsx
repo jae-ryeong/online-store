@@ -40,7 +40,7 @@ const CartCard2: React.FC = () => {
             const token = getAuth();
 
             try {
-                const response = await fetch("http://localhost:8080/api/v1/user/cart/view", {
+                const response = await fetch(process.env.REACT_APP_API_BASE_URL + "/api/v1/user/cart/view", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -66,7 +66,7 @@ const CartCard2: React.FC = () => {
     const handleCheckboxChange = async (itemCartId: number) => {
         const token = getAuth();
         try{
-            const response = await fetch("http://localhost:8080/api/v1/user/cart/view/check", {
+            const response = await fetch(process.env.REACT_APP_API_BASE_URL + "/api/v1/user/cart/view/check", {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -93,7 +93,7 @@ const CartCard2: React.FC = () => {
     const handleQuantityUp = async(itemCartId: number) => {
         const token = getAuth();
         try{
-            const response = await fetch(`http://localhost:8080/api/v1/user/cart/view/${itemCartId}/up`, {
+            const response = await fetch(process.env.REACT_APP_API_BASE_URL + `/api/v1/user/cart/view/${itemCartId}/up`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -119,7 +119,7 @@ const CartCard2: React.FC = () => {
         const token = getAuth();
 
         try{
-            const response = await fetch(`http://localhost:8080/api/v1/user/cart/view/${itemCartId}/down`, {
+            const response = await fetch(process.env.REACT_APP_API_BASE_URL + `/api/v1/user/cart/view/${itemCartId}/down`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -152,7 +152,7 @@ const CartCard2: React.FC = () => {
     const handleDelete = async(itemCartId: number) => {
         const token = getAuth();
         try{
-            const response = await fetch(`http://localhost:8080/api/v1/user/cart/view/delete/${itemCartId}`, {
+            const response = await fetch(process.env.REACT_APP_API_BASE_URL + `/api/v1/user/cart/view/delete/${itemCartId}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

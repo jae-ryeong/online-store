@@ -7,7 +7,7 @@ export const checkAuth = async () => {
     }
 
     try {
-        const response = await axios.post("http://localhost:8080/api/v1/user/auth/check", {},
+        const response = await axios.post(process.env.REACT_APP_API_BASE_URL + "/api/v1/user/auth/check", {},
             {
                 headers: {
                     Authorization: `Bearer ${token}`

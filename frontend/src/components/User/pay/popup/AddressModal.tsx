@@ -33,7 +33,7 @@ export default function AddressModal() {
 
         const fetchAddressData = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/v1/user/setting/address/view", {
+                const response = await fetch(process.env.REACT_APP_API_BASE_URL + "/api/v1/user/setting/address/view", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -70,7 +70,7 @@ export default function AddressModal() {
     const deleteAddress = async (addressId: number) => {
         const token = getAuth();
         try {
-            const response = await fetch(`http://localhost:8080/api/v1/user/setting/address/delete/${addressId}`, {
+            const response = await fetch(process.env.REACT_APP_API_BASE_URL + `/api/v1/user/setting/address/delete/${addressId}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

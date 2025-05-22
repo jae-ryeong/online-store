@@ -31,7 +31,7 @@ export default function ItemDetail(){
     useEffect(() => {
         const fetchData = async() => {
             try{
-                const response = await axios.get(`http://localhost:8080/api/v1/item/detail/${itemId}`)
+                const response = await axios.get(process.env.REACT_APP_API_BASE_URL + `/api/v1/item/detail/${itemId}`)
                 const result : ItemData = response.data;
                 setItem(result);
             }catch(error){
@@ -80,7 +80,7 @@ export default function ItemDetail(){
             return;
         }
         try{
-            await axios.post(`http://localhost:8080/api/v1/user/cart/add`,{
+            await axios.post(process.env.REACT_APP_API_BASE_URL + `/api/v1/user/cart/add`,{
                 itemId: itemId,
                 quantity: orderQuantity
             },{

@@ -35,7 +35,7 @@ const CustomerJoinForm : React.FC = () => {
             if (formData.userName === "") return;
 
             try{
-                const response = await axios.post("http://localhost:8080/api/v1/user/join/idcheck",
+                const response = await axios.post(process.env.REACT_APP_API_BASE_URL + "/api/v1/user/join/idcheck",
                     formData.userName
                 );
 
@@ -86,7 +86,7 @@ const CustomerJoinForm : React.FC = () => {
         e.preventDefault();
         if(validate()){
             try{
-                const response = await axios.post("http://localhost:8080/api/v1/user/customer/join", 
+                const response = await axios.post(process.env.REACT_APP_API_BASE_URL + "/api/v1/user/customer/join", 
                     {userName: formData.userName, password: formData.password}
                 )
                 alert("회원가입이 완료되었습니다.");

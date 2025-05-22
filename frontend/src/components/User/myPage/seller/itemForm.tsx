@@ -54,7 +54,7 @@ export default function ItemForm() {
             if(mainImagePreview) {
                 const fileName = mainImagePreview.split('/').pop();
                 try {
-                    await axios.delete(`http://localhost:8080/api/v1/item/gcp/image/delete/${fileName}`);
+                    await axios.delete(process.env.REACT_APP_API_BASE_URL + `/api/v1/item/gcp/image/delete/${fileName}`);
                     setMainImagePreview(null);
                     setFormData((prev) => ({...prev, mainImageUrl: ''}))
                 } catch(error){
@@ -64,7 +64,7 @@ export default function ItemForm() {
 
             // 이미지 업로드
             try {
-                const response = await axios.post("http://localhost:8080/api/v1/item/gcp/image/upload", formData, {
+                const response = await axios.post(process.env.REACT_APP_API_BASE_URL + "/api/v1/item/gcp/image/upload", formData, {
                     headers: {"Content-Type": "multipart/form-data"},
                 });
                 setFormData(prev => ({ ...prev, mainImageUrl: decodeURI(response.data)}));
@@ -83,7 +83,7 @@ export default function ItemForm() {
         formData.append('file', file);
         
         try{
-            const response = await axios.post("http://localhost:8080/api/v1/item/gcp/image/upload", formData, {
+            const response = await axios.post(process.env.REACT_APP_API_BASE_URL + "/api/v1/item/gcp/image/upload", formData, {
                 headers: {"Content-Type": "multipart/form-data"},
             });         
             return decodeURI(response.data);
@@ -108,7 +108,7 @@ export default function ItemForm() {
         for (const imageUrl of deletedImages) {
             const fileName = imageUrl.split('/').pop();
             try {
-                await axios.delete(`http://localhost:8080/api/v1/item/gcp/image/delete/${fileName}`);
+                await axios.delete(process.env.REACT_APP_API_BASE_URL + `/api/v1/item/gcp/image/delete/${fileName}`);
             } catch(error){
                 console.error("Failed to delete image", error);
             }
@@ -118,7 +118,7 @@ export default function ItemForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8080/api/v1/item/registration", formData)
+            const response = await axios.post(process.env.REACT_APP_API_BASE_URL + "/api/v1/item/registration", formData)
         } catch(error){
             console.error("Item registration failed: ", error);
         }

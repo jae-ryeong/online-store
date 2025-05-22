@@ -69,7 +69,7 @@ export default function PaymentForm() {
         // CartData API 호출
         const fetchCartData = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/v1/order/list/orderitem", {
+                const response = await fetch(process.env.REACT_APP_API_BASE_URL + "/api/v1/order/list/orderitem", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -111,7 +111,7 @@ export default function PaymentForm() {
     const createOrder = async () => {
         const token = getAuth();
         try {
-            const response = await fetch("http://localhost:8080/api/v1/order/createorder", {
+            const response = await fetch(process.env.REACT_APP_API_BASE_URL + "/api/v1/order/createorder", {
                 method: "POST",
                 body: JSON.stringify({
                     amount: totalAmount,
@@ -144,7 +144,7 @@ export default function PaymentForm() {
     const deleteOrder = async (orderId: number) => {
         console.log("주문 삭제 실행");
         const token = getAuth();
-        const response = await fetch(`http://localhost:8080/api/v1/order/deleteorder/${orderId}`, {
+        const response = await fetch(process.env.REACT_APP_API_BASE_URL + `/api/v1/order/deleteorder/${orderId}`, {
             method: "DELETE",
             body: JSON.stringify({
                 orderId
@@ -164,7 +164,7 @@ export default function PaymentForm() {
     const successOrder = async (orderId: number) => {
         console.log("주문 성공 실행");
         const token = getAuth();
-        const response = await fetch(`http://localhost:8080/api/v1/order/successorder/${orderId}`, {
+        const response = await fetch(process.env.REACT_APP_API_BASE_URL + `/api/v1/order/successorder/${orderId}`, {
             method: "PUT",
             body: JSON.stringify({
                 orderId
