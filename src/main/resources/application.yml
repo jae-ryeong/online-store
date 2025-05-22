@@ -5,9 +5,9 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    username: user
-    password: 1234
-    url: jdbc:mariadb://mariadb:3306/online_store?allowPublicKeyRetrieval=true&useSSL=false
+    username: ${DB_USER}
+    password: ${DB_PW}
+    url: ${DB_URL}
 
   jpa:
     hibernate:
