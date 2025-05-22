@@ -30,8 +30,6 @@
 - **AWS (Amazon Web Services)**: 애플리케이션의 배포 환경으로 활용되었으며 서비스 운영을 지원
 
 ### 기타
-- **Docker**: 컨테이너화를 통해 일관된 개발 및 배포 환경 구성
-- **GCP (Google Cloud Platform)**: 상품과 관련된 대용량 이미지 파일을 저장하는 데 사용
 - **PortOne Payment API (V2)**: 온라인 결제 서비스 처리 기능 구현
 
 
